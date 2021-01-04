@@ -1,7 +1,6 @@
 import Module from "./maximilian.wasmmodule.js"; //NOTE:FB We need this import here for webpack to emit maximilian.wasmmodule.js
 import Open303 from "./open303.wasmmodule.js"; //NOTE:FB We need this import here for webpack to emit maximilian.wasmmodule.js
 import CustomProcessor from "./maxi-processor";
-// import "../utils/ringbuf.js"; //thanks padenot
 import {
   RingBuffer
 } from "../ringbuf.js"; //thanks padenot
