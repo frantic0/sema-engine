@@ -1,25 +1,22 @@
 import Module from "./maximilian.wasmmodule.js"; //NOTE:FB We need this import here for webpack to emit maximilian.wasmmodule.js
 import Open303 from "./open303.wasmmodule.js"; //NOTE:FB We need this import here for webpack to emit maximilian.wasmmodule.js
-import CustomProcessor from "./maxi-processor";
-import {
-  RingBuffer
-} from "../ringbuf.js"; //thanks padenot
+// import CustomProcessor from "./maxi-processor.js";
+import RingBuffer from "./ringbuf.js"; //thanks padenot
 import {
   loadSampleToArray
-} from "./maximilian.util";
-import {
-  kuramotoNetClock
-} from "../interfaces/clockInterface.js";
-import {
-  PubSub
-} from "../messaging/pubSub.js";
-import {
-  PeerStreaming
-} from "../interfaces/peerStreaming.js";
-import {
-  copyToPasteBuffer
-} from '../utils/pasteBuffer.js';
-
+} from "./maximilian.util.js";
+// import {
+//   kuramotoNetClock
+// } from "./interfaces/clockInterface.js";
+// import {
+//   PubSub
+// } from "./messaging/pubSub.js";
+// import {
+//   PeerStreaming
+// } from "../interfaces/peerStreaming.js";
+// import {
+//   copyToPasteBuffer
+// } from '../utils/pasteBuffer.js';
 
 
 /**

@@ -1,5 +1,5 @@
 //warning this is the same as in ringbuf, but packaged differently - needs fixing!!!
-class RingBuffer {
+export default class RingBuffer {
   static getStorageForCapacity(capacity, type) {
     if (!type.BYTES_PER_ELEMENT) {
       throw "Pass in a ArrayBuffer subclass";
@@ -161,4 +161,3 @@ class RingBuffer {
   }
 }
 
-module.exports = {RingBuffer};

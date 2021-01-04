@@ -3,6 +3,8 @@
 // import {
 //   loadSampleToArray
 // } from '../build/maximilian.wasmmodule.js';
-import { loadSampleToArray } from "../../build/index";
 
-window.loadSampleToArray = loadSampleToArray;
+export { AudioEngine } from "../../build/index.js";
+// export { loadSampleToArray } from "../../build/index.js";
+
+// window.loadSampleToArray = loadSampleToArray;
