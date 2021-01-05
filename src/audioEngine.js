@@ -1,5 +1,5 @@
-import Module from "./maximilian.wasmmodule.js"; //NOTE:FB We need this import here for webpack to emit maximilian.wasmmodule.js
-import Open303 from "./open303.wasmmodule.js"; //NOTE:FB We need this import here for webpack to emit maximilian.wasmmodule.js
+// import Module from "./maximilian.wasmmodule.js"; //NOTE:FB We need this import here for webpack to emit maximilian.wasmmodule.js
+// import Open303 from "./open303.wasmmodule.js"; //NOTE:FB We need this import here for webpack to emit maximilian.wasmmodule.js
 // import CustomProcessor from "./maxi-processor.js";
 import RingBuffer from "./ringbuf.js"; //thanks padenot
 import {
@@ -20,13 +20,13 @@ import {
 
 
 /**
- * The CustomAudioNode is a class that extends AudioWorkletNode
+ * The CustomMaxiNode is a class that extends AudioWorkletNode
  * to hold an Custom Audio Worklet Processor and connect to Web Audio graph
- * @class CustomAudioNode
+ * @class CustomMaxiNode
  * @extends AudioWorkletNode
  */
 // if(true){
-class MaxiNode extends AudioWorkletNode {
+class CustomMaxiNode extends AudioWorkletNode {
   constructor(audioContext, processorName) {
     // super(audioContext, processorName);
     console.log();
@@ -61,9 +61,11 @@ class AudioEngine {
     // by setting this.audioContext = new AudioContext();
     this.audioContext;
     this.audioWorkletProcessorName = "maxi-processor";
-    this.audioWorkletUrl = "/maxi-processor.js";
+    this.audioWorkletUrl = "http://localhost:9001/src/maxi-processor.js";
     this.audioWorkletNode;
     this.samplesLoaded = false;
+
+
 
     // Hash of on-demand analysers (e.g. spectrogram, oscilloscope)
     // NOTE: analysers from localStorage are loaded from local Storage before user-started audioContext init
@@ -72,35 +74,37 @@ class AudioEngine {
     //shared array buffers for sharing client side data to the audio engine- e.g. mouse coords
     this.sharedArrayBuffers = {};
 
+    console.log("Audio Engine loaded");
+
 
     // Sema's Publish-Subscribe pattern object with "lowercase-lowercase" format convention for subscription topic
-    this.messaging = new PubSub();
-    this.messaging.subscribe("eval-dsp", e => this.evalDSP(e));
-    this.messaging.subscribe("stop-audio", e => this.stop());
-    this.messaging.subscribe("load-sample", (name, url) =>
-      this.loadSample(name, url)
-    );
-    this.messaging.subscribe("model-output-data", e =>
-      this.onMessagingEventHandler(e)
-    );
-    this.messaging.subscribe("clock-phase", e =>
-      this.onMessagingEventHandler(e)
-    );
-    this.messaging.subscribe("model-send-buffer", e =>
-      this.onMessagingEventHandler(e)
-    );
-    this.messaging.subscribe("add-engine-analyser", e =>
-      this.createAnalyser(e)
-    );
-    this.messaging.subscribe("remove-engine-analyser", e =>
-      this.removeAnalyser(e)
-    );
+    // this.messaging = new PubSub();
+    // this.messaging.subscribe("eval-dsp", e => this.evalDSP(e));
+    // this.messaging.subscribe("stop-audio", e => this.stop());
+    // this.messaging.subscribe("load-sample", (name, url) =>
+    //   this.loadSample(name, url)
+    // );
+    // this.messaging.subscribe("model-output-data", e =>
+    //   this.onMessagingEventHandler(e)
+    // );
+    // this.messaging.subscribe("clock-phase", e =>
+    //   this.onMessagingEventHandler(e)
+    // );
+    // this.messaging.subscribe("model-send-buffer", e =>
+    //   this.onMessagingEventHandler(e)
+    // );
+    // this.messaging.subscribe("add-engine-analyser", e =>
+    //   this.createAnalyser(e)
+    // );
+    // this.messaging.subscribe("remove-engine-analyser", e =>
+    //   this.removeAnalyser(e)
+    // );
 
-    this.messaging.subscribe("mouse-xy", e => {
-      if (this.sharedArrayBuffers.mxy) {
-        this.sharedArrayBuffers.mxy.rb.push(e);
-      }
-    });
+    // this.messaging.subscribe("mouse-xy", e => {
+    //   if (this.sharedArrayBuffers.mxy) {
+    //     this.sharedArrayBuffers.mxy.rb.push(e);
+    //   }
+    // });
     // this.messaging.subscribe("osc", e => console.log(`DEBUG:AudioEngine:OSC: ${e}`));
 
 
@@ -121,6 +125,7 @@ class AudioEngine {
     //   console.log(this.peerNet.peerID);
     //   copyToPasteBuffer(this.peerNet.peerID);
     // });
+
 
 
   }
@@ -324,47 +329,49 @@ class AudioEngine {
    */
   async init(numClockPeers) {
     if (this.audioContext === undefined) {
-      this.audioContext = new AudioContext({
-        // create audio context with latency optimally configured for playback
-        latencyHint: "playback",
-        // latencyHint: 32/44100,  //this doesn't work below 512 on chrome (?)
-        // sampleRate: 44100
-      });
+			this.audioContext = new AudioContext({
+				// create audio context with latency optimally configured for playback
+				latencyHint: "playback",
+				// latencyHint: 32/44100,  //this doesn't work below 512 on chrome (?)
+				// sampleRate: 44100
+			});
 
-      this.audioContext.destination.channelInterpretation = 'discrete';
-      this.audioContext.destination.channelCountMode = 'explicit';
-      this.audioContext.destination.channelCount = this.audioContext.destination.maxChannelCount;
-      console.log(this.audioContext.destination);
+			// this.audioContext.destination.channelInterpretation = 'discrete';
+			// this.audioContext.destination.channelCountMode = 'explicit';
+			// this.audioContext.destination.channelCount = this.audioContext.destination.maxChannelCount;
+			// console.log(this.audioContext.destination);
 
-      await this.loadWorkletProcessorCode();
-      this.audioWorkletNode.channelInterpretation = 'discrete';
-      this.audioWorkletNode.channelCountMode = 'explicit';
-      this.audioWorkletNode.channelCount = this.audioContext.destination.maxChannelCount;
+			await this.loadWorkletProcessorCode();
 
-      this.connectMediaStream();
+			// Connect the worklet node to the audio graph
+			this.audioWorkletNode.connect(this.audioContext.destination);
 
-      this.connectAnalysers(); // Connect Analysers loaded from the store
+			// this.audioWorkletNode.channelInterpretation = 'discrete';
+			// this.audioWorkletNode.channelCountMode = 'explicit';
+			// this.audioWorkletNode.channelCount = this.audioContext.destination.maxChannelCount;
 
-      this.loadImportedSamples();
+			// this.connectMediaStream();
 
-      // No need to inject the callback here, messaging is built in KuraClock
-      // this.kuraClock = new kuramotoNetClock((phase, idx) => {
-      //   // console.log( `DEBUG:AudioEngine:sendPeersMyClockPhase:phase:${phase}:id:${idx}`);
-      //   // This requires an initialised audio worklet
-      //   this.audioWorkletNode.port.postMessage({ phase: phase, i: idx });
-      // });
+			// this.connectAnalysers(); // Connect Analysers loaded from the store
 
-      //temporarily disabled
-      // if (this.kuraClock.connected()) {
-      // 	this.kuraClock.queryPeers(async numClockPeers => {
-      // 		console.log(`DEBUG:AudioEngine:init:numClockPeers: ${numClockPeers}`);
-      // 	});
-      // }
+			// this.loadImportedSamples();
 
-      this.createSharedArrayBuffer("mxy", "mouseXY", 2);
+			// No need to inject the callback here, messaging is built in KuraClock
+			// this.kuraClock = new kuramotoNetClock((phase, idx) => {
+			//   // console.log( `DEBUG:AudioEngine:sendPeersMyClockPhase:phase:${phase}:id:${idx}`);
+			//   // This requires an initialised audio worklet
+			//   this.audioWorkletNode.port.postMessage({ phase: phase, i: idx });
+			// });
 
+			//temporarily disabled
+			// if (this.kuraClock.connected()) {
+			// 	this.kuraClock.queryPeers(async numClockPeers => {
+			// 		console.log(`DEBUG:AudioEngine:init:numClockPeers: ${numClockPeers}`);
+			// 	});
+			// }
 
-    }
+			this.createSharedArrayBuffer("mxy", "mouseXY", 2);
+		}
   }
 
   /**
@@ -488,12 +495,16 @@ class AudioEngine {
     if (this.audioContext !== undefined) {
       try {
         await this.audioContext.audioWorklet.addModule(this.audioWorkletUrl);
-
-        // Custom node constructor with required parameters
-        this.audioWorkletNode = new MaxiNode(
-          this.audioContext,
-          this.audioWorkletProcessorName
+      } catch (err) {
+        console.log(
+          "DEBUG:AudioEngine:loadWorkletProcessorCode: AudioWorklet not supported in this browser: ",
+          err.message
         );
+        return false;
+      }
+      try {
+        // Custom node constructor with required parameters
+        this.audioWorkletNode = new CustomMaxiNode(this.audioContext, this.audioWorkletProcessorName);
 
         // All possible error event handlers subscribed
         this.audioWorkletNode.onprocessorerror = event => {
@@ -524,11 +535,8 @@ class AudioEngine {
           this.onProcessorMessageEventHandler(event);
         };
 
-        // Connect the worklet node to the audio graph
-        this.audioWorkletNode.connect(this.audioContext.destination);
-        console.log(this.audioContext.destination);
-
         return true;
+
       } catch (err) {
         console.log(
           "DEBUG:AudioEngine:loadWorkletProcessorCode: AudioWorklet not supported in this browser: ",
@@ -600,6 +608,4 @@ class AudioEngine {
   // }
 }
 
-export {
-  AudioEngine
-};
+export { AudioEngine };
