@@ -77,6 +77,8 @@ class AudioEngine {
     console.log("Audio Engine loaded");
 
 
+    // MOVE THIS TO AN UP LAYER IN SEMA
+
     // Sema's Publish-Subscribe pattern object with "lowercase-lowercase" format convention for subscription topic
     // this.messaging = new PubSub();
     // this.messaging.subscribe("eval-dsp", e => this.evalDSP(e));
@@ -336,9 +338,9 @@ class AudioEngine {
 				// sampleRate: 44100
 			});
 
-			// this.audioContext.destination.channelInterpretation = 'discrete';
-			// this.audioContext.destination.channelCountMode = 'explicit';
-			// this.audioContext.destination.channelCount = this.audioContext.destination.maxChannelCount;
+			this.audioContext.destination.channelInterpretation = 'discrete';
+			this.audioContext.destination.channelCountMode = 'explicit';
+			this.audioContext.destination.channelCount = this.audioContext.destination.maxChannelCount;
 			// console.log(this.audioContext.destination);
 
 			await this.loadWorkletProcessorCode();
@@ -496,8 +498,8 @@ class AudioEngine {
       try {
         await this.audioContext.audioWorklet.addModule(this.audioWorkletUrl);
       } catch (err) {
-        console.log(
-          "DEBUG:AudioEngine:loadWorkletProcessorCode: AudioWorklet not supported in this browser: ",
+        console.error(
+          "ERROR: AudioEngine:loadWorkletProcessorCode: AudioWorklet not supported in this browser: ",
           err.message
         );
         return false;
@@ -538,8 +540,8 @@ class AudioEngine {
         return true;
 
       } catch (err) {
-        console.log(
-          "DEBUG:AudioEngine:loadWorkletProcessorCode: AudioWorklet not supported in this browser: ",
+        console.error(
+          "ERROR: AudioEngine:loadWorkletProcessorCode: Custom AudioWorklet node creation: ",
           err.message
         );
         return false;
