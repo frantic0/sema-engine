@@ -431,7 +431,7 @@ class AudioEngine {
     } else return false;
   }
 
-  evalDSP(dspFunction) {
+  eval(dspFunction) {
 
     // console.log("DEBUG:AudioEngine:evalDSP:");
     // console.log(dspFunction);

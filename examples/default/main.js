@@ -1,5 +1,5 @@
 
-import { AudioEngine } from "../../build/index.js";
+import { AudioEngine } from "../../build/index.mjs";
 
 let audioEngine = new AudioEngine();
 
@@ -18,7 +18,7 @@ bindCallback("evalButton", () => {
 	let editorValue = editor.getValue();
 	console.log(editorValue);
 
-	audioEngine.evalDSP({
+	audioEngine.eval({
 		setup: `() => {
                     let q = this.newq();;
                     q.b0l5 = new Float64Array(2);

@@ -9,7 +9,7 @@
       "request": "launch",
       "name": "Launch Chrome against localhost",
       "url": "http://localhost:9001",
-      "webRoot": "${workspaceFolder}/sema-engine"
+      "webRoot": "${workspaceFolder}/sema-engine/"
     }
   ]
 }
