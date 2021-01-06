@@ -61,7 +61,7 @@ class AudioEngine {
     // by setting this.audioContext = new AudioContext();
     this.audioContext;
     this.audioWorkletProcessorName = "maxi-processor";
-    this.audioWorkletUrl = "http://localhost:9001/src/maxi-processor.js";
+    this.audioWorkletUrl = "http://localhost:9001/src/engine/maxi-processor.js";
     this.audioWorkletNode;
     this.samplesLoaded = false;
 
@@ -73,8 +73,6 @@ class AudioEngine {
 
     //shared array buffers for sharing client side data to the audio engine- e.g. mouse coords
     this.sharedArrayBuffers = {};
-
-    console.log("Audio Engine loaded");
 
 
     // MOVE THIS TO AN UP LAYER IN SEMA

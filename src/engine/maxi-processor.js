@@ -257,7 +257,7 @@ class MaxiProcessor extends AudioWorkletProcessor {
 		super();
 
 		// this.sampleRate = 44100;
-		console.log("SAMPLERATE", sampleRate);
+		// console.log("SAMPLERATE", sampleRate);
 
 		//indicate audio settings in WASM and JS domains
 		Maximilian.maxiSettings.setup(sampleRate, 1, 512);
@@ -380,12 +380,12 @@ class MaxiProcessor extends AudioWorkletProcessor {
 		this.barPhaseMultiplier =
 			this.maxTimeLength / this.beatLengthInSamples / this.beatsPerBar;
 
-		console.log(
-			"DEBUG:maxi-processor:clockUpdate: ",
-			this.barPhaseMultiplier,
-			this.maxTimeLength,
-			this.beatsPerBar
-		);
+		// console.log(
+		// 	"DEBUG:maxi-processor:clockUpdate: ",
+		// 	this.barPhaseMultiplier,
+		// 	this.maxTimeLength,
+		// 	this.beatsPerBar
+		// );
 	};
 
 	/**

@@ -15,12 +15,16 @@
 		"Signal Processing",
 		"Interactive Music"
 	],
-  "dependencies": {
-    "nearley": "^2.20.1"
-  },
   "scripts":{
     "build": "",
     "dev": "",
     "test": ""
+  },
+  "dependencies": {
+    "nearley": "^2.20.1",
+    "maximilian": "^2.2.0"
+  },
+  "devDependencies": {
+    "mocha": "^7.1.1"
   }
 }
