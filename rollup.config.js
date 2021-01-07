@@ -2,6 +2,8 @@ import resolve from "@rollup/plugin-node-resolve";
 import { terser } from "rollup-plugin-terser";
 import commonjs from "@rollup/plugin-commonjs";
 import pkg from "./package.json";
+import eslint from "@rollup/plugin-eslint";
+
 
 export default [
 	// browser-friendly UMD build
@@ -16,7 +18,10 @@ export default [
 		plugins: [
 			resolve(), // so Rollup can find `nearley`
 			commonjs(), // so Rollup can convert `nearley` to an ES module
-      terser(),
+			terser(),
+			eslint({
+				/* your options */
+			}),
 		],
 	},
 

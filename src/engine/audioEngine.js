@@ -1,19 +1,19 @@
-// import Module from "./maximilian.wasmmodule.js"; //NOTE:FB We need this import here for webpack to emit maximilian.wasmmodule.js
-// import Open303 from "./open303.wasmmodule.js"; //NOTE:FB We need this import here for webpack to emit maximilian.wasmmodule.js
-// import CustomProcessor from "./maxi-processor.js";
-import RingBuffer from "./ringbuf.js"; //thanks padenot
+// import Module from './maximilian.wasmmodule.js'; //NOTE:FB We need this import here for webpack to emit maximilian.wasmmodule.js
+// import Open303 from './open303.wasmmodule.js'; //NOTE:FB We need this import here for webpack to emit maximilian.wasmmodule.js
+// import CustomProcessor from './maxi-processor.js';
+import RingBuffer from './ringbuf.js'; //thanks padenot
 import {
   loadSampleToArray
-} from "./maximilian.util.js";
+} from './maximilian.util.js';
 // import {
 //   kuramotoNetClock
-// } from "./interfaces/clockInterface.js";
+// } from './interfaces/clockInterface.js';
 // import {
 //   PubSub
-// } from "./messaging/pubSub.js";
+// } from './messaging/pubSub.js';
 // import {
 //   PeerStreaming
-// } from "../interfaces/peerStreaming.js";
+// } from '../interfaces/peerStreaming.js';
 // import {
 //   copyToPasteBuffer
 // } from '../utils/pasteBuffer.js';
@@ -60,8 +60,8 @@ class AudioEngine {
     // Audio Engine first play() call, triggered by user, prevents the warning
     // by setting this.audioContext = new AudioContext();
     this.audioContext;
-    this.audioWorkletProcessorName = "maxi-processor";
-    this.audioWorkletUrl = "http://localhost:9001/src/engine/maxi-processor.js";
+    this.audioWorkletProcessorName = 'maxi-processor';
+    this.audioWorkletUrl = 'http://localhost:9001/src/engine/maxi-processor.js';
     this.audioWorkletNode;
     this.samplesLoaded = false;
 
@@ -77,35 +77,35 @@ class AudioEngine {
 
     // MOVE THIS TO AN UP LAYER IN SEMA
 
-    // Sema's Publish-Subscribe pattern object with "lowercase-lowercase" format convention for subscription topic
+    // Sema's Publish-Subscribe pattern object with 'lowercase-lowercase' format convention for subscription topic
     // this.messaging = new PubSub();
-    // this.messaging.subscribe("eval-dsp", e => this.evalDSP(e));
-    // this.messaging.subscribe("stop-audio", e => this.stop());
-    // this.messaging.subscribe("load-sample", (name, url) =>
+    // this.messaging.subscribe('eval-dsp', e => this.evalDSP(e));
+    // this.messaging.subscribe('stop-audio', e => this.stop());
+    // this.messaging.subscribe('load-sample', (name, url) =>
     //   this.loadSample(name, url)
     // );
-    // this.messaging.subscribe("model-output-data", e =>
+    // this.messaging.subscribe('model-output-data', e =>
     //   this.onMessagingEventHandler(e)
     // );
-    // this.messaging.subscribe("clock-phase", e =>
+    // this.messaging.subscribe('clock-phase', e =>
     //   this.onMessagingEventHandler(e)
     // );
-    // this.messaging.subscribe("model-send-buffer", e =>
+    // this.messaging.subscribe('model-send-buffer', e =>
     //   this.onMessagingEventHandler(e)
     // );
-    // this.messaging.subscribe("add-engine-analyser", e =>
+    // this.messaging.subscribe('add-engine-analyser', e =>
     //   this.createAnalyser(e)
     // );
-    // this.messaging.subscribe("remove-engine-analyser", e =>
+    // this.messaging.subscribe('remove-engine-analyser', e =>
     //   this.removeAnalyser(e)
     // );
 
-    // this.messaging.subscribe("mouse-xy", e => {
+    // this.messaging.subscribe('mouse-xy', e => {
     //   if (this.sharedArrayBuffers.mxy) {
     //     this.sharedArrayBuffers.mxy.rb.push(e);
     //   }
     // });
-    // this.messaging.subscribe("osc", e => console.log(`DEBUG:AudioEngine:OSC: ${e}`));
+    // this.messaging.subscribe('osc', e => console.log(`DEBUG:AudioEngine:OSC: ${e}`));
 
 
     //temporarily disabled for now
@@ -115,13 +115,13 @@ class AudioEngine {
     // this.peerNet = new PeerStreaming();
 
     //the message has incoming data from other peers
-    // this.messaging.subscribe("peermsg", (e) => {
+    // this.messaging.subscribe('peermsg', (e) => {
     //   e.ttype = 'NET';
     //   e.peermsg = 1;
     //   this.onMessagingEventHandler(e);
     // });
 
-    // this.messaging.subscribe("peerinfo-request", (e) => {
+    // this.messaging.subscribe('peerinfo-request', (e) => {
     //   console.log(this.peerNet.peerID);
     //   copyToPasteBuffer(this.peerNet.peerID);
     // });
@@ -136,19 +136,15 @@ class AudioEngine {
    */
   onProcessorMessageEventHandler(event) {
     if (event != undefined && event.data != undefined) {
-      // console.log("DEBUG:AudioEngine:processorMessageHandler:");
+      // console.log('DEBUG:AudioEngine:processorMessageHandler:');
       // console.log(event);
-      if (event.data === "giveMeSomeSamples") {} else if (event.data.phase != undefined) {
-        // console.log('DEBUG:AudioEngine:phase:');
-        // console.log(event.data.phase);
-        this.kuraClock.broadcastPhase(event.data.phase); // TODO Refactor p to phase
-      } else if (event.data.rq != undefined && event.data.rq === "send") {
+      if (event.data.rq != undefined && event.data.rq === 'send') {
         switch (event.data.ttype) {
           case 'ML':
             // Stream generated by 'toJS' live code instruction — e.g. {10,0,{1}sin}toJS;
             // publishes to model/JS editor, which posts to ml.worker
-            this.messaging.publish("model-input-data", {
-              type: "model-input-data",
+            this.messaging.publish('model-input-data', {
+              type: 'model-input-data',
               value: event.data.value,
               ch: event.data.ch
             });
@@ -157,12 +153,12 @@ class AudioEngine {
             this.peerNet.send(event.data.ch[0], event.data.value, event.data.ch[1]);
             break;
         }
-      } else if (event.data.rq && event.data.rq === "buf") {
-        console.log("buf", event.data);
+      } else if (event.data.rq && event.data.rq === 'buf') {
+        console.log('buf', event.data);
         switch (event.data.ttype) {
           case 'ML':
-            this.messaging.publish("model-input-buffer", {
-              type: "model-input-buffer",
+            this.messaging.publish('model-input-buffer', {
+              type: 'model-input-buffer',
               value: event.data.value,
               channelID: event.data.channelID, //channel ID
               blocksize: event.data.blocksize
@@ -170,13 +166,18 @@ class AudioEngine {
             break;
         }
       }
-      // else if (event.data.rq != undefined && event.data.rq === "receive") {
+      else if (event.data === 'giveMeSomeSamples') {} else if (event.data.phase != undefined) {
+        // console.log('DEBUG:AudioEngine:phase:');
+        // console.log(event.data.phase);
+        // this.kuraClock.broadcastPhase(event.data.phase); // TODO Refactor p to phase
+      }
+      // else if (event.data.rq != undefined && event.data.rq === 'receive') {
       //   switch (event.data.ttype) {
       //     case 'ML':
       //       // Stream generated by 'fromJS' live code instruction – e.g. {{10,1}fromJS}saw
       //       // publishes to model/JS editor, which posts to ml.worker
-      //       this.messaging.publish("model-output-data-request", {
-      //         type: "model-output-data-request",
+      //       this.messaging.publish('model-output-data-request', {
+      //         type: 'model-output-data-request',
       //         value: event.data.value,
       //         channel: event.data.ch
       //       });
@@ -195,8 +196,8 @@ class AudioEngine {
    */
   onMessagingEventHandler(event) {
     if (event !== undefined) {
-      // Receive notification from "model-output-data" topic
-      console.log("DEBUG:AudioEngine:onMessagingEventHandler:");
+      // Receive notification from 'model-output-data' topic
+      console.log('DEBUG:AudioEngine:onMessagingEventHandler:');
       console.log(event);
       this.audioWorkletNode.port.postMessage(event);
     }
@@ -264,7 +265,7 @@ class AudioEngine {
       const analyserPollingLoop = () => {
 
         analyserData = this.pollAnalyserData(analyser);
-        this.messaging.publish("analyser-data", analyserData);
+        this.messaging.publish('analyser-data', analyserData);
         let analyserFrameId = requestAnimationFrame(analyserPollingLoop);
         this.analysers[name] = {
           analyser,
@@ -329,9 +330,9 @@ class AudioEngine {
    */
   async init(numClockPeers) {
     if (this.audioContext === undefined) {
-			this.audioContext = new AudioContext({
+      this.audioContext = new AudioContext({
 				// create audio context with latency optimally configured for playback
-				latencyHint: "playback",
+				latencyHint: 'playback',
 				// latencyHint: 32/44100,  //this doesn't work below 512 on chrome (?)
 				// sampleRate: 44100
 			});
@@ -370,7 +371,7 @@ class AudioEngine {
 			// 	});
 			// }
 
-			this.createSharedArrayBuffer("mxy", "mouseXY", 2);
+			this.createSharedArrayBuffer('mxy', 'mouseXY', 2);
 		}
   }
 
@@ -381,7 +382,7 @@ class AudioEngine {
    */
   play() {
     if (this.audioContext !== undefined) {
-      if (this.audioContext.state !== "suspended") {
+      if (this.audioContext.state !== 'suspended') {
         this.stop();
         return false;
       } else {
@@ -417,7 +418,7 @@ class AudioEngine {
     if (this.audioWorkletNode !== undefined) {
       const gainParam = this.audioWorkletNode.parameters.get(gain);
       gainParam.value += 0.5;
-      console.log(gain + ": " + gainParam.value); // DEBUG
+      console.log(gain + ': ' + gainParam.value); // DEBUG
       return true;
     } else return false;
   }
@@ -426,18 +427,18 @@ class AudioEngine {
     if (this.audioWorkletNode !== undefined) {
       const gainParam = this.audioWorkletNode.parameters.get(gain);
       gainParam.value -= 0.5;
-      console.log(gain + ": " + gainParam.value); // DEBUG
+      console.log(gain + ': ' + gainParam.value); // DEBUG
       return true;
     } else return false;
   }
 
   eval(dspFunction) {
 
-    // console.log("DEBUG:AudioEngine:evalDSP:");
+    // console.log('DEBUG:AudioEngine:evalDSP:');
     // console.log(dspFunction);
 
     if (this.audioWorkletNode !== undefined) {
-      if (this.audioContext.state === "suspended") {
+      if (this.audioContext.state === 'suspended') {
         this.audioContext.resume();
       }
       this.audioWorkletNode.port.postMessage({
@@ -459,7 +460,7 @@ class AudioEngine {
   }
 
   onAudioInputInit(stream) {
-    // console.log("DEBUG:AudioEngine: Audio Input init");
+    // console.log('DEBUG:AudioEngine: Audio Input init');
     let mediaStreamSource = this.audioContext.createMediaStreamSource(stream);
     mediaStreamSource.connect(this.audioWorkletNode);
   }
@@ -497,7 +498,7 @@ class AudioEngine {
         await this.audioContext.audioWorklet.addModule(this.audioWorkletUrl);
       } catch (err) {
         console.error(
-          "ERROR: AudioEngine:loadWorkletProcessorCode: AudioWorklet not supported in this browser: ",
+          'ERROR: AudioEngine:loadWorkletProcessorCode: AudioWorklet not supported in this browser: ',
           err.message
         );
         return false;
@@ -539,7 +540,7 @@ class AudioEngine {
 
       } catch (err) {
         console.error(
-          "ERROR: AudioEngine:loadWorkletProcessorCode: Custom AudioWorklet node creation: ",
+          'ERROR: AudioEngine:loadWorkletProcessorCode: Custom AudioWorklet node creation: ',
           err.message
         );
         return false;
@@ -550,7 +551,7 @@ class AudioEngine {
   }
 
   getSamplesNames() {
-    const r = require.context("../../assets/samples", false, /\.wav$/);
+    const r = require.context('../../assets/samples', false, /\.wav$/);
 
     // return an array list of filenames (with extension)
     const importAll = r => r.keys().map(file => file.match(/[^\/]+$/)[0]);
@@ -566,18 +567,18 @@ class AudioEngine {
         url,
         this.audioWorkletNode
       );
-    } else throw "Audio Context is not initialised!";
+    } else throw 'Audio Context is not initialised!';
   }
 
   lazyLoadSample(sampleName) {
-    import( /* webpackMode: "lazy" */ `../../assets/samples/${sampleName}`)
+    import( /* webpackMode: 'lazy' */ `../../assets/samples/${sampleName}`)
       .then(() => this.loadSample(sampleName, `/samples/${sampleName}`))
       .catch(err => console.error(`DEBUG:AudioEngine:lazyLoadSample: ` + err));
   }
 
   loadImportedSamples() {
     let samplesNames = this.getSamplesNames();
-    // console.log("DEBUG:AudioEngine:getSamplesNames: " + samplesNames);
+    // console.log('DEBUG:AudioEngine:getSamplesNames: ' + samplesNames);
     samplesNames.forEach(sampleName => {
       this.lazyLoadSample(sampleName);
     });
@@ -586,22 +587,22 @@ class AudioEngine {
   // NOTE:FB Test code should be segregated from production code into its own fixture.
   // Otherwise, it becomes bloated, difficult to read and reason about.
   // messageHandler(data) {
-  // 	if (data == "dspStart") {
+  // 	if (data == 'dspStart') {
   // 		this.ts = window.performance.now();
   // 	}
-  // 	if (data == "dspEnd") {
+  // 	if (data == 'dspEnd') {
   // 		this.ts = window.performance.now() - this.ts;
   // 		this.dspTime = this.dspTime * 0.9 + this.ts * 0.1; //time for 128 sample buffer
   // 		this.onNewDSPLoadValue((this.dspTime / 2.90249433106576) * 100);
   // 	}
-  // 	if (data == "evalEnd") {
+  // 	if (data == 'evalEnd') {
   // 		let evalts = window.performance.now();
   // 		this.onEvalTimestamp(evalts);
-  // 	} else if (data == "evalEnd") {
+  // 	} else if (data == 'evalEnd') {
   // 		let evalts = window.performance.now();
   // 		this.onEvalTimestamp(evalts);
-  // 	} else if (data == "giveMeSomeSamples") {
-  // 		// this.msgHandler("giveMeSomeSamples");    	// NOTE:FB Untangling the previous msgHandler hack from the audio engine
+  // 	} else if (data == 'giveMeSomeSamples') {
+  // 		// this.msgHandler('giveMeSomeSamples');    	// NOTE:FB Untangling the previous msgHandler hack from the audio engine
   // 	} else {
   // 		this.msgHandler(data);
   // 	}

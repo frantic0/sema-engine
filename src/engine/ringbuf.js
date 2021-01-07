@@ -2,7 +2,7 @@
 export default class RingBuffer {
   static getStorageForCapacity(capacity, type) {
     if (!type.BYTES_PER_ELEMENT) {
-      throw "Pass in a ArrayBuffer subclass";
+      throw 'Pass in a ArrayBuffer subclass';
     }
     var bytes = 8 + (capacity + 1) * type.BYTES_PER_ELEMENT;
     return new SharedArrayBuffer(bytes);
@@ -12,7 +12,7 @@ export default class RingBuffer {
   constructor(sab, type) {
     if (!ArrayBuffer.__proto__.isPrototypeOf(type) &&
       type.BYTES_PER_ELEMENT !== undefined) {
-      throw "Pass a concrete typed array class as second argument";
+      throw 'Pass a concrete typed array class as second argument';
     }
 
     // Maximum usable size is 1<<32 - type.BYTES_PER_ELEMENT bytes in the ring
