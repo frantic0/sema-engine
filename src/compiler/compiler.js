@@ -6,19 +6,24 @@
   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-import nearley from "nearley";
+// import nearley from "nearley";
+import nearley from "../../node_modules/nearley/lib/nearley.js";
 
-import compileLowLevel from "./compiler-low-level";
+// import compileLowLevel from "./compiler-low-level";
+import compileLowLevel from "./compiler-low-level.js";
 
 import {
 	ParserRules,
 	ParserStart,
-	Lexer
-} from "nearley/lib/nearley-language-bootstrapped";
+	Lexer,
+	// } from "nearley/lib/nearley-language-bootstrapped";
+} from "../../node_modules/nearley/lib/nearley-language-bootstrapped.js";
 
-import generate from "nearley/lib/generate.js";
+// import generate from "nearley/lib/generate.js";
+import generate from "../../node_modules/nearley/lib/generate.js";
 
-import lint from "nearley/lib/lint.js";
+// import lint from "nearley/lib/lint.js";
+import lint from "../../node_modules/nearley/lib/lint.js";
 
 function stream() {
 	let out = "";
@@ -52,7 +57,7 @@ function AnnotatePositions(rules) {
 }
 
 export default function compile(grammar) {
-	
+
 	let parser = new nearley.Parser( AnnotatePositions(ParserRules), ParserStart, { lexer: Lexer } );
 
 	let errors = stream();

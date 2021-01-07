@@ -2,29 +2,34 @@
   "name": "sema-engine",
   "version": "0.0.1",
   "description": "Module containing Sema's signal engine and compiler for a live coding language ecossystem",
-  "main": "build/index.js",
   "repository": "https://github.com/frantic0/sema-engine.git",
   "author": "Francisco Bernardo <f.bernardo@sussex.ac.uk>",
   "license": "MIT",
-	"keywords": [
-		"Web Audio",
-		"Web Audio API",
-		"Synthesis",
-		"Playback",
-		"DSP",
-		"Signal Processing",
-		"Interactive Music"
-	],
-  "scripts":{
-    "build": "",
-    "dev": "",
-    "test": ""
+  "keywords": [
+    "Web Audio",
+    "Web Audio API",
+    "Synthesis",
+    "Playback",
+    "DSP",
+    "Signal Processing",
+    "Interactive Music"
+  ],
+  "main": "dist/how-long-till-lunch.cjs.js",
+  "module": "dist/how-long-till-lunch.esm.js",
+  "browser": "dist/how-long-till-lunch.umd.js",
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "test": "node test/test.js",
+    "pretest": "npm run build"
   },
   "dependencies": {
-    "nearley": "^2.20.1",
-    "maximilian": "^2.2.0"
+    "nearley": "^2.20.1"
   },
   "devDependencies": {
-    "mocha": "^7.1.1"
+    "mocha": "^7.1.1",
+    "rollup": "^2.36.1",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-resolve": "^0.0.1-predev.1"
   }
 }
