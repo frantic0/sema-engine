@@ -1,4 +1,5 @@
 import resolve from "@rollup/plugin-node-resolve";
+import { terser } from "rollup-plugin-terser";
 import commonjs from "@rollup/plugin-commonjs";
 import pkg from "./package.json";
 
@@ -8,12 +9,14 @@ export default [
 		input: "src/main.js",
 		output: {
 			name: "sema-engine",
+			// sourcemap: process.env.BUNDLE_TYPE !== "minified", // Check how to minify https://github.com/dropbox/dropbox-sdk-js/blob/main/rollup.config.js
 			file: pkg.browser,
 			format: "umd",
 		},
 		plugins: [
 			resolve(), // so Rollup can find `nearley`
 			commonjs(), // so Rollup can convert `nearley` to an ES module
+      terser(),
 		],
 	},
 

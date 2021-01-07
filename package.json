@@ -14,9 +14,9 @@
     "Signal Processing",
     "Interactive Music"
   ],
-  "main": "dist/how-long-till-lunch.cjs.js",
-  "module": "dist/how-long-till-lunch.esm.js",
-  "browser": "dist/how-long-till-lunch.umd.js",
+  "main": "dist/sema-engine.cjs.js",
+  "module": "dist/sema-engine.esm.js",
+  "browser": "dist/sema-engine.umd.js",
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
@@ -27,9 +27,10 @@
     "nearley": "^2.20.1"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^17.0.0",
+    "@rollup/plugin-node-resolve": "^11.0.1",
     "mocha": "^7.1.1",
     "rollup": "^2.36.1",
-    "rollup-plugin-commonjs": "^10.1.0",
-    "rollup-plugin-resolve": "^0.0.1-predev.1"
+    "rollup-plugin-terser": "^7.0.2"
   }
 }
