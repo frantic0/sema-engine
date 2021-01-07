@@ -8,20 +8,18 @@ import eslint from "@rollup/plugin-eslint";
 export default [
 	// browser-friendly UMD build
 	{
-		input: "src/main.js",
-		output: {
-			name: "sema-engine",
-			// sourcemap: process.env.BUNDLE_TYPE !== "minified", // Check how to minify https://github.com/dropbox/dropbox-sdk-js/blob/main/rollup.config.js
-			file: pkg.browser,
-			format: "umd",
-		},
+		input: "src/index.js",
+		output: [
+			{ file: pkg.module, format: "es" },
+			{ file: pkg.main, format: "umd", name: "sema-engine" },
+		],
 		plugins: [
 			resolve(), // so Rollup can find `nearley`
 			commonjs(), // so Rollup can convert `nearley` to an ES module
 			terser(),
-			eslint({
-				/* your options */
-			}),
+			// eslint({
+			// 	/* your options */
+			// }),
 		],
 	},
 
@@ -32,7 +30,7 @@ export default [
 	// an array for the `output` option, where we can specify
 	// `file` and `format` for each target)
 	{
-		input: "src/main.js",
+		input: "src/index.js",
 		external: ["nearley"],
 		output: [
 			{ file: pkg.main, format: "cjs" },
@@ -40,3 +38,4 @@ export default [
 		],
 	},
 ];
+

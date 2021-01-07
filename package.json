@@ -14,9 +14,8 @@
     "Signal Processing",
     "Interactive Music"
   ],
-  "main": "dist/sema-engine.cjs.js",
-  "module": "dist/sema-engine.esm.js",
-  "browser": "dist/sema-engine.umd.js",
+  "module": "dist/index.mjs",
+  "main": "dist/index.js",
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
