@@ -2,13 +2,16 @@
 // import { AudioEngine } from "../../build/index.mjs";
 import { AudioEngine } from "../dist/index.mjs";
 
-let audioEngine = new AudioEngine();
+let audioEngine;
 
 const bindCallback = (elemId, callback) =>
 	document.getElementById(elemId).addEventListener("click", callback);
 
 bindCallback("playButton", () => {
-	audioEngine.init();
+  let audioWorkletURL =
+		document.location.origin + "/src/engine/maxi-processor.js";
+  audioEngine = new AudioEngine();
+  audioEngine.init(audioWorkletURL);
 	audioEngine.play();
 });
 
