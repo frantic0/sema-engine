@@ -8,7 +8,8 @@ const bindCallback = (elemId, callback) =>
 	document.getElementById(elemId).addEventListener("click", callback);
 
 bindCallback("playButton", () => {
-	audioEngine.init();
+  let audioWorkletURL = document.location.origin + "/sema-engine/" + "maxi-processor.js";
+	audioEngine.init(audioWorkletURL);
 	audioEngine.play();
 });
 
