@@ -1,5 +1,5 @@
 import Maximilian from './maximilian.wasmmodule.js';
-// import RingBuffer from "./ringbuf.js"; //thanks padenot
+import RingBuffer from "./ringbuf.js"; //thanks padenot
 import Open303 from './open303.wasmmodule.js';
 
 
