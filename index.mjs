@@ -607,7 +607,7 @@ class AudioEngine {
 		// this.audioWorkletUrl = document.location.origin + '/maxi-processor.js';
   	this.audioWorkletUrl = audioWorkletUrl;
   	this.audioWorkletNode;
-		this.samplesLoaded = fal;
+		this.samplesLoaded = false;
 
 		if (this.audioContext === undefined) {
 			this.audioContext = new AudioContext({
