@@ -1,6 +1,6 @@
 
 // import { AudioEngine } from "../../build/index.mjs";
-import { AudioEngine } from "./dist/index.mjs";
+import { AudioEngine } from "./index.mjs";
 
 let audioEngine = new AudioEngine();
 
