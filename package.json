@@ -26,13 +26,14 @@
     "nearley": "^2.20.1"
   },
   "devDependencies": {
-    "mocha": "^7.1.1",
-    "rollup": "^2.36.1",
     "@rollup/plugin-commonjs": "^17.0.0",
     "@rollup/plugin-eslint": "^8.0.1",
     "@rollup/plugin-node-resolve": "^11.0.1",
-    "rollup-plugin-terser": "^7.0.2",
+    "@rollup/plugin-wasm": "^5.1.2",
     "eslint": "^7.17.0",
-    "eslint-config-google": "^0.14.0"
+    "eslint-config-google": "^0.14.0",
+    "mocha": "^7.1.1",
+    "rollup": "^2.36.1",
+    "rollup-plugin-terser": "^7.0.2"
   }
 }

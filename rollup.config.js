@@ -17,9 +17,15 @@ export default [
 			resolve(), // so Rollup can find `nearley`
 			commonjs(), // so Rollup can convert `nearley` to an ES module
 			terser(),
-			eslint({
-				/* your options */
-			}),
+			// wasm({
+			// 	sync: [
+			// 		"src/engine/maximilian.wasmmodule.js",
+			// 		"src/engine/open303.wasmmodule.js",
+			// 	],
+			// }),
+			// eslint({
+			// 	/* your options */
+			// }),
 		],
 	},
 
