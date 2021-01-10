@@ -316,7 +316,7 @@ class AudioEngine {
 	 * Initialises audio context and sets worklet processor code
 	 * @play
 	 */
-	async init(audioWorkletURL/*numClockPeers*/) {
+	async init(audioWorkletURL /*numClockPeers*/) {
 		// AudioContext needs lazy loading to workaround the Chrome warning
 		// Audio Engine first play() call, triggered by user, prevents the warning
 		// by setting this.audioContext = new AudioContext();
@@ -547,15 +547,6 @@ class AudioEngine {
 		}
 	}
 
-	getSamplesNames() {
-		const r = require.context("../../assets/samples", false, /\.wav$/);
-
-		// return an array list of filenames (with extension)
-		const importAll = (r) => r.keys().map((file) => file.match(/[^\/]+$/)[0]);
-
-		return importAll(r);
-	}
-
 	loadSample(objectName, url) {
 		if (this.audioContext !== undefined) {
 			loadSampleToArray(
@@ -567,21 +558,30 @@ class AudioEngine {
 		} else throw "Audio Context is not initialised!";
 	}
 
-	lazyLoadSample(sampleName) {
-		import(/* webpackMode: 'lazy' */ `../../assets/samples/${sampleName}`)
-			.then(() => this.loadSample(sampleName, `/samples/${sampleName}`))
-			.catch((err) =>
-				console.error(`DEBUG:AudioEngine:lazyLoadSample: ` + err)
-			);
-	}
+	// getSamplesNames() {
+	// 	const r = require.context("../../assets/samples", false, /\.wav$/);
 
-	loadImportedSamples() {
-		let samplesNames = this.getSamplesNames();
-		// console.log('DEBUG:AudioEngine:getSamplesNames: ' + samplesNames);
-		samplesNames.forEach((sampleName) => {
-			this.lazyLoadSample(sampleName);
-		});
-	}
+	// 	// return an array list of filenames (with extension)
+	// 	const importAll = (r) => r.keys().map((file) => file.match(/[^\/]+$/)[0]);
+
+	// 	return importAll(r);
+	// }
+
+	// lazyLoadSample(sampleName) {
+	// 	import(/* webpackMode: 'lazy' */ `../../assets/samples/${sampleName}`)
+	// 		.then(() => this.loadSample(sampleName, `/samples/${sampleName}`))
+	// 		.catch((err) =>
+	// 			console.error(`DEBUG:AudioEngine:lazyLoadSample: ` + err)
+	// 		);
+	// }
+
+	// loadImportedSamples() {
+	// 	let samplesNames = this.getSamplesNames();
+	// 	// console.log('DEBUG:AudioEngine:getSamplesNames: ' + samplesNames);
+	// 	samplesNames.forEach((sampleName) => {
+	// 		this.lazyLoadSample(sampleName);
+	// 	});
+	// }
 
 	// NOTE:FB Test code should be segregated from production code into its own fixture.
 	// Otherwise, it becomes bloated, difficult to read and reason about.
