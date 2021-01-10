@@ -16,6 +16,9 @@
   ],
   "module": "dist/index.mjs",
   "main": "dist/index.js",
+  "files": [
+    "dist/*"
+  ],
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
@@ -34,6 +37,7 @@
     "eslint-config-google": "^0.14.0",
     "mocha": "^7.1.1",
     "rollup": "^2.36.1",
-    "rollup-plugin-terser": "^7.0.2"
+    "rollup-plugin-terser": "^7.0.2",
+    "maximilian-wasm": "0.0.2"
   }
 }
