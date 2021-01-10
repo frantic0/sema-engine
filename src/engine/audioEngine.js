@@ -558,7 +558,7 @@ class AudioEngine {
 		} else throw "Audio Context is not initialised!";
 	}
 
-	// getSamplesNames() {
+	// getSamplesNamegetSamplesNamess() {
 	// 	const r = require.context("../../assets/samples", false, /\.wav$/);
 
 	// 	// return an array list of filenames (with extension)
@@ -574,6 +574,7 @@ class AudioEngine {
 	// 			console.error(`DEBUG:AudioEngine:lazyLoadSample: ` + err)
 	// 		);
 	// }
+
 
 	// loadImportedSamples() {
 	// 	let samplesNames = this.getSamplesNames();
