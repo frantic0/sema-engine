@@ -1,7 +1,7 @@
 import Maximilian from './maximilian.wasmmodule.js';
-import RingBuffer from "./ringbuf.js"; //thanks padenot
+// import Maximilian from './maximilian.mjs';
+import RingBuffer from './ringbuf.js'; //thanks padenot
 import Open303 from './open303.wasmmodule.js';
-
 
 // import {PostMsgTransducer} from './transducer.js'
 // import {

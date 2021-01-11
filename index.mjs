@@ -337,15 +337,6 @@ class AudioEngine {
 		}
 		AudioEngine.instance = this;
 
-		// AudioContext needs lazy loading to workaround the Chrome warning
-		// Audio Engine first play() call, triggered by user, prevents the warning
-		// by setting this.audioContext = new AudioContext();
-		// this.audioContext;
-		// this.audioWorkletProcessorName = 'maxi-processor';
-		// this.audioWorkletUrl = document.location.origin + '/maxi-processor.js';
-		// this.audioWorkletNode;
-		// this.samplesLoaded = false;
-
 		// Hash of on-demand analysers (e.g. spectrogram, oscilloscope)
 		// NOTE: analysers from localStorage are loaded from local Storage before user-started audioContext init
 		this.analysers = {};
@@ -443,8 +434,7 @@ class AudioEngine {
 						});
 						break;
 				}
-			} else if (event.data === "giveMeSomeSamples");
-			else if (event.data.phase != undefined);
+			} else if (event.data === "giveMeSomeSamples") ; else if (event.data.phase != undefined) ;
 			// else if (event.data.rq != undefined && event.data.rq === 'receive') {
 			//   switch (event.data.ttype) {
 			//     case 'ML':
@@ -601,12 +591,13 @@ class AudioEngine {
 	 * Initialises audio context and sets worklet processor code
 	 * @play
 	 */
-	async init(audioWorkletUrl /*numClockPeers*/) {
+	async init(audioWorkletURL/*numClockPeers*/) {
+		// AudioContext needs lazy loading to workaround the Chrome warning
+		// Audio Engine first play() call, triggered by user, prevents the warning
+		// by setting this.audioContext = new AudioContext();
 		this.audioContext;
 		this.audioWorkletProcessorName = "maxi-processor";
-		// this.audioWorkletUrl = document.location.origin + '/maxi-processor.js';
-  	this.audioWorkletUrl = audioWorkletUrl;
-  	this.audioWorkletNode;
+		this.audioWorkletUrl = audioWorkletURL;
 		this.samplesLoaded = false;
 
 		if (this.audioContext === undefined) {
