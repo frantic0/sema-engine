@@ -59,7 +59,7 @@
       document.getElementById(elemId).addEventListener("click", callback);
 
     $("playButton", () => {
-      let audioWorkletURL = document.location.origin + "/maxi-processor.js";
+      let audioWorkletURL = document.location.origin + "sema-engine/maxi-processor.js";
       audioEngine = new AudioEngine();
       audioEngine.init(audioWorkletURL);
       audioEngine.play();
