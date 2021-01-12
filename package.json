@@ -23,7 +23,9 @@
   "scripts": {
     "build": "webpack && cp dist/sema-engine.js dist/ringbuf.js dist/maxi-processor.js dist/maximilian.wasmmodule.js examples/",
     "test": "node test/test.js",
-    "pretest": "npm run build"
+    "pretest": "npm run build",
+    "clean": "rm -rf build dist",
+    "clean-all": "rm -rf .cache build dist node_modules package-lock.json"
   },
   "dependencies": {
     "nearley": "^2.20.1"
@@ -32,7 +34,9 @@
     "@babel/cli": "^7.12.10",
     "@babel/core": "^7.12.10",
     "@babel/plugin-transform-modules-umd": "^7.12.1",
+    "@babel/plugin-transform-runtime": "^7.12.10",
     "@babel/preset-env": "^7.12.11",
+    "babel-loader": "^8.2.2",
     "eslint": "^7.17.0",
     "eslint-config-google": "^0.14.0",
     "file-loader": "^6.2.0",

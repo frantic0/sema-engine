@@ -56,8 +56,7 @@ module.exports = {
 			},
 			{
 				test: /\.wasm$/,
-				type:
-					"javascript/auto", // this disables webpacks default handling of wasm
+				type: "javascript/auto", // this disables webpacks default handling of wasm
 				use: [
 					{
 						loader: "file-loader",
@@ -68,14 +67,17 @@ module.exports = {
 					},
 				],
 			},
+			{
+				test: /\.m?js$/,
+				exclude: /(node_modules|bower_components)/,
+				use: {
+					loader: "babel-loader",
+					options: {
+						presets: ["@babel/preset-env"],
+						plugins: ["@babel/plugin-proposal-object-rest-spread"],
+					},
+				},
+			},
 		],
 	},
-  plugins: [
-    ["@babel/plugin-transform-modules-umd", {
-      exactGlobals: true,
-      globals: {
-        index: 'AudioEngine'
-      }
-    }]
-  ]
 };
