@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sema engine - Default</title>
+  <style type="text/css">
+
+    html, body {
+      width: 100%;
+      height: 100%;
+    }
+    .prettyprint ol.linenums>li {
+      list-style-type: decimal
+    }
+
+    .editor-container {
+      width: 640px;
+      height: 320px;
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
+
+    #textArea {
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.1/codemirror.min.js" integrity="sha512-9fASXXoC6x4BKdqe6IcEYZnt4KPMiQx5YJIsiWevf2QpSXfPcXMj4MTzIbwQuKJRysBlRh1LGHIaQm/415WyEA==" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.1/codemirror.min.css" integrity="sha512-MWdvo/Qqcf4pY1ecQUB1uBn0qLp19U/qJ1Rpp2BDZeuBA7YsFEwkvqR/+aG4BroPiAYDunKJ6X8R/Pmdt3p7oA==" crossorigin="anonymous" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.1/keymap/vim.min.js" integrity="sha512-g2nzBS/fBHxdSRXaDcYGHVg2Rjk7+3gITKVMv1q/ylh2izUiw1AZ50urelrhy7I6EYLQi5RM8FFj3rdATH5wIg==" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.1/mode/javascript/javascript.min.js" integrity="sha512-ssJuYJm7WuzXiDvMgmhFfPcXAM3QLILVaH8VhLDkauwZRTSlw7uxxUh2TXDau3y2eK0PsJfzL/q0lYsjTEO8sQ==" crossorigin="anonymous"></script>
+</head>
+
+<body>
+  <h1>Sema engine – Default language</h1>
+  <p>You might need to clean the cache when testing your worklet processor code (Cmd-Shift-Backspace/Ctrl-Shift-Backspace)</p>
+
+  <div class="editor-container">
+    <textarea id="textArea"></textarea>
+  </div>
+
+  <div class="commands-container">
+    <button id="playButton">Play</button>
+    <button id="stopButton">Stop</button>
+    <button id="plusButton">Vol+</button>
+    <button id="minusButton">Vol–</button>
+    <button id="evalButton">Eval</button>
+    <button id="loadSamplesButton">Load Samples</button>
+  </div>
+
+  <script type="module" src="sema-engine.js"></script>
+  <script>
+    let textArea = document.getElementById("textArea");
+    let editor = CodeMirror.fromTextArea(textArea, {
+      lineNumbers: true,
+      mode: "javascript"
+    });
+
+  </script>
+</body>
+</html>
