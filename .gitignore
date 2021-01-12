@@ -105,3 +105,8 @@ dist
 
 .vscode
 .vscode/*
+.vscode/
+.DS_Store
+public/*bundle.*
+package-lock.json
+yarn.lock
