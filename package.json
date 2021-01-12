@@ -29,6 +29,10 @@
     "nearley": "^2.20.1"
   },
   "devDependencies": {
+    "@babel/cli": "^7.12.10",
+    "@babel/core": "^7.12.10",
+    "@babel/plugin-transform-modules-umd": "^7.12.1",
+    "@babel/preset-env": "^7.12.11",
     "eslint": "^7.17.0",
     "eslint-config-google": "^0.14.0",
     "file-loader": "^6.2.0",
