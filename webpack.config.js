@@ -57,7 +57,7 @@ module.exports = {
 			{
 				test: /\.wasm$/,
 				type:
-					"javascript/auto" /** this disables webpacks default handling of wasm */,
+					"javascript/auto", // this disables webpacks default handling of wasm
 				use: [
 					{
 						loader: "file-loader",
