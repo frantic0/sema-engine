@@ -23,14 +23,14 @@ export default [
 		plugins: [
 			resolve(), // so Rollup can find `nearley`
 			commonjs(), // so Rollup can convert `nearley` to an ES module
-			{
-				// debug the Rollup bundling process by injecting a hook in the plugin chain!
-				transform(code, id) {
-					console.log(id);
-					console.log(code);
-					// not returning anything, so doesn't affect bundle
-				},
-			},
+			// {
+			// 	// debug the Rollup bundling process by injecting a hook in the plugin chain!
+			// 	transform(code, id) {
+			// 		console.log(id);
+			// 		console.log(code);
+			// 		// not returning anything, so doesn't affect bundle
+			// 	},
+			// },
 			terser(),
 			copy({
 				targets: [
@@ -40,6 +40,10 @@ export default [
 					},
 					{
 						src: "src/engine/maximilian.wasmmodule.js",
+						dest: ["dist", "example"],
+					},
+					{
+						src: "src/engine/open303.wasmmodule.js",
 						dest: ["dist", "example"],
 					},
 					{
@@ -65,13 +69,13 @@ export default [
 	// builds from a single configuration where possible, using
 	// an array for the `output` option, where we can specify
 	// `file` and `format` for each target)
-	{
-		input: "src/index.js",
-		external: ["nearley"],
-		output: [
-			{ file: pkg.main, format: "cjs" },
-			{ file: pkg.module, format: "es" },
-		],
-	},
+	// {
+	// 	input: "src/index.js",
+	// 	external: ["nearley"],
+	// 	output: [
+	// 		{ file: pkg.main, format: "cjs" },
+	// 		{ file: pkg.module, format: "es" },
+	// 	],
+	// },
 ];
 

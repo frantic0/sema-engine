@@ -136,22 +136,22 @@ export const loadSampleToArray = (audioContext, sampleObjectName, url, audioWork
 /**
  * @buildWorkletStringForBlob
  */
-export const buildWorkletStringForBlob = () => {
-  let userDefinedFunction = "";
-  switch (expression % 2) {
-    case 0:
-      userDefinedFunction = `Math.random() * 2`;
-      break;
-    case 1:
-      userDefinedFunction = `(Math.sin(400) + 0.4)`;
-      break;
-    default:
-      userDefinedFunction = `(Math.sin(440) + 0.4)`;
-  }
+export const buildWorkletStringForBlob = (userDefinedFunction) => {
+	// let = "";
+	// switch (expression % 2) {
+	// 	case 0:
+	// 		userDefinedFunction = `Math.random() * 2`;
+	// 		break;
+	// 	case 1:
+	// 		userDefinedFunction = `(Math.sin(400) + 0.4)`;
+	// 		break;
+	// 	default:
+	// 		userDefinedFunction = `(Math.sin(440) + 0.4)`;
+	// }
 
-  // We get an "Error on loading worklet:  DOMException" with the following import:
-  // import Module from './maximilian.wasmmodule.js';
-  return `
+	// We get an "Error on loading worklet:  DOMException" with the following import:
+	// import Module from './maximilian.wasmmodule.js';
+	return `
       import Module from './maximilian.wasmmodule.js';
       cwlass CustomProcessor extends AudioWorkletProcessor {
         static get parameterDescriptors() {
@@ -190,7 +190,7 @@ export const buildWorkletStringForBlob = () => {
           return true;
         }
       }`;
-}
+};
 
 /**
  * @createAndRegisterCustomProcessorCode
@@ -206,19 +206,19 @@ export const createAndRegisterCustomProcessorCode = (il2pCode, processorName) =>
  * @buildWorkletStringForBlob
  */
 export const buildWorkletFromBlob = () => {
-  console.log('processorCount: ' + this.processorCount);
-  // const userCode = editor.getDoc().getValue();
-  const processorName = `processor-${this.processorCount}`;
+  // console.log('processorCount: ' + this.processorCount);
+  // // const userCode = editor.getDoc().getValue();
+  // const processorName = `processor-${this.processorCount}`;
 
-  this.il2pCode = this.translateIntermediateLanguageToProcessorCode(this.processorCount);
+  // this.il2pCode = this.translateIntermediateLanguageToProcessorCode(this.processorCount);
 
-  const code = this.createAndRegisterCustomProcessorCode(this.il2pCode, processorName);
+  // const code = this.createAndRegisterCustomProcessorCode(this.il2pCode, processorName);
 
-  console.log(code);
+  // console.log(code);
 
-  const blob = new Blob([code], {
-    type: "application/javascript; charset=utf-8",
-  });
+  // const blob = new Blob([code], {
+  //   type: "application/javascript; charset=utf-8",
+  // });
 
   return blob;
 }
@@ -227,22 +227,22 @@ export const buildWorkletFromBlob = () => {
  * TODO: Check for memory leaks
  * @runProcessorCode
  */
-export const runProcessorCode = () => {
-  // TODO: Check for memory leaks
-  // URL.revokeObjectURL()
-  const workletUrl = window.URL.createObjectURL(blob);
+// export const runProcessorCode = () => {
+//   // TODO: Check for memory leaks
+//   // URL.revokeObjectURL()
+//   const workletUrl = window.URL.createObjectURL(blob);
 
-  // Set custom processor in audio worklet
-  this.audioContext.audioWorklet.addModule(workletUrl).then(() => {
-    this.stop();
-    this.customNode = new CustomAudioNode(this.audioContext, processorName);
-    this.customNode.port.onmessage = (event) => {
-      //  data from the processor.
-      console.log("from processor: " + event.data);
-    };
-    this.customNode.connect(this.audioContext.destination);
-  }).catch(e => console.log("Error on loading worklet: ", e));
-}
+//   // Set custom processor in audio worklet
+//   this.audioContext.audioWorklet.addModule(workletUrl).then(() => {
+//     this.stop();
+//     this.customNode = new CustomAudioNode(this.audioContext, processorName);
+//     this.customNode.port.onmessage = (event) => {
+//       //  data from the processor.
+//       console.log("from processor: " + event.data);
+//     };
+//     this.customNode.connect(this.audioContext.destination);
+//   }).catch(e => console.log("Error on loading worklet: ", e));
+// }
 
 
 export const generateNoiseBuffer = (length) => {
