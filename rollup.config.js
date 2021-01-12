@@ -1,6 +1,6 @@
-import resolve from "@rollup/plugin-node-resolve";
+import resolve from "@rollup/plugin-node-resolve"; // allows us to load third-party modules in node_modules
 import { terser } from "rollup-plugin-terser";
-import commonjs from "@rollup/plugin-commonjs";
+import commonjs from "@rollup/plugin-commonjs"; // converts CommonJS modules to ES6, which stops them from breaking Rollup
 import pkg from "./package.json";
 import copy from "rollup-plugin-copy";
 // import eslint from "@rollup/plugin-eslint";
@@ -14,7 +14,7 @@ export default [
 			{ file: pkg.module, format: "es" },
 			{ file: pkg.main, format: "umd", name: "sema-engine" },
 			{
-				file: "sema-engine.min.js",
+				file: "dist/sema-engine.min.js",
 				format: "iife",
 				name: "version",
 				plugins: [terser()],
@@ -24,7 +24,7 @@ export default [
 			resolve(), // so Rollup can find `nearley`
 			commonjs(), // so Rollup can convert `nearley` to an ES module
 			{
-				// how to debug the bundling process!
+				// debug the Rollup bundling process by injecting a hook in the plugin chain!
 				transform(code, id) {
 					console.log(id);
 					console.log(code);
