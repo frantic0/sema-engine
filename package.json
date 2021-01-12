@@ -25,7 +25,8 @@
     "clean-all": "rm -rf .cache dist node_modules package-lock.json"
   },
   "dependencies": {
-    "nearley": "^2.20.1"
+    "nearley": "^2.20.1",
+    "maximilian-wasm": "0.0.2"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^17.0.0",

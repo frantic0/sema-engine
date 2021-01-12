@@ -2,7 +2,7 @@ import resolve from "@rollup/plugin-node-resolve";
 import { terser } from "rollup-plugin-terser";
 import commonjs from "@rollup/plugin-commonjs";
 import pkg from "./package.json";
-import eslint from "@rollup/plugin-eslint";
+// import eslint from "@rollup/plugin-eslint";
 
 
 export default [
@@ -16,6 +16,13 @@ export default [
 		plugins: [
 			resolve(), // so Rollup can find `nearley`
 			commonjs(), // so Rollup can convert `nearley` to an ES module
+			{
+				transform(code, id) {
+					console.log(id);
+					console.log(code);
+					// not returning anything, so doesn't affect bundle
+				},
+			},
 			terser(),
 			// eslint({
 			// 	/* your options */
