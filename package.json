@@ -17,22 +17,25 @@
   "module": "dist/index.mjs",
   "main": "dist/index.js",
   "scripts": {
-    "build": "rollup -c",
-    "dev": "rollup -c -w",
+    "build": "rollup -c && cp dist/sema-engine.js dist/ringbuf.js dist/maxi-processor.js dist/maximilian.wasmmodule.js examples/",
+    "dev": "rollup -c -w && cp dist/sema-engine.js dist/ringbuf.js dist/maxi-processor.js dist/maximilian.wasmmodule.js examples/",
     "test": "node test/test.js",
-    "pretest": "npm run build"
+    "pretest": "npm run build",
+    "clean": "rm -rf build dist",
+    "clean-all": "rm -rf .cache dist node_modules package-lock.json"
   },
   "dependencies": {
     "nearley": "^2.20.1"
   },
   "devDependencies": {
-    "mocha": "^7.1.1",
-    "rollup": "^2.36.1",
     "@rollup/plugin-commonjs": "^17.0.0",
     "@rollup/plugin-eslint": "^8.0.1",
     "@rollup/plugin-node-resolve": "^11.0.1",
-    "rollup-plugin-terser": "^7.0.2",
+    "@rollup/plugin-wasm": "^5.1.2",
     "eslint": "^7.17.0",
-    "eslint-config-google": "^0.14.0"
+    "eslint-config-google": "^0.14.0",
+    "mocha": "^7.1.1",
+    "rollup": "^2.36.1",
+    "rollup-plugin-terser": "^7.0.2"
   }
 }
