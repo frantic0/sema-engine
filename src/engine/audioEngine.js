@@ -188,31 +188,9 @@ class AudioEngine {
 	}
 
 	/**
-	 * Creates a WAAPI analyser node
-	 * @todo configuration object as argumen
-	 * @createAnalyser
-	 */
-	createAnalyser(event) {
-		// If Analyser creation happens after AudioContext intialization, create and connect WAAPI analyser
-		if (this.audioContext !== undefined && event !== undefined) {
-			let analyser = this.audioContext.createAnalyser();
-			analyser.smoothingTimeConstant = 0.25;
-			analyser.fftSize = 256; // default 2048;
-			analyser.minDecibels = -90; // default
-			analyser.maxDecibels = -0; // default -10; max 0
-			this.connectAnalyser(analyser, event.id); // @todo Move out
-
-			// Other if AudioContext is NOT created yet (after app load, before splashScreen click)
-		} else if (this.audioContext === undefined) {
-			this.analysers[event.id] = {};
-		}
-	}
-
-	/**
 	 * Polls data from connected WAAPI analyser return structured object with data and time data in arrays
 	 * @param {*} analyser
 	 */
-
 	pollAnalyserData(analyser) {
 		if (analyser !== undefined) {
 			const timeDataArray = new Uint8Array(analyser.fftSize); // Uint8Array should be the same length as the fftSize
@@ -231,36 +209,59 @@ class AudioEngine {
 	}
 
 	/**
-	 * Connects WAAPI analyser node to the main audio worklet for visualisation.
-	 * @connectAnalyser
+	 * Creates a WAAPI analyser node
+	 * @todo configuration object as argumen
+	 * @createAnalyser
 	 */
-	connectAnalyser(analyser, name, callback) {
-		if (this.audioWorkletNode !== undefined) {
+	createAnalyser(analyserID, callback) {
+		// If Analyser creation happens after AudioContext intialization, create and connect WAAPI analyser
+		if (this.audioContext !== undefined && event !== undefined) {
+
+			let analyser = this.audioContext.createAnalyser();
+			analyser.smoothingTimeConstant = 0.25;
+			analyser.fftSize = 256; // default 2048;
+			analyser.minDecibels = -90; // default
+			analyser.maxDecibels = -0; // default -10; max 0
 			this.audioWorkletNode.connect(analyser);
 
-			let analyserFrameId;
-			let analyserData;
+
+			let analyserFrameId = -1,
+          analyserData = {};
+
+			this.analysers[analyserID] = {
+				analyser,
+				analyserFrameId,
+				callback
+			};
 
 			/**
 			 * Creates requestAnimationFrame loop for polling data and publishing
 			 * Returns Analyser Frame ID for adding to Analysers hash and cancelling animation frame
 			 */
 			const analyserPollingLoop = () => {
-				callback(this.pollAnalyserData(analyser));
-				let analyserFrameId = requestAnimationFrame(analyserPollingLoop);
-				this.analysers[name] = {
-					analyser,
-					analyserFrameId,
-				};
+
+        analyserData = this.pollAnalyserData(this.analysers[analyserID].analyser);
+
+        this.analysers[analyserID].callback(analyserData); // Invoke callback that carries
+
+        // This will guarantee feeding poll request at steady animation framerate
+				this.analysers[analyserID].analyserFrameId = requestAnimationFrame(analyserPollingLoop);
+
 				return analyserFrameId;
 			};
 
-			// analyserFrameId = analyserPollingLoop;
-
 			analyserPollingLoop();
+
+			// Other if AudioContext is NOT created yet (after app load, before splashScreen click)
+		} else if (this.audioContext === undefined) {
+			this.analysers[analyser] = {};
 		}
 	}
 
+	/**
+	 * Connects WAAPI analyser nodes to the main audio worklet for visualisation.
+	 * @connectAnalysers
+	 */
 	connectAnalysers() {
 		Object.keys(this.analysers).map((id) =>
 			this.createAnalyser({
