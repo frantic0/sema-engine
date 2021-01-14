@@ -5,10 +5,9 @@ import pkg from "./package.json";
 import copy from "rollup-plugin-copy";
 import serve from "rollup-plugin-serve";
 import livereload from "rollup-plugin-livereload";
-
 // import eslint from "@rollup/plugin-eslint";
 
-const isDevelopment = process.env.BUILD || "development";
+const isDevelopment = !process.env.BUILD;
 
 export default [
 	// browser-friendly UMD build
@@ -18,7 +17,7 @@ export default [
 			{
 				file: pkg.module,
 				format: "es",
-				sourcemap: isDevelopment ? true : "inline",
+				sourcemap: isDevelopment ? true : "inline", // generate sourcemap files if true
 			},
 			{
 				file: pkg.main,
@@ -30,7 +29,7 @@ export default [
 				file: "dist/sema-engine.min.js",
 				format: "iife",
 				name: "version",
-				sourcemap: isDevelopment ? true : "inline",
+				sourcemap: isDevelopment ? true : false, // do not generate sourcemap files if true
 				plugins: [terser()],
 			},
 		],
