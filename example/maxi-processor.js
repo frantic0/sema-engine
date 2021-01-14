@@ -256,12 +256,9 @@ class MaxiProcessor extends AudioWorkletProcessor {
 	constructor() {
 		super();
 
-		// this.sampleRate = 44100;
-		// console.log("SAMPLERATE", sampleRate);
-
 		//indicate audio settings in WASM and JS domains
 		Maximilian.maxiSettings.setup(sampleRate, 1, 512);
-		Maximilian.maxiJSSettings.setup(sampleRate, 1, 512);
+		// Maximilian.maxiJSSettings.setup(sampleRate, 1, 512);
 
 		//we don't know the number of channels at this stage, so reserve lots for the DAC
 		this.DAC = [];
