@@ -3,6 +3,9 @@ import { terser } from "rollup-plugin-terser";
 import commonjs from "@rollup/plugin-commonjs"; // converts CommonJS modules to ES6, which stops them from breaking Rollup
 import pkg from "./package.json";
 import copy from "rollup-plugin-copy";
+import serve from "rollup-plugin-serve";
+import livereload from "rollup-plugin-livereload";
+
 // import eslint from "@rollup/plugin-eslint";
 
 const mode = process.env.BUILD || "development";
@@ -27,7 +30,7 @@ export default [
 				file: "dist/sema-engine.min.js",
 				format: "iife",
 				name: "version",
-				sourcemap: mode === 'development' ? true : "inline",
+				sourcemap: mode === "development" ? true : "inline",
 				plugins: [terser()],
 			},
 		],
@@ -67,6 +70,24 @@ export default [
 						dest: "dist",
 					},
 				],
+			}),
+			serve({
+				open: true, // Launch in browser (default: false)
+				verbose: true, // Show server address in console (default: true)
+				contentBase: "dist", // Folder to serve files from
+				historyApiFallback: false, // Set to true to return index.html (200) instead of error page (404)
+				historyApiFallback: "/200.html", // Path to fallback page
+				host: "localhost", // Options used in setting up server
+				port: 9002, // Use this port in you VSCode
+				mimeTypes: {
+					// set custom mime types, usage https://github.com/broofa/mime#mimedefinetypemap-force--false
+					"application/javascript": ["js"],
+					"application/wasm": ["wasm"]
+				},
+			}),
+			livereload({
+				watch: "dist",
+				verbose: true,
 			}),
 			// eslint({
 			// 	/* your options */
