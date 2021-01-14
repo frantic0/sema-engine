@@ -1,6 +1,3 @@
-// import Module from './maximilian.wasmmodule.js'; //NOTE:FB We need this import here for webpack to emit maximilian.wasmmodule.js
-// import Open303 from './open303.wasmmodule.js'; //NOTE:FB We need this import here for webpack to emit maximilian.wasmmodule.js
-// import CustomProcessor from './maxi-processor.js';
 import RingBuffer from './ringbuf.js'; //thanks padenot
 import {
   loadSampleToArray
@@ -56,10 +53,10 @@ class AudioEngine {
 		AudioEngine.instance = this;
 
 		// Hash of on-demand analysers (e.g. spectrogram, oscilloscope)
-		// NOTE: analysers from localStorage are loaded from local Storage before user-started audioContext init
+		// NOTE: analysers serialized to localStorage are de-serialized and loaded from local Storage before user-started audioContext init
 		this.analysers = {};
 
-		//shared array buffers for sharing client side data to the audio engine- e.g. mouse coords
+		// Shared array buffers for sharing client side data to the audio engine- e.g. mouse coords
 		this.sharedArrayBuffers = {};
 
 		// MOVE THIS TO AN UP LAYER IN SEMA
@@ -181,7 +178,7 @@ class AudioEngine {
 	 * whose topics are subscribed to in the audio engine constructor
 	 * @onMessagingEventHandler
 	 */
-	onMessagingEventHandler(event) {
+	postAsyncMessageToProcessor(event) {
 		if (event !== undefined) {
 			// Receive notification from 'model-output-data' topic
 			console.log("DEBUG:AudioEngine:onMessagingEventHandler:");
@@ -237,7 +234,7 @@ class AudioEngine {
 	 * Connects WAAPI analyser node to the main audio worklet for visualisation.
 	 * @connectAnalyser
 	 */
-	connectAnalyser(analyser, name) {
+	connectAnalyser(analyser, name, callback) {
 		if (this.audioWorkletNode !== undefined) {
 			this.audioWorkletNode.connect(analyser);
 
@@ -249,8 +246,7 @@ class AudioEngine {
 			 * Returns Analyser Frame ID for adding to Analysers hash and cancelling animation frame
 			 */
 			const analyserPollingLoop = () => {
-				analyserData = this.pollAnalyserData(analyser);
-				this.messaging.publish("analyser-data", analyserData);
+				callback(this.pollAnalyserData(analyser));
 				let analyserFrameId = requestAnimationFrame(analyserPollingLoop);
 				this.analysers[name] = {
 					analyser,
@@ -557,56 +553,6 @@ class AudioEngine {
 			);
 		} else throw "Audio Context is not initialised!";
 	}
-
-	// getSamplesNamegetSamplesNamess() {
-	// 	const r = require.context("../../assets/samples", false, /\.wav$/);
-
-	// 	// return an array list of filenames (with extension)
-	// 	const importAll = (r) => r.keys().map((file) => file.match(/[^\/]+$/)[0]);
-
-	// 	return importAll(r);
-	// }
-
-	// lazyLoadSample(sampleName) {
-	// 	import(/* webpackMode: 'lazy' */ `../../assets/samples/${sampleName}`)
-	// 		.then(() => this.loadSample(sampleName, `/samples/${sampleName}`))
-	// 		.catch((err) =>
-	// 			console.error(`DEBUG:AudioEngine:lazyLoadSample: ` + err)
-	// 		);
-	// }
-
-
-	// loadImportedSamples() {
-	// 	let samplesNames = this.getSamplesNames();
-	// 	// console.log('DEBUG:AudioEngine:getSamplesNames: ' + samplesNames);
-	// 	samplesNames.forEach((sampleName) => {
-	// 		this.lazyLoadSample(sampleName);
-	// 	});
-	// }
-
-	// NOTE:FB Test code should be segregated from production code into its own fixture.
-	// Otherwise, it becomes bloated, difficult to read and reason about.
-	// messageHandler(data) {
-	// 	if (data == 'dspStart') {
-	// 		this.ts = window.performance.now();
-	// 	}
-	// 	if (data == 'dspEnd') {
-	// 		this.ts = window.performance.now() - this.ts;
-	// 		this.dspTime = this.dspTime * 0.9 + this.ts * 0.1; //time for 128 sample buffer
-	// 		this.onNewDSPLoadValue((this.dspTime / 2.90249433106576) * 100);
-	// 	}
-	// 	if (data == 'evalEnd') {
-	// 		let evalts = window.performance.now();
-	// 		this.onEvalTimestamp(evalts);
-	// 	} else if (data == 'evalEnd') {
-	// 		let evalts = window.performance.now();
-	// 		this.onEvalTimestamp(evalts);
-	// 	} else if (data == 'giveMeSomeSamples') {
-	// 		// this.msgHandler('giveMeSomeSamples');    	// NOTE:FB Untangling the previous msgHandler hack from the audio engine
-	// 	} else {
-	// 		this.msgHandler(data);
-	// 	}
-	// }
 }
 
 export { AudioEngine };
