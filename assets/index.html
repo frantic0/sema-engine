@@ -52,7 +52,7 @@
 
   <script type="module">
 
-    import { AudioEngine } from "./sema-engine.mjs";
+    import { Engine } from "./sema-engine.mjs";
 
     let audioEngine,
         analyser = 0;
@@ -62,7 +62,7 @@
 
     $("playButton", () => {
       let audioWorkletURL = document.location.origin + "/maxi-processor.js";
-      audioEngine = new AudioEngine();
+      audioEngine = new Engine();
       audioEngine.init(audioWorkletURL);
       audioEngine.play();
     });

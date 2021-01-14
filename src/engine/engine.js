@@ -42,47 +42,25 @@ class CustomMaxiNode extends AudioWorkletNode {
  * and all WASM and Maximilian -powered Audio Worklet Processor
  * @class AudioEngine
  */
-class AudioEngine {
+export class Engine {
 	/**
 	 * @constructor
 	 */
 	constructor() {
-		if (AudioEngine.instance) {
-			return AudioEngine.instance; // Singleton pattern
+		if (Engine.instance) {
+			return Engine.instance; // Singleton pattern
 		}
-		AudioEngine.instance = this;
+		Engine.instance = this;
 
 		// Hash of on-demand analysers (e.g. spectrogram, oscilloscope)
-		// NOTE: analysers serialized to localStorage are de-serialized and loaded from local Storage before user-started audioContext init
+		// NOTE: analysers serialized to localStorage are de-serialized
+    // and loaded from localStorage before user-triggered audioContext init
 		this.analysers = {};
 
 		// Shared array buffers for sharing client side data to the audio engine- e.g. mouse coords
 		this.sharedArrayBuffers = {};
 
 		// MOVE THIS TO AN UP LAYER IN SEMA
-
-		// Sema's Publish-Subscribe pattern object with 'lowercase-lowercase' format convention for subscription topic
-		// this.messaging = new PubSub();
-		// this.messaging.subscribe('eval-dsp', e => this.evalDSP(e));
-		// this.messaging.subscribe('stop-audio', e => this.stop());
-		// this.messaging.subscribe('load-sample', (name, url) =>
-		//   this.loadSample(name, url)
-		// );
-		// this.messaging.subscribe('model-output-data', e =>
-		//   this.onMessagingEventHandler(e)
-		// );
-		// this.messaging.subscribe('clock-phase', e =>
-		//   this.onMessagingEventHandler(e)
-		// );
-		// this.messaging.subscribe('model-send-buffer', e =>
-		//   this.onMessagingEventHandler(e)
-		// );
-		// this.messaging.subscribe('add-engine-analyser', e =>
-		//   this.createAnalyser(e)
-		// );
-		// this.messaging.subscribe('remove-engine-analyser', e =>
-		//   this.removeAnalyser(e)
-		// );
 
 		// this.messaging.subscribe('mouse-xy', e => {
 		//   if (this.sharedArrayBuffers.mxy) {
@@ -238,7 +216,6 @@ class AudioEngine {
 			 * Returns Analyser Frame ID for adding to Analysers hash and cancelling animation frame
 			 */
 			const analyserPollingLoop = () => {
-
         analyserData = this.pollAnalyserData(this.analysers[analyserID].analyser);
         this.analysers[analyserID].callback(analyserData); // Invoke callback that carries
         // This will guarantee feeding poll request at steady animation framerate
@@ -549,5 +526,3 @@ class AudioEngine {
 		} else throw "Audio Context is not initialised!";
 	}
 }
-
-export { AudioEngine };
