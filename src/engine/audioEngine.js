@@ -224,7 +224,6 @@ class AudioEngine {
 			analyser.maxDecibels = -0; // default -10; max 0
 			this.audioWorkletNode.connect(analyser);
 
-
 			let analyserFrameId = -1,
           analyserData = {};
 
@@ -241,12 +240,9 @@ class AudioEngine {
 			const analyserPollingLoop = () => {
 
         analyserData = this.pollAnalyserData(this.analysers[analyserID].analyser);
-
         this.analysers[analyserID].callback(analyserData); // Invoke callback that carries
-
         // This will guarantee feeding poll request at steady animation framerate
 				this.analysers[analyserID].analyserFrameId = requestAnimationFrame(analyserPollingLoop);
-
 				return analyserFrameId;
 			};
 
