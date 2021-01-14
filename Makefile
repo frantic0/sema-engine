@@ -28,7 +28,7 @@ CFLAGS=--bind -O3\
 	-s "EXPORT_NAME='Maximilian'" \
   -s "BINARYEN_METHOD='native-wasm'" \
 	-s ERROR_ON_UNDEFINED_SYMBOLS=0 \
-  -g4 --source-map-base "${BUILD_DIR}/build/" \
+  -g4 --source-map-base "${BUILD_DIR}" \
 	--js-opts 0
 
 
