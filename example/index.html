@@ -53,8 +53,7 @@
 
     import { AudioEngine } from "./sema-engine.mjs";
 
-    let audioEngine,
-        analyserId = 0;
+    let audioEngine;
 
     const $ = (elemId, callback) =>
       document.getElementById(elemId).addEventListener("click", callback);
@@ -65,6 +64,7 @@
       audioEngine.init(audioWorkletURL);
       audioEngine.play();
     });
+
     $("stopButton", () => audioEngine.stop());
     $("plusButton", () => audioEngine.more());
     $("minusButton", () => audioEngine.less());
@@ -100,9 +100,6 @@
       audioEngine.loadSample("kick1.wav", "./audio/kick1.wav");
       audioEngine.loadSample("snare1.wav", "./audio/snare1.wav");
     });
-
-    $("createAnalyserButton", () => audioEngine.createAnalyser( analyserId++, data => console.log(data) ));
-
   </script>
   <script>
     let textArea = document.getElementById("textArea");

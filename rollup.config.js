@@ -5,18 +5,29 @@ import pkg from "./package.json";
 import copy from "rollup-plugin-copy";
 // import eslint from "@rollup/plugin-eslint";
 
+const mode = process.env.BUILD || "development";
 
 export default [
 	// browser-friendly UMD build
 	{
 		input: "src/index.js",
 		output: [
-			{ file: pkg.module, format: "es" },
-			{ file: pkg.main, format: "umd", name: "sema-engine" },
+			{
+				file: pkg.module,
+				format: "es",
+				sourcemap: mode === "development" ? true : "inline",
+			},
+			{
+				file: pkg.main,
+				format: "umd",
+				name: "sema-engine",
+				sourcemap: mode === "development" ? true : "inline",
+			},
 			{
 				file: "dist/sema-engine.min.js",
 				format: "iife",
 				name: "version",
+				sourcemap: mode === 'development' ? true : "inline",
 				plugins: [terser()],
 			},
 		],
