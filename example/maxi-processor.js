@@ -641,7 +641,7 @@ class MaxiProcessor extends AudioWorkletProcessor {
 
 		console.log("DEBUG:maxi-processor:initialiseDAC: ", channels);
 
-		// Maximilian.maxiJSSettings.setup(sampleRate, channels, bufferSize);
+		Maximilian.maxiJSSettings.setup(sampleRate, channels, bufferSize);
 		Maximilian.maxiSettings.setup(sampleRate, channels, bufferSize);
 
 		this.DACInitialised = true;
