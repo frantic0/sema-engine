@@ -50,20 +50,20 @@ export default [
 							targets: [
 								{
 									src: "src/engine/maxi-processor.js",
-									dest: ["dist", "example"],
+									dest: "dist",
 								},
 								{
 									src: "src/engine/maximilian.wasmmodule.js",
-									dest: ["dist", "example"],
+									dest: "dist",
 								},
 								{
 									src: "src/engine/open303.wasmmodule.js",
-									dest: ["dist", "example"],
+									dest: "dist",
 								},
 								{
 									// ringbuf is imported by both the Engine (AW node) and maxi-processor (AWP) so needs to be both bundled AND copied!
 									src: "src/engine/ringbuf.js",
-									dest: ["dist", "example"],
+									dest: ["dist"],
 								},
 								{
 									src: "assets/*",
@@ -98,20 +98,20 @@ export default [
 							targets: [
 								{
 									src: "src/engine/maxi-processor.js",
-									dest: ["dist", "example"],
+									dest: "dist",
 								},
 								{
 									src: "src/engine/maximilian.wasmmodule.js",
-									dest: ["dist", "example"],
+									dest: "dist",
 								},
 								{
 									src: "src/engine/open303.wasmmodule.js",
-									dest: ["dist", "example"],
+									dest: "dist",
 								},
 								{
 									// ringbuf is imported by both the Engine (AW node) and maxi-processor (AWP) so needs to be both bundled AND copied!
 									src: "src/engine/ringbuf.js",
-									dest: ["dist", "example"],
+									dest: ["dist"],
 								},
 								{
 									src: "assets/open303.wasmmodule.js",
