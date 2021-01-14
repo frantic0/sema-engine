@@ -264,9 +264,7 @@ class AudioEngine {
 	 */
 	connectAnalysers() {
 		Object.keys(this.analysers).map((id) =>
-			this.createAnalyser({
-				id,
-			})
+			this.createAnalyser({ id })
 		);
 	}
 

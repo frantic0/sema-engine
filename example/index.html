@@ -47,6 +47,7 @@
     <button id="minusButton">Vol–</button>
     <button id="evalButton">Eval</button>
     <button id="loadSamplesButton">Load Samples</button>
+    <button id="loadSamplesButton">Load Samples</button>
   </div>
 
   <script type="module">
@@ -68,6 +69,11 @@
     $("stopButton", () => audioEngine.stop());
     $("plusButton", () => audioEngine.more());
     $("minusButton", () => audioEngine.less());
+    $("loadSamplesButton", () => {
+      audioEngine.loadSample("crebit2.ogg", "./audio/crebit2.ogg");
+      audioEngine.loadSample("kick1.wav", "./audio/kick1.wav");
+      audioEngine.loadSample("snare1.wav", "./audio/snare1.wav");
+    });
     $("evalButton", () => {
       let editorValue = editor.getValue();
       console.log(editorValue);
@@ -95,11 +101,7 @@
       });
     });
 
-    $("loadSamplesButton", () => {
-      audioEngine.loadSample("crebit2.ogg", "./audio/crebit2.ogg");
-      audioEngine.loadSample("kick1.wav", "./audio/kick1.wav");
-      audioEngine.loadSample("snare1.wav", "./audio/snare1.wav");
-    });
+
   </script>
   <script>
     let textArea = document.getElementById("textArea");

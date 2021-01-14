@@ -45,8 +45,9 @@
     <button id="stopButton">Stop</button>
     <button id="plusButton">Vol+</button>
     <button id="minusButton">Vol–</button>
-    <button id="evalButton">Eval</button>
     <button id="loadSamplesButton">Load Samples</button>
+    <button id="evalButton">Eval</button>
+    <button id="createAnalyserButton">Analyser++</button>
   </div>
 
   <script type="module">
@@ -54,6 +55,7 @@
     import { AudioEngine } from "./sema-engine.mjs";
 
     let audioEngine;
+    let analyser;
 
     const $ = (elemId, callback) =>
       document.getElementById(elemId).addEventListener("click", callback);
@@ -64,10 +66,14 @@
       audioEngine.init(audioWorkletURL);
       audioEngine.play();
     });
-
     $("stopButton", () => audioEngine.stop());
     $("plusButton", () => audioEngine.more());
     $("minusButton", () => audioEngine.less());
+    $("loadSamplesButton", () => {
+      audioEngine.loadSample("crebit2.ogg", "./audio/crebit2.ogg");
+      audioEngine.loadSample("kick1.wav", "./audio/kick1.wav");
+      audioEngine.loadSample("snare1.wav", "./audio/snare1.wav");
+    });
     $("evalButton", () => {
       let editorValue = editor.getValue();
       console.log(editorValue);
@@ -95,11 +101,10 @@
       });
     });
 
-    $("loadSamplesButton", () => {
-      audioEngine.loadSample("crebit2.ogg", "./audio/crebit2.ogg");
-      audioEngine.loadSample("kick1.wav", "./audio/kick1.wav");
-      audioEngine.loadSample("snare1.wav", "./audio/snare1.wav");
+    $("createAnalyserButton", () => {
+      audioEngine.createAnalyser(analyser++, data => console.log(data) );
     });
+
   </script>
   <script>
     let textArea = document.getElementById("textArea");
