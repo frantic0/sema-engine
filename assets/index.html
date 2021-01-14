@@ -54,8 +54,8 @@
 
     import { AudioEngine } from "./sema-engine.mjs";
 
-    let audioEngine;
-    let analyser;
+    let audioEngine,
+        analyser = 0;
 
     const $ = (elemId, callback) =>
       document.getElementById(elemId).addEventListener("click", callback);

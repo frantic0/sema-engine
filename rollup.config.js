@@ -64,7 +64,7 @@ export default [
 					},
 					{
 						src: "assets/*",
-						dest: "example",
+						dest: "dist",
 					},
 				],
 			}),
