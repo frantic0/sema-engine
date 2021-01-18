@@ -63,7 +63,7 @@ ${BUILD_DIR}:
 	${MKDIR_P} ${BUILD_DIR}
 
 full: directory
-	@echo "${YELLOW}\r\nmaximilian.wasm – WebAssembly (Wasm) build for Web Audio API AudioWorklet\r\n ${RESET}"
+	@echo "${YELLOW}\r\nmaximilian.wasmmodule.js – WebAssembly (Wasm) build for Web Audio API AudioWorklet\r\n ${RESET}"
 	$(EMSCR) $(CFLAGS) --post-js $(POST_JS) -o $(OUTPUT) $(SRC_EM) $(SRC) $(SRC_LIBS) $(C_SRC_LIBS)
 
 clean:

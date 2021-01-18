@@ -72,7 +72,7 @@ export default [
 							],
 						}),
 						serve({
-							open: true, // Launch in browser (default: false)
+							open: false, // Launch in browser (default: false)
 							verbose: true, // Show server address in console (default: true)
 							contentBase: "dist", // Folder to serve files from
 							historyApiFallback: false, // Set to true to return index.html (200) instead of error page (404)

@@ -610,7 +610,7 @@ class MaxiProcessor extends AudioWorkletProcessor {
 					-1,
 					1
 				);
-				this.xfadeControl.prepare(xfadeBegin, xfadeEnd, 2, true); // short xfade across signals
+				this.xfadeControl.prepare(xfadeBegin, xfadeEnd, 2); // short xfade across signals
 				this.xfadeControl.triggerEnable(true); //enable the trigger straight away
 
 				this.codeSwapState = this.codeSwapStates.QUEUD;
