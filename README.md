@@ -17,13 +17,13 @@ The *sema-engine* currently uses Github Actions workflows for build automation a
 ## Usage
 
 
-If you are developing a Web application in modern environment, using a bundler such as Webpack or Rollup, can easily *sema-engine* as a dependency as it is published in Node Package Manager (NPM) registry.
+If you are developing a Web application in a modern environment, and using a bundler such as *Webpack* or *Rollup*, you can easily add *sema-engine* as a dependency, as it is published in Node Package Manager (NPM) registry.
 
 ```
 npm install sema-engine
 ```
 
-You can use the modules of the *sema-engine* library in an HTML file using inline `<script>` tags.
+You can use also use the modules of the *sema-engine* library in an a HTML file using inline `<script>` tags (this example is published [here](https://frantic0.github.io/sema-engine/), and it is output by the development build).
 
 ```
  <script type="module">
