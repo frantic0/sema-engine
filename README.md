@@ -1,7 +1,7 @@
 # sema-engine
 
 ![Node.js CI](https://github.com/frantic0/sema-engine/workflows/Node.js%20CI/badge.svg)
-![version](https://img.shields.io/badge/version-0.0.6-red)
+![version](https://img.shields.io/badge/version-0.0.7-red)
 [![stability-experimental](https://img.shields.io/badge/stability-experimental-orange.svg)](https://github.com/emersion/stability-badges#experimental)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-yellow.svg)](https://github.com/frantic0/sema-engine/blob/main)
 [![Website](https://img.shields.io/website?url=https%3A%2F%2Fsema.codes)](https://frantic0.github.io/sema-engine/)
@@ -15,7 +15,7 @@
 
 The *sema-engine* library exposes ES and UMD modules (works on the browser, with modern native JS modules and older JS module formats—amd, cjs for nodejs applications—think electron!).
 
-The *sema-engine* currently uses Github Actions workflows for build automation and continuous integration. The development builds propagate source maps (.map), so you can have modern debugging features—e.g. using breakpoints in the context of the client application. Production builds ship all formats optimised and minified.
+The *sema-engine* currently uses Github Actions workflows for build automation and continuous integration. The development builds propagate source maps (.map files)—so you can have modern debugging features like using breakpoints in the context of the client application. The production build ships all formats optimised and minified.
 
 
 ## Usage
@@ -85,7 +85,7 @@ You can use also use the *sema-engine* library modules in an a HTML file using i
 Note the following:
 
 * the script tag for the main module `sema-engine.mjs` has `type = module`
-* when initialising *sema-engine*, you need to pass the `audioWorkletURL` URL which points to where package dependencies – maxi-processor.js, maximilian.wasmmodule.js and maximilian.transpile.js (check the `dist/` folder) – are served.
+* when initialising *sema-engine*, you need to pass the `audioWorkletURL` URL which points to where package dependencies – maxi-processor.js, maximilian.wasmmodule.js and maximilian.transpile.js (check the `dist/` folder) – should be served.
 *
 
 
@@ -133,7 +133,7 @@ The development build outputs the example above, which you can use to learn and 
 
 ## Documentation
 
-The *sema-engine* has small API surface that you can find more about on this project's [wiki]().
+The *sema-engine* has small API surface that you can find more about on this project's [wiki](https://github.com/frantic0/sema-engine/wiki).
 
 
 
