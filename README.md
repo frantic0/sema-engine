@@ -14,10 +14,16 @@ The *sema-engine* library exposes ES and UMD modules (works on the browser, with
 The *sema-engine* currently uses Github Actions workflows for build automation and continuous integration. The development builds propagate source maps (.map), so you can have modern debugging features—e.g. using breakpoints in the context of the client application. Production builds ship all formats optimised and minified.
 
 
-
 ## Usage
 
-You can use modules of the *sema-engine* library straight out-of-the-box in a simple HTML file using inline `<script>` tags.
+
+If you are developing a Web application in modern environment, using a bundler such as Webpack or Rollup, can easily *sema-engine* as a dependency as it is published in Node Package Manager (NPM) registry.
+
+```
+npm install sema-engine
+```
+
+You can use the modules of the *sema-engine* library in an HTML file using inline `<script>` tags.
 
 ```
  <script type="module">
@@ -28,12 +34,12 @@ You can use modules of the *sema-engine* library straight out-of-the-box in a si
         analyser = 0;
 
 
-    let patch1 = {
+    let patch = {
           setup: `() => {
             () => {
               let q = this.newq();
               q.b0u2 = new Maximilian.maxiOsc();
-              q.b0u2.phaseReset(0);;;;
+              q.b0u2.phaseReset(0);
               return q;
             }
           }`,
@@ -51,18 +57,21 @@ You can use modules of the *sema-engine* library straight out-of-the-box in a si
       engine.init(audioWorkletURL);
       engine.play();
     });
+
     $("stopButton", () => engine.stop());
     $("plusButton", () => engine.more());
     $("minusButton", () => engine.less());
+
     $("loadSamplesButton", () => {
       engine.loadSample("crebit2.ogg", "./audio/crebit2.ogg");
       engine.loadSample("kick1.wav", "./audio/kick1.wav");
       engine.loadSample("snare1.wav", "./audio/snare1.wav");
     });
+
     $("evalButton", () => {
       let editorValue = editor.getValue();
       console.log(editorValue);
-      engine.eval(patch2);
+      engine.eval(patch);
     });
 
     $("createAnalyserButton", () => {
@@ -70,18 +79,16 @@ You can use modules of the *sema-engine* library straight out-of-the-box in a si
     });
 ```
 
-Note that the main library tag has `type = module` and that you need to add the all the dependencies of its package.
+Note the following:
+
+* the main library tag has `type = module`.
+* you need to pass an URL `audioWorkletURL` of where *sema-engine* has its package dependencies – maxi-processor.js, maximilian.wasmmodule.js and maximilian.transpile.js (`maxi`check the `dist/` folder) — published on the URL that .
+*
 
 
 
 
 
-
-Additionally, if you are developing a Web application in modern environment, using a bundler such as Webpack or Rollup, can easily *sema-engine* as a dependency as it is published in Node Package Manager (NPM) registry.
-
-```
-npm install sema-engine
-```
 
 
 ## Build
