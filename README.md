@@ -84,14 +84,9 @@ You can use also use the *sema-engine* library modules in an a HTML file using i
 
 Note the following:
 
-* the main library tag has `type = module`
-* when initialising *sema-engine*, you need to pass the `audioWorkletURL` URL that points to where its package dependencies are served – maxi-processor.js, maximilian.wasmmodule.js and maximilian.transpile.js (check the `dist/` folder)
+* the script tag for the main module `sema-engine.mjs` has `type = module`
+* when initialising *sema-engine*, you need to pass the `audioWorkletURL` URL which points to where package dependencies – maxi-processor.js, maximilian.wasmmodule.js and maximilian.transpile.js (check the `dist/` folder) – are served.
 *
-
-
-
-
-
 
 
 ## Build
@@ -135,9 +130,16 @@ The *sema-engine* library uses AVA, a modern and minimal test environment with g
 
 The development build outputs the example above, which you can use to learn and test out how to work with the engine.
 
+
+## Documentation
+
+The *sema-engine* has small API surface that you can find more about on this project's [wiki]().
+
+
+
 ## Contributing
 
-Pull requests are wellcome but please observe the [Contributing](https://github.com/frantic0/sema-engine/blob/main/CONTRIBUTING) guidelines.
+Pull requests are wellcome but please observe the [Contributing](https://github.com/frantic0/sema-engine/blob/main/CONTRIBUTING.md) guidelines.
 
 ## Related Publications
 
