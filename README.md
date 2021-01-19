@@ -3,6 +3,12 @@
 ![Node.js CI](https://github.com/frantic0/sema-engine/workflows/Node.js%20CI/badge.svg)
 
 
+
+If you are cloning this library first time, initialise the submodules
+```
+git submodule update --init --recursive
+```
+
 Install dependencies
 ```
 npm i
@@ -21,11 +27,6 @@ npm run build
 Test the sema-engine library in a local example
 ```
 npm run dev
-```
-
-If you are cloning this library first time, initialise the submodules
-```
-git submodule update --init --recursive
 ```
 
 To update submodule if there are any upgrades
