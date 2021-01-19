@@ -276,16 +276,11 @@ export class Engine {
 			this.audioContext.destination.channelInterpretation = "discrete";
 			this.audioContext.destination.channelCountMode = "explicit";
 			this.audioContext.destination.channelCount = this.audioContext.destination.maxChannelCount;
-			// console.log(this.audioContext.destination);
 
 			await this.loadWorkletProcessorCode();
 
 			// Connect the worklet node to the audio graph
 			this.audioWorkletNode.connect(this.audioContext.destination);
-
-			// this.audioWorkletNode.channelInterpretation = 'discrete';
-			// this.audioWorkletNode.channelCountMode = 'explicit';
-			// this.audioWorkletNode.channelCount = this.audioContext.destination.maxChannelCount;
 
 			// No need to inject the callback here, messaging is built in KuraClock
 			// this.kuraClock = new kuramotoNetClock((phase, idx) => {
