@@ -59,33 +59,6 @@ export class Engine {
 
 		// Shared array buffers for sharing client side data to the audio engine- e.g. mouse coords
 		this.sharedArrayBuffers = {};
-
-		// MOVE THIS TO AN UP LAYER IN SEMA
-
-		// this.messaging.subscribe('mouse-xy', e => {
-		//   if (this.sharedArrayBuffers.mxy) {
-		//     this.sharedArrayBuffers.mxy.rb.push(e);
-		//   }
-		// });
-		// this.messaging.subscribe('osc', e => console.log(`DEBUG:AudioEngine:OSC: ${e}`));
-
-		//temporarily disabled for now
-		// this.kuraClock = new kuramotoNetClock();
-
-		//temporarily disabled for now
-		// this.peerNet = new PeerStreaming();
-
-		//the message has incoming data from other peers
-		// this.messaging.subscribe('peermsg', (e) => {
-		//   e.ttype = 'NET';
-		//   e.peermsg = 1;
-		//   this.onMessagingEventHandler(e);
-		// });
-
-		// this.messaging.subscribe('peerinfo-request', (e) => {
-		//   console.log(this.peerNet.peerID);
-		//   copyToPasteBuffer(this.peerNet.peerID);
-		// });
 	}
 
 	/**
@@ -213,7 +186,8 @@ export class Engine {
 
 			/**
 			 * Creates requestAnimationFrame loop for polling data and publishing
-			 * Returns Analyser Frame ID for adding to Analysers hash and cancelling animation frame
+			 * Returns Analyser Frame ID for adding to Analysers hash
+       * and cancelling animation frame
 			 */
 			const analyserPollingLoop = () => {
         analyserData = this.pollAnalyserData(this.analysers[analyserID].analyser);
@@ -276,8 +250,6 @@ export class Engine {
 			sab: sab,
 			rb: ringbuf,
 		};
-
-		console.log(this.sharedArrayBuffers);
 	}
 
 	/**
@@ -315,20 +287,12 @@ export class Engine {
 			// this.audioWorkletNode.channelCountMode = 'explicit';
 			// this.audioWorkletNode.channelCount = this.audioContext.destination.maxChannelCount;
 
-			// this.connectMediaStream();
-
-			// this.connectAnalysers(); // Connect Analysers loaded from the store
-
-			// this.loadImportedSamples();
-
 			// No need to inject the callback here, messaging is built in KuraClock
 			// this.kuraClock = new kuramotoNetClock((phase, idx) => {
 			//   // console.log( `DEBUG:AudioEngine:sendPeersMyClockPhase:phase:${phase}:id:${idx}`);
 			//   // This requires an initialised audio worklet
 			//   this.audioWorkletNode.port.postMessage({ phase: phase, i: idx });
 			// });
-
-			//temporarily disabled
 			// if (this.kuraClock.connected()) {
 			// 	this.kuraClock.queryPeers(async numClockPeers => {
 			// 		console.log(`DEBUG:AudioEngine:init:numClockPeers: ${numClockPeers}`);
