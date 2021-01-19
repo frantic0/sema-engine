@@ -96,27 +96,29 @@ Note the following:
 
 ## Build
 
-If you are cloning this library first time, initialise the submodules
+If you are cloning this library for the first time:
+
+1. Initialise the Maximilian submodule
 ```
 git submodule update --init --recursive
 ```
 
-Install dependencies
+2. Install dependencies
 ```
 npm i
 ```
 
-Build the Maximilian native JS and WebAssembly modules
+3. Build the Maximilian native JS and WebAssembly modules
 ```
 make
 ```
 
-Build the sema-engine library into UMD and ES modules
+4. Build the sema-engine library into UMD and ES modules
 ```
 npm run build
 ```
 
-Test the sema-engine library in a local example
+5. Test the sema-engine library in a local example
 ```
 npm run dev
 ```
@@ -129,12 +131,14 @@ git submodule update --remote --merge
 
 ## Tests and Examples
 
-The *sema-engine* library uses AVA, a modern and minimal test environment with good features over Mocha (e.g. parallel exec) and fills other criteria (community, support, used in many modern JS libraries, etc.).
+The *sema-engine* library uses AVA, a modern and minimal test environment with good features over other testing libraries (e.g. parallel exec, community, support, used in many modern JS libraries, etc.).
+
+The development build outputs the example above, which you can use to learn and test out how to work with the engine.
 
 ## Contributing
 
+Pull requests are wellcome but please observe the [Contributing](https://github.com/frantic0/sema-engine/blob/main/CONTRIBUTING) guidelines.
 
-# Related Publications
+## Related Publications
 
-
-Bernardo, F., Kiefer, C., Magnusson, T. (forthcoming). A Signal Engine for a Live Code Language Ecosystem. Journal of Audio Engineering Society, Vol. 68, No. 1, October
+Bernardo, F., Kiefer, C., Magnusson, T. (2020). A Signal Engine for a Live Code Language Ecosystem. Journal of Audio Engineering Society, Vol. 68, No. 1, October
