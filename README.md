@@ -11,18 +11,23 @@
 
 The *sema-engine* library exposes ES and UMD modules (works on the browser, with modern native JS modules and older JS module formats—amd, cjs for nodejs applications—think electron!).
 
-The *sema-engine* is currently maintained and uses Github Actions workflows for build automation and continuous integration, for final packaging for production (all formats optimised and minified) and for development (propagates source maps (.map), so we can have modern debugging features, e.g. using breakpoints in the context of the client application.
+The *sema-engine* currently uses Github Actions workflows for build automation and continuous integration. The development builds propagate source maps (.map), so you can have modern debugging features—e.g. using breakpoints in the context of the client application. Production builds ship all formats optimised and minified.
 
 
 
 ## Usage
 
-You can use the *sema-engine* library straight out-of-the-box in a simple HTML file using inline `<script>` tags of `type = module`.
+You can use modules of the *sema-engine* library straight out-of-the-box in a simple HTML file using inline `<script>` tags.
 
 ```
 
 ```
-Note You also neetd to add the dependencies of its package as a set of script tags for your
+
+Note that the main library tag has `type = module` and that you need to add the all the dependencies of its package.
+
+
+
+
 
 
 Additionally, if you are developing a Web application in modern environment, using a bundler such as Webpack or Rollup, can easily *sema-engine* as a dependency as it is published in Node Package Manager (NPM) registry.
@@ -67,6 +72,7 @@ git submodule update --remote --merge
 
 ## Tests and Examples
 
+The *sema-engine* library uses AVA, a modern and minimal test environment with good features over Mocha (e.g. parallel exec) and fills other criteria (community, support, used in many modern JS libraries, etc.).
 
 ## Contributing
 
