@@ -3,29 +3,29 @@
 ![Node.js CI](https://github.com/frantic0/sema-engine/workflows/Node.js%20CI/badge.svg)
 
 
-*sema-engine* is a Javascript library that provides an audio engine for modern and high-performance Web applications. It is based on two main components:
+*sema-engine* is a Javascript library that provides a high-performance audio engine for modern Web applications, with an easy-to-use API. It is based on two main components:
 
 * the Web Audio API Audio Worklets
 
-* the Maximilian DSP C++ library
+* the Maximilian DSP C++ library – as a git submodule
 
-The *sema-engine* library exposes in different formats including UMD and
+The *sema-engine* library exposes ES and UMD modules (works on the browser, with modern native JS modules and older JS module formats—amd, cjs for nodejs applications—think electron!).
 
+The *sema-engine* is currently maintained and uses Github Actions workflows for build automation and continuous integration, for final packaging for production (all formats optimised and minified) and for development (propagates source maps (.map), so we can have modern debugging features, e.g. using breakpoints in the context of the client application.
 
-
-It is currently maintained and uses Github Actions workflows for continuous integration.
 
 
 ## Usage
 
-
-You can also import it as a script from
-
-```
+You can use the *sema-engine* library straight out-of-the-box in a simple HTML file using inline `<script>` tags of `type = module`.
 
 ```
 
-Additionally, *sema-engine* is published in Node Package Manager (NPM) registry. You can easily add it as a dependency to you web application, using
+```
+Note You also neetd to add the dependencies of its package as a set of script tags for your
+
+
+Additionally, if you are developing a Web application in modern environment, using a bundler such as Webpack or Rollup, can easily *sema-engine* as a dependency as it is published in Node Package Manager (NPM) registry.
 
 ```
 npm install sema-engine
