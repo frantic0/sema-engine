@@ -20,71 +20,68 @@ The *sema-engine* currently uses Github Actions workflows for build automation a
 
 ## Usage
 
-
-If you are developing a Web application in a modern environment, and using a bundler such as *Webpack* or *Rollup*, you can easily add *sema-engine* as a dependency, as it is published in Node Package Manager (NPM) registry.
+The *sema-engine* is published in the Node Package Manager (NPM) registry. If you are developing a Web application in a modern environment, and using a bundler such as *Webpack* or *Rollup*, you can easily add *sema-engine* as a dependency,
 
 ```
 npm install sema-engine
 ```
 
-You can check how the sema-engine is used in [Sema](https://github.com/mimic-sussex/sema), a full-fledged application from which *sema-engine* was extracted.
-
+Check how *sema-engine* is used in [Sema](https://github.com/mimic-sussex/sema), a full-fledged application from which *sema-engine* was extracted.
 
 
 You can use also use the modules of the *sema-engine* library in an a HTML file using inline `<script>` tags (this example is published [here](https://frantic0.github.io/sema-engine/), and it is output by the development build).
 
 ```
- <script type="module">
+<script type="module">
 
-    import { Engine } from "./sema-engine.mjs";
+  import { Engine } from "./sema-engine.mjs";
+  let engine,
+      analyser = 0;
+  let patch = {
+        setup: `() => {
+          () => {
+            let q = this.newq();
+            q.b0u2 = new Maximilian.maxiOsc();
+            q.b0u2.phaseReset(0);
+            return q;
+          }
+        }`,
+        loop: `(q, inputs, mem) => {
+          this.dacOutAll(q.b0u2.sinewave(440));
+        }`
+  };
 
-    let engine,
-        analyser = 0;
+  const $ = (elemId, callback) =>
+    document.getElementById(elemId).addEventListener("click", callback);
 
+  $("playButton", () => {
+    let audioWorkletURL = document.location.origin + "/maxi-processor.js";
+    engine = new Engine();
+    engine.init(audioWorkletURL);
+    engine.play();
+  });
 
-    let patch = {
-          setup: `() => {
-            () => {
-              let q = this.newq();
-              q.b0u2 = new Maximilian.maxiOsc();
-              q.b0u2.phaseReset(0);
-              return q;
-            }
-          }`,
-          loop: `(q, inputs, mem) => {
-            this.dacOutAll(q.b0u2.sinewave(440));
-          }`
-    };
+  $("stopButton", () => engine.stop());
+  $("plusButton", () => engine.more());
+  $("minusButton", () => engine.less());
 
-    const $ = (elemId, callback) =>
-      document.getElementById(elemId).addEventListener("click", callback);
+  $("loadSamplesButton", () => {
+    engine.loadSample("crebit2.ogg", "./audio/crebit2.ogg");
+    engine.loadSample("kick1.wav", "./audio/kick1.wav");
+    engine.loadSample("snare1.wav", "./audio/snare1.wav");
+  });
 
-    $("playButton", () => {
-      let audioWorkletURL = document.location.origin + "/maxi-processor.js";
-      engine = new Engine();
-      engine.init(audioWorkletURL);
-      engine.play();
-    });
+  $("evalButton", () => {
+    let editorValue = editor.getValue();
+    console.log(editorValue);
+    engine.eval(patch);
+  });
 
-    $("stopButton", () => engine.stop());
-    $("plusButton", () => engine.more());
-    $("minusButton", () => engine.less());
+  $("createAnalyserButton", () => {
+    engine.createAnalyser(analyser++, data => console.log(data) );
+  });
 
-    $("loadSamplesButton", () => {
-      engine.loadSample("crebit2.ogg", "./audio/crebit2.ogg");
-      engine.loadSample("kick1.wav", "./audio/kick1.wav");
-      engine.loadSample("snare1.wav", "./audio/snare1.wav");
-    });
-
-    $("evalButton", () => {
-      let editorValue = editor.getValue();
-      console.log(editorValue);
-      engine.eval(patch);
-    });
-
-    $("createAnalyserButton", () => {
-      engine.createAnalyser(analyser++, data => console.log(data) );
-    });
+</script>
 ```
 
 Note the following:
