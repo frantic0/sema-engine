@@ -20,7 +20,54 @@ The *sema-engine* currently uses Github Actions workflows for build automation a
 You can use modules of the *sema-engine* library straight out-of-the-box in a simple HTML file using inline `<script>` tags.
 
 ```
+ <script type="module">
 
+    import { Engine } from "./sema-engine.mjs";
+
+    let engine,
+        analyser = 0;
+
+
+    let patch1 = {
+          setup: `() => {
+            () => {
+              let q = this.newq();
+              q.b0u2 = new Maximilian.maxiOsc();
+              q.b0u2.phaseReset(0);;;;
+              return q;
+            }
+          }`,
+          loop: `(q, inputs, mem) => {
+            this.dacOutAll(q.b0u2.sinewave(440));
+          }`
+    };
+
+    const $ = (elemId, callback) =>
+      document.getElementById(elemId).addEventListener("click", callback);
+
+    $("playButton", () => {
+      let audioWorkletURL = document.location.origin + "/maxi-processor.js";
+      engine = new Engine();
+      engine.init(audioWorkletURL);
+      engine.play();
+    });
+    $("stopButton", () => engine.stop());
+    $("plusButton", () => engine.more());
+    $("minusButton", () => engine.less());
+    $("loadSamplesButton", () => {
+      engine.loadSample("crebit2.ogg", "./audio/crebit2.ogg");
+      engine.loadSample("kick1.wav", "./audio/kick1.wav");
+      engine.loadSample("snare1.wav", "./audio/snare1.wav");
+    });
+    $("evalButton", () => {
+      let editorValue = editor.getValue();
+      console.log(editorValue);
+      engine.eval(patch2);
+    });
+
+    $("createAnalyserButton", () => {
+      engine.createAnalyser(analyser++, data => console.log(data) );
+    });
 ```
 
 Note that the main library tag has `type = module` and that you need to add the all the dependencies of its package.
