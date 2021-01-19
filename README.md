@@ -9,9 +9,9 @@
 
 *sema-engine* is a Javascript library that provides a high-performance audio engine for modern Web applications, with an easy-to-use API. It is based on two main components:
 
-* the Web Audio API Audio Worklets
+* the Maximilian DSP C++ library – consumes it as git submodule and uses its DSP objects
 
-* the Maximilian DSP C++ library – as a git submodule
+* the Web Audio API Audio Worklet – it packs a bespoke Audio Worklet node (src/engine.js) and processor (maxi-processor), which consumes Maximilian DSP objects and a program specification.
 
 The *sema-engine* library exposes ES and UMD modules (works on the browser, with modern native JS modules and older JS module formats—amd, cjs for nodejs applications—think electron!).
 
@@ -27,7 +27,7 @@ If you are developing a Web application in a modern environment, and using a bun
 npm install sema-engine
 ```
 
-You can check how the sema-engine is used in [Sema](https://github.com/mimic-sussex/sema), a full-fledged application from which the *sema-engine* was extracted.
+You can check how the sema-engine is used in [Sema](https://github.com/mimic-sussex/sema), a full-fledged application from which *sema-engine* was extracted.
 
 
 
