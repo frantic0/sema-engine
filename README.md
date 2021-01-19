@@ -23,6 +23,10 @@ If you are developing a Web application in a modern environment, and using a bun
 npm install sema-engine
 ```
 
+You can check how the sema-engine is used in [Sema](https://github.com/mimic-sussex/sema), a full-fledged application from which the *sema-engine* was extracted.
+
+
+
 You can use also use the modules of the *sema-engine* library in an a HTML file using inline `<script>` tags (this example is published [here](https://frantic0.github.io/sema-engine/), and it is output by the development build).
 
 ```
