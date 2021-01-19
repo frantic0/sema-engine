@@ -29,14 +29,16 @@ npm install sema-engine
 Check how *sema-engine* is used in [Sema](https://github.com/mimic-sussex/sema), a full-fledged application from which *sema-engine* was extracted.
 
 
-You can use also use the modules of the *sema-engine* library in an a HTML file using inline `<script>` tags (this example is published [here](https://frantic0.github.io/sema-engine/), and it is output by the development build).
+You can use also use the *sema-engine* library modules in an a HTML file using inline `<script>` tags (check the published [example](https://frantic0.github.io/sema-engine/) which is output by the development build).
 
 ```
 <script type="module">
 
   import { Engine } from "./sema-engine.mjs";
+
   let engine,
       analyser = 0;
+
   let patch = {
         setup: `() => {
           () => {
@@ -71,14 +73,10 @@ You can use also use the modules of the *sema-engine* library in an a HTML file 
     engine.loadSample("snare1.wav", "./audio/snare1.wav");
   });
 
-  $("evalButton", () => {
-    let editorValue = editor.getValue();
-    console.log(editorValue);
-    engine.eval(patch);
-  });
+  $("evalButton", () => { engine.eval(patch); });
 
   $("createAnalyserButton", () => {
-    engine.createAnalyser(analyser++, data => console.log(data) );
+    engine.createAnalyser(analyser++, d => console.log(d) );
   });
 
 </script>
@@ -86,8 +84,8 @@ You can use also use the modules of the *sema-engine* library in an a HTML file 
 
 Note the following:
 
-* the main library tag has `type = module`.
-* you need to pass an URL `audioWorkletURL` of where *sema-engine* has its package dependencies – maxi-processor.js, maximilian.wasmmodule.js and maximilian.transpile.js (`maxi`check the `dist/` folder) — published on the URL that .
+* the main library tag has `type = module`
+* when initialising *sema-engine*, you need to pass the `audioWorkletURL` URL that points to where its package dependencies are served – maxi-processor.js, maximilian.wasmmodule.js and maximilian.transpile.js (check the `dist/` folder)
 *
 
 
