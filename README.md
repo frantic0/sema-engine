@@ -1,7 +1,7 @@
 # sema-engine
 
 ![Node.js CI](https://github.com/frantic0/sema-engine/workflows/Node.js%20CI/badge.svg)
-![version](https://img.shields.io/badge/version-0.0.7-red)
+![version](https://img.shields.io/badge/version-0.0.11-red)
 [![stability-experimental](https://img.shields.io/badge/stability-experimental-orange.svg)](https://github.com/emersion/stability-badges#experimental)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-yellow.svg)](https://github.com/frantic0/sema-engine/blob/main)
 [![Website](https://img.shields.io/website?url=https%3A%2F%2Fsema.codes)](https://frantic0.github.io/sema-engine/)
@@ -9,9 +9,9 @@
 
 *sema-engine* is a Javascript library that provides a high-performance audio engine for modern Web applications, with an easy-to-use API. It relies on two main components:
 
-* the Maximilian DSP C++ library – consumes it as git submodule and uses its DSP objects
+* the Maximilian DSP C++ library – from which *sema-engine* consumes DSP objects, as a git submodule
 
-* the Web Audio API Audio Worklet – packs a bespoke Audio Worklet node (src/engine.js) and processor (maxi-processor), which loads Maximilian DSP objects and consumes a program specification.
+* the Web Audio API Audio Worklet – packs a bespoke Audio Worklet node (src/engine.js) and processor (maxi-processor), which loads Maximilian DSP objects and dynamic program specifications.
 
 The *sema-engine* library exposes ES and UMD modules (works on the browser, with modern native JS modules and older JS module formats—amd, cjs for nodejs applications—think electron!).
 
