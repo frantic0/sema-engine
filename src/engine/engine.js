@@ -166,8 +166,7 @@ export class Engine {
 	 */
 	createAnalyser(analyserID, callback) {
 		// If Analyser creation happens after AudioContext intialization, create and connect WAAPI analyser
-		if (this.audioContext !== undefined && event !== undefined) {
-
+		if (this.audioContext !== undefined && analyserID !== undefined && callback !== undefined) {
 			let analyser = this.audioContext.createAnalyser();
 			analyser.smoothingTimeConstant = 0.25;
 			analyser.fftSize = 256; // default 2048;
@@ -176,24 +175,28 @@ export class Engine {
 			this.audioWorkletNode.connect(analyser);
 
 			let analyserFrameId = -1,
-          analyserData = {};
+				analyserData = {};
 
 			this.analysers[analyserID] = {
 				analyser,
 				analyserFrameId,
-				callback
+				callback,
 			};
 
 			/**
 			 * Creates requestAnimationFrame loop for polling data and publishing
 			 * Returns Analyser Frame ID for adding to Analysers hash
-       * and cancelling animation frame
+			 * and cancelling animation frame
 			 */
 			const analyserPollingLoop = () => {
-        analyserData = this.pollAnalyserData(this.analysers[analyserID].analyser);
-        this.analysers[analyserID].callback(analyserData); // Invoke callback that carries
-        // This will guarantee feeding poll request at steady animation framerate
-				this.analysers[analyserID].analyserFrameId = requestAnimationFrame(analyserPollingLoop);
+				analyserData = this.pollAnalyserData(
+					this.analysers[analyserID].analyser
+				);
+				this.analysers[analyserID].callback(analyserData); // Invoke callback that carries
+				// This will guarantee feeding poll request at steady animation framerate
+				this.analysers[analyserID].analyserFrameId = requestAnimationFrame(
+					analyserPollingLoop
+				);
 				return analyserFrameId;
 			};
 
@@ -201,7 +204,7 @@ export class Engine {
 
 			// Other if AudioContext is NOT created yet (after app load, before splashScreen click)
 		} else if (this.audioContext === undefined) {
-			this.analysers[analyser] = {};
+			this.analysers[analyserID] = { callback };
 		}
 	}
 
@@ -210,8 +213,8 @@ export class Engine {
 	 * @connectAnalysers
 	 */
 	connectAnalysers() {
-		Object.keys(this.analysers).map((id) =>
-			this.createAnalyser({ id })
+		Object.keys(this.analysers).map( id =>
+			this.createAnalyser( id, this.analysers[id].callback )
 		);
 	}
 
