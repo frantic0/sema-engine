@@ -54,19 +54,18 @@ export class Engine {
 
 		// Hash of on-demand analysers (e.g. spectrogram, oscilloscope)
 		// NOTE: analysers serialized to localStorage are de-serialized
-    // and loaded from localStorage before user-triggered audioContext init
+		// and loaded from localStorage before user-triggered audioContext init
 		this.analysers = {};
 
 		// Shared array buffers for sharing client side data to the audio engine- e.g. mouse coords
 		this.sharedArrayBuffers = {};
 	}
 
-
-
 	/**
 	 * Handler of the Pub/Sub message events
 	 * whose topics are subscribed to in the audio engine constructor
-	 * @onMessagingEventHandler
+	 * @postAsyncMessageToProcessor
+	 * @param {*} event
 	 */
 	postAsyncMessageToProcessor(event) {
 		if (event !== undefined) {
@@ -75,6 +74,40 @@ export class Engine {
 			console.log(event);
 			this.audioWorkletNode.port.postMessage(event);
 		}
+	}
+
+	/**
+	 * @pushToSharedArrayBuffers
+	 * @param {*} event
+	 */
+	pushToSharedArrayBuffers(sabName, event) {
+		if (this.sharedArrayBuffers[sabName]) {
+			this.sharedArrayBuffers[sabName].rb.push(event);
+		}
+	}
+
+	/**
+	 * Create a shared array buffer for communicating with the audio engine
+	 * @param channelId
+	 * @param ttype
+	 * @param blocksize
+	 */
+	createSharedArrayBuffer(channelId, ttype, blocksize) {
+		let sab = RingBuffer.getStorageForCapacity(32 * blocksize, Float64Array);
+		let ringbuf = new RingBuffer(sab, Float64Array);
+
+		this.audioWorkletNode.port.postMessage({
+			func: "sab",
+			value: sab,
+			ttype: ttype,
+			channelID: channelId,
+			blocksize: blocksize,
+		});
+
+		this.sharedArrayBuffers[channelId] = {
+			sab: sab,
+			rb: ringbuf,
+		};
 	}
 
 	/**
@@ -105,7 +138,11 @@ export class Engine {
 	 */
 	createAnalyser(analyserID, callback) {
 		// If Analyser creation happens after AudioContext intialization, create and connect WAAPI analyser
-		if (this.audioContext !== undefined && analyserID !== undefined && callback !== undefined) {
+		if (
+			this.audioContext !== undefined &&
+			analyserID !== undefined &&
+			callback !== undefined
+		) {
 			let analyser = this.audioContext.createAnalyser();
 			analyser.smoothingTimeConstant = 0.25;
 			analyser.fftSize = 256; // default 2048;
@@ -152,8 +189,8 @@ export class Engine {
 	 * @connectAnalysers
 	 */
 	connectAnalysers() {
-		Object.keys(this.analysers).map( id =>
-			this.createAnalyser( id, this.analysers[id].callback )
+		Object.keys(this.analysers).map((id) =>
+			this.createAnalyser(id, this.analysers[id].callback)
 		);
 	}
 
@@ -173,25 +210,6 @@ export class Engine {
 				// this.audioWorkletNode.disconnect(analyser);
 			}
 		}
-	}
-
-	//make a shared array buffer for communicating with the audio engine
-	createSharedArrayBuffer(chID, ttype, blocksize) {
-		let sab = RingBuffer.getStorageForCapacity(32 * blocksize, Float64Array);
-		let ringbuf = new RingBuffer(sab, Float64Array);
-
-		this.audioWorkletNode.port.postMessage({
-			func: "sab",
-			value: sab,
-			ttype: ttype,
-			channelID: chID,
-			blocksize: blocksize,
-		});
-
-		this.sharedArrayBuffers[chID] = {
-			sab: sab,
-			rb: ringbuf,
-		};
 	}
 
 	/**
@@ -217,7 +235,7 @@ export class Engine {
 
 			await this.loadWorkletProcessorCode();
 
-      this.connectWorkletNode(callback);
+			this.connectWorkletNode(callback);
 
 			// No need to inject the callback here, messaging is built in KuraClock
 			// this.kuraClock = new kuramotoNetClock((phase, idx) => {
@@ -367,7 +385,6 @@ export class Engine {
 					this.audioWorkletProcessorName
 				);
 				return true;
-
 			} catch (err) {
 				console.error(
 					"ERROR: AudioEngine:loadWorkletProcessorCode: Custom AudioWorklet node creation: ",
@@ -380,32 +397,25 @@ export class Engine {
 		}
 	}
 
+	connectWorkletNode(callback) {
+		if (this.audioWorkletNode !== undefined) {
+			try {
+				this.audioContext.destination.channelInterpretation = "discrete";
+				this.audioContext.destination.channelCountMode = "explicit";
+				this.audioContext.destination.channelCount = this.audioContext.destination.maxChannelCount;
 
-  connectWorkletNode(callback){
-
-    if(this.audioWorkletNode !== undefined){
-      try{
-        this.audioContext.destination.channelInterpretation = "discrete";
-        this.audioContext.destination.channelCountMode = "explicit";
-        this.audioContext.destination.channelCount = this.audioContext.destination.maxChannelCount;
-
-        // Connect the worklet node to the audio graph
-        this.audioWorkletNode.connect(this.audioContext.destination);
+				// Connect the worklet node to the audio graph
+				this.audioWorkletNode.connect(this.audioContext.destination);
 
 				// All possible error event handlers subscribed
 				this.audioWorkletNode.onprocessorerror = (event) => {
 					// Errors from the processor
-					console.error(
-						`Engine: maxi-processor ERROR detected`
-					);
+					console.error(`Engine: maxi-processor ERROR detected`);
 				};
 
 				this.audioWorkletNode.port.onmessageerror = (event) => {
 					//  error from the processor port
-					console.error(
-						`Engine: ERROR message from port: ` +
-							event.data
-					);
+					console.error(`Engine: ERROR message from port: ` + event.data);
 				};
 
 				// State changes in the audio worklet processor
@@ -416,17 +426,14 @@ export class Engine {
 					);
 				};
 
-        if(callback !== undefined)
-				// Worklet Processor message handler
-			  	this.audioWorkletNode.port.onmessage = callback;
-      }
-      catch(err){
-        console.error("Engine: ERROR connecting WorkletNode: ", err.message);
-      }
-    }
-  }
-
-
+				if (callback !== undefined)
+					// Worklet Processor message handler
+					this.audioWorkletNode.port.onmessage = callback;
+			} catch (err) {
+				console.error("Engine: ERROR connecting WorkletNode: ", err.message);
+			}
+		}
+	}
 
 	loadSample(objectName, url) {
 		if (this.audioContext !== undefined) {
