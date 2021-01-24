@@ -52,10 +52,17 @@
 
   <script type="module">
 
-    import { Engine } from "./sema-engine.mjs";
+    import {
+      Engine,
+      compile
+    } from "./sema-engine.mjs";
 
     let engine,
-        analyser = 0;
+        analyser = 0,
+        grammarCompiledParser = {},
+        grammarCompilationErrors = ""
+        ;
+
 
     let patch1 = {
           setup: `() => {
@@ -95,6 +102,9 @@
           }`,
         };
 
+
+
+
     const $ = (elemId, callback) =>
       document.getElementById(elemId).addEventListener("click", callback);
 
@@ -115,6 +125,11 @@
     $("evalButton", () => {
       let editorValue = editor.getValue();
       console.log(editorValue);
+
+      let { grammarCompilationErrors, grammarCompiledParser } = compile(editorValue);
+      console.log(grammarCompilationErrors)
+      console.log(grammarCompiledParser)
+
       engine.eval(patch2);
     });
 

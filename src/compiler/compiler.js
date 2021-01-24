@@ -56,7 +56,7 @@ function AnnotatePositions(rules) {
 	);
 }
 
-export default function compile(grammar) {
+export function compile(grammar) {
 
 	let parser = new nearley.Parser( AnnotatePositions(ParserRules), ParserStart, { lexer: Lexer } );
 
