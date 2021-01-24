@@ -80,7 +80,7 @@ export class Engine {
 	 * @pushToSharedArrayBuffers
 	 * @param {*} event
 	 */
-	pushToSharedArrayBuffers(sabName, event) {
+	pushToSharedArrayBuffer(sabName, event) {
 		if (this.sharedArrayBuffers[sabName]) {
 			this.sharedArrayBuffers[sabName].rb.push(event);
 		}
@@ -235,7 +235,7 @@ export class Engine {
 
 			await this.loadWorkletProcessorCode();
 
-			this.connectWorkletNode(callback);
+			this.connectWorkletNode();
 
 			// No need to inject the callback here, messaging is built in KuraClock
 			// this.kuraClock = new kuramotoNetClock((phase, idx) => {
@@ -397,7 +397,7 @@ export class Engine {
 		}
 	}
 
-	connectWorkletNode(callback) {
+	connectWorkletNode() {
 		if (this.audioWorkletNode !== undefined) {
 			try {
 				this.audioContext.destination.channelInterpretation = "discrete";
@@ -426,14 +426,22 @@ export class Engine {
 					);
 				};
 
-				if (callback !== undefined)
-					// Worklet Processor message handler
-					this.audioWorkletNode.port.onmessage = callback;
 			} catch (err) {
 				console.error("Engine: ERROR connecting WorkletNode: ", err.message);
 			}
 		}
 	}
+
+  /**
+   * Public method for subscribing async messaging from the Audio Worklet Processor scope
+   * @param callback
+   */
+	subscribeAsyncMessage(callback){
+	  if (callback !== undefined && this.audioWorkletNode !== undefined)
+      // Worklet Processor message handler
+      this.audioWorkletNode.port.onmessage = callback;
+
+  }
 
 	loadSample(objectName, url) {
 		if (this.audioContext !== undefined) {
