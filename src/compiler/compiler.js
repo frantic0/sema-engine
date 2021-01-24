@@ -88,8 +88,8 @@ export function compile(grammar) {
 	};
 }
 
-export function get_exports(source) {
-	let module = { exports: "" };
-	eval(source);
-	return module.exports;
-}
+// export function get_exports(source) {
+// 	let module = { exports: "" };
+// 	eval(source);
+// 	return module.exports;
+// }

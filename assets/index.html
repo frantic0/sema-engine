@@ -14,6 +14,15 @@
       list-style-type: decimal
     }
 
+    .flex-container {
+      display: inline-flex;
+    }
+
+    .editor-header {
+      font-weight: bold;
+      margin-bottom: 50px;
+    }
+
     .editor-container {
       width: 640px;
       height: 320px;
@@ -25,9 +34,10 @@
       height: 100%;
       width: 100%;
     }
+
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.1/codemirror.min.js" integrity="sha512-9fASXXoC6x4BKdqe6IcEYZnt4KPMiQx5YJIsiWevf2QpSXfPcXMj4MTzIbwQuKJRysBlRh1LGHIaQm/415WyEA==" crossorigin="anonymous"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.1/codemirror.min.css" integrity="sha512-MWdvo/Qqcf4pY1ecQUB1uBn0qLp19U/qJ1Rpp2BDZeuBA7YsFEwkvqR/+aG4BroPiAYDunKJ6X8R/Pmdt3p7oA==" crossorigin="anonymous" />
+  <link   rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.1/codemirror.min.css" integrity="sha512-MWdvo/Qqcf4pY1ecQUB1uBn0qLp19U/qJ1Rpp2BDZeuBA7YsFEwkvqR/+aG4BroPiAYDunKJ6X8R/Pmdt3p7oA==" crossorigin="anonymous" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.1/keymap/vim.min.js" integrity="sha512-g2nzBS/fBHxdSRXaDcYGHVg2Rjk7+3gITKVMv1q/ylh2izUiw1AZ50urelrhy7I6EYLQi5RM8FFj3rdATH5wIg==" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.1/mode/javascript/javascript.min.js" integrity="sha512-ssJuYJm7WuzXiDvMgmhFfPcXAM3QLILVaH8VhLDkauwZRTSlw7uxxUh2TXDau3y2eK0PsJfzL/q0lYsjTEO8sQ==" crossorigin="anonymous"></script>
 </head>
@@ -36,10 +46,16 @@
   <h1>Sema engine – Default language</h1>
   <p>You might need to clean the cache when testing your worklet processor code (Cmd-Shift-Backspace/Ctrl-Shift-Backspace)</p>
 
-  <div class="editor-container">
-    <textarea id="textArea"></textarea>
+  <div class="flex-container">
+    <div class="editor-container">
+      <span class="editor-header">Live Code Editor</span>
+      <textarea id="textArea-livecode"></textarea>
+    </div>
+    <div class="editor-container">
+      <span class="editor-header">Grammar Editor</span>
+      <textarea id="textArea-grammar"></textarea>
+    </div>
   </div>
-
   <div class="commands-container">
     <button id="playButton">Play</button>
     <button id="stopButton">Stop</button>
@@ -54,55 +70,18 @@
 
     import {
       Engine,
-      compile
+      compile,
+      ASTreeToJavascript
     } from "./sema-engine.mjs";
 
     let engine,
         analyser = 0,
-        grammarCompiledParser = {},
-        grammarCompilationErrors = ""
+        compiledParser = {},
+        grammarCompilationErrors = "",
+        liveCodeParseErrors,
+        liveCodeParseTree,
+        dspCode
         ;
-
-
-    let patch1 = {
-          setup: `() => {
-            () => {
-              let q = this.newq();
-              q.b0u2 = new Maximilian.maxiOsc();
-              q.b0u2.phaseReset(0);;;;
-              return q;
-            }
-          }`,
-          loop: `(q, inputs, mem) => {
-            this.dacOutAll(q.b0u2.sinewave(440));
-          }`
-    };
-
-    let patch2 = {
-          setup: `() => {
-            let q = this.newq();;
-            q.b0l5 = new Float64Array(2);
-            q.b0l5[0] = 3;
-            q.b0l5[1] = 2;
-            q.b0u3 = new Maximilian.maxiRatioSeq();;
-            q.b0u2 = new Maximilian.maxiSample();
-            q.b0u2.setSample(this.getSampleBuffer('crebit2'));;
-            q.b0u1 = new Maximilian.maxiNonlinearity();;
-            q.b0l9 = new Float64Array(2);
-            q.b0l9[0] = 1;
-            q.b0l9[1] = 0;
-            q.b0u7 = new Maximilian.maxiRatioSeq();;
-            q.b0u6 = new Maximilian.maxiSample();
-            q.b0u6.setSample(this.getSampleBuffer('snare1'));;;;;
-            return q; }`,
-          loop: `(q, inputs, mem) => {
-            (mem[0] = q.b0u1.asymclip((q.b0u2.isReady() ? q.b0u2.playOnZX(q.b0u3.playTrig(this.clockPhase(4, 0), (() => { return q.b0l5 })())) : 0.0), 2, 0.1));
-            (mem[1] = (q.b0u6.isReady() ? q.b0u6.playOnZX(q.b0u7.playTrig(this.clockPhase(8, 0), (() => { return q.b0l9 })())) : 0.0));
-            this.dacOutAll(((mem[0] != undefined ? mem[0] : 0) + (mem[1] != undefined ? mem[1] : 0)));
-          }`,
-        };
-
-
 
 
     const $ = (elemId, callback) =>
@@ -122,15 +101,23 @@
       engine.loadSample("kick1.wav", "./audio/kick1.wav");
       engine.loadSample("snare1.wav", "./audio/snare1.wav");
     });
+
     $("evalButton", () => {
-      let editorValue = editor.getValue();
-      console.log(editorValue);
+      try{
+        let { grammarCompilationErrors, compiledParser } = compile(editorGrammar.getValue());
 
-      let { grammarCompilationErrors, grammarCompiledParser } = compile(editorValue);
-      console.log(grammarCompilationErrors)
-      console.log(grammarCompiledParser)
-
-      engine.eval(patch2);
+        if(compiledParser && grammarCompilationErrors == ''){
+          liveCodeParseTree = compiledParser.feed(editorLivecode.getValue());
+          if(liveCodeParseTree && liveCodeParseErrors == ''){
+            dspCode = ASTreeToJavascript.treeToCode(liveCodeParseTree, 0)
+            if(dspCode && engine){
+              engine.eval(dspCode);
+            }
+          }
+        }
+      } catch (err) {
+        console.error("ERROR: Eval pipeline")
+      }
     });
 
     $("createAnalyserButton", () => {
@@ -139,11 +126,20 @@
 
   </script>
   <script>
-    let textArea = document.getElementById("textArea");
-    let editor = CodeMirror.fromTextArea(textArea, {
+    let textAreaLivecode = document.getElementById("textArea-livecode");
+    let editorLiveCode = CodeMirror.fromTextArea(textAreaLivecode, {
       lineNumbers: true,
-      mode: "javascript"
+      mode: "javascript",
+      value: "asdf"
     });
+
+    let textAreaGrammar = document.getElementById("textArea-grammar");
+    let editorGrammar = CodeMirror.fromTextArea(textAreaGrammar, {
+      lineNumbers: true,
+      value: "zxcfv"
+    });
+
   </script>
 </body>
 </html>
+
