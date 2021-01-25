@@ -7,17 +7,19 @@
 [![Website](https://img.shields.io/website?url=https%3A%2F%2Fsema.codes)](https://frantic0.github.io/sema-engine/)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/frantic0/sema-engine/blob/main/LICENSE)
 
-*sema-engine* is a Javascript library that provides a high-performance audio engine for modern Web applications, with an easy-to-use API. It relies on the following components:
+*sema-engine* is a Javascript library that provides a high-performance audio engine for modern Web applications, with an easy-to-use API. It was extracted from sema, which was developed at MIMIC-Sussex with @ChrisKiefer and @ThorMagnusson. @ChrisKiefer contributed greatly to the engine and the compiler.
+
+*sema-engine* builds upon the following components:
 
 * the Maximilian DSP C++ library – from which *sema-engine* consumes DSP objects, as a git submodule
 
 * the Web Audio API Audio Worklet – packs a bespoke Audio Worklet node (src/engine.js) and processor (maxi-processor), which loads Maximilian DSP objects and dynamic program specifications.
 
-* the Nearley compiler –
+* the Nearley compiler – generates parsers from an EBNF grammar
 
 The *sema-engine* library exposes ES and UMD modules (works on the browser, with modern native JS modules and older JS module formats—amd, cjs for nodejs applications—think electron!).
 
-The *sema-engine* currently uses Github Actions workflows for build automation and continuous integration. The development builds propagate source maps (.map files)—so you can have modern debugging features like using breakpoints in the context of the client application. The production build ships all formats optimised and minified.
+We use Github Actions workflows for build automation and continuous integration. The development builds propagate source maps (.map files)—so you can have modern debugging features like using breakpoints in the context of the client application. The production build ships all formats optimised and minified.
 
 
 ## Usage
