@@ -5,7 +5,7 @@ import pkg from "./package.json";
 import copy from "rollup-plugin-copy";
 import serve from "rollup-plugin-serve";
 import livereload from "rollup-plugin-livereload";
-import workerLoader from "rollup-plugin-web-worker-loader";
+// import workerLoader from "rollup-plugin-web-worker-loader";
 // import eslint from "@rollup/plugin-eslint";
 
 const isDevelopment = !process.env.BUILD;
@@ -39,7 +39,7 @@ export default [
 				? [
 						resolve(), // so Rollup can find `nearley`
 						commonjs(), // so Rollup can convert `nearley` to an ES module
-						workerLoader(),
+						// workerLoader(),
 						// {
 						// 	transform(code, id) {
 						// 		// debug the Rollup bundling process by injecting a hook in the plugin chain!
@@ -95,7 +95,7 @@ export default [
 				: [
 						resolve(), // so Rollup can find `nearley`
 						commonjs(), // so Rollup can convert `nearley` to an ES module
-						webWorkerLoader(/* configuration */),
+						// webWorkerLoader(/* configuration */),
 						terser(),
 						copy({
 							targets: [
