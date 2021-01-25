@@ -519,7 +519,7 @@ var jsFuncMap = {
 // if (${o}_tdec.onChanged(${p[6].loop}, 1e-5)) {${o}.setDecay(${p[6].loop})};
 // if (newPitch || newVel) {${o}.noteOn(${p[0].loop},${p[1].loop})};
 
-export class ASTreeToJavascript {
+export default class ASTreeToJavascript {
 
   static getNextID() {
     objectID = objectID > 9999 ? 0 : ++objectID;

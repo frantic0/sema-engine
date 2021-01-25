@@ -6,15 +6,8 @@ import {
 //   kuramotoNetClock
 // } from './interfaces/clockInterface.js';
 // import {
-//   PubSub
-// } from './messaging/pubSub.js';
-// import {
 //   PeerStreaming
 // } from '../interfaces/peerStreaming.js';
-// import {
-//   copyToPasteBuffer
-// } from '../utils/pasteBuffer.js';
-
 
 /**
  * The CustomMaxiNode is a class that extends AudioWorkletNode
@@ -38,7 +31,7 @@ class CustomMaxiNode extends AudioWorkletNode {
 // }
 
 /**
- * The AudioEngine is a singleton class that encapsulates the AudioContext
+ * The Engine is a singleton class that encapsulates the AudioContext
  * and all WASM and Maximilian -powered Audio Worklet Processor
  * @class AudioEngine
  */

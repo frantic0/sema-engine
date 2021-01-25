@@ -9,13 +9,16 @@
     html, body {
       width: 100%;
       height: 100%;
+      overflow: hidden;
     }
     .prettyprint ol.linenums>li {
       list-style-type: decimal
     }
 
     .flex-container {
+      width: 100%;
       display: inline-flex;
+      padding-right: 50px;
     }
 
     .editor-header {
@@ -24,7 +27,7 @@
     }
 
     .editor-container {
-      width: 640px;
+      width: 100%;
       height: 320px;
       padding-top: 10px;
       padding-bottom: 10px;
@@ -70,19 +73,17 @@
 
     import {
       Engine,
-      compile,
-      ASTreeToJavascript
+      compile
     } from "./sema-engine.mjs";
 
     let engine,
         analyser = 0,
         compiledParser = {},
         grammarCompilationErrors = "",
-        liveCodeParseErrors,
-        liveCodeParseTree,
+        livecodeParseErrors,
+        livecodeParseTree,
         dspCode
         ;
-
 
     const $ = (elemId, callback) =>
       document.getElementById(elemId).addEventListener("click", callback);
@@ -104,40 +105,38 @@
 
     $("evalButton", () => {
       try{
-        let { grammarCompilationErrors, compiledParser } = compile(editorGrammar.getValue());
-
-        if(compiledParser && grammarCompilationErrors == ''){
-          liveCodeParseTree = compiledParser.feed(editorLivecode.getValue());
-          if(liveCodeParseTree && liveCodeParseErrors == ''){
-            dspCode = ASTreeToJavascript.treeToCode(liveCodeParseTree, 0)
-            if(dspCode && engine){
-              engine.eval(dspCode);
-            }
-          }
+        const grammarSource = editorGrammar.getValue();
+        const livecodeSource = editorLivecode.getValue();
+        let { errors, dspCode } = compile(grammarSource, livecodeSource);
+        if(dspCode && engine){
+          engine.eval(dspCode);
         }
       } catch (err) {
-        console.error("ERROR: Eval pipeline")
+        console.error("ERROR: Eval – sema compiler: ", err);
       }
     });
 
-    $("createAnalyserButton", () => {
-      engine.createAnalyser(analyser++, data => console.log(data) );
-    });
+    $("createAnalyserButton", () => engine.createAnalyser(analyser++, data => console.log(data)) );
 
   </script>
   <script>
-    let textAreaLivecode = document.getElementById("textArea-livecode");
-    let editorLiveCode = CodeMirror.fromTextArea(textAreaLivecode, {
+
+    const editorLivecode = CodeMirror.fromTextArea(document.getElementById("textArea-livecode"), {
       lineNumbers: true,
-      mode: "javascript",
-      value: "asdf"
+      mode: "javascript"
     });
 
-    let textAreaGrammar = document.getElementById("textArea-grammar");
-    let editorGrammar = CodeMirror.fromTextArea(textAreaGrammar, {
+    const editorGrammar = CodeMirror.fromTextArea(document.getElementById("textArea-grammar"), {
       lineNumbers: true,
-      value: "zxcfv"
     });
+
+    fetch(document.location.origin + '/langs/default-livecode.txt')
+      .then( response => response.text() )
+      .then( data => editorLivecode.setValue(data) )
+
+    fetch(document.location.origin + '/langs/default-grammar.txt')
+      .then( response => response.text() )
+      .then( data => editorGrammar.setValue(data) );
 
   </script>
 </body>
