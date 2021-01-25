@@ -147,4 +147,4 @@ Pull requests are wellcome but please observe the [Contributing](https://github.
 
 ## Related Publications
 
-Bernardo, F., Kiefer, C., Magnusson, T. (2020). A Signal Engine for a Live Code Language Ecosystem. Journal of Audio Engineering Society, Vol. 68, No. 1, October
+Bernardo, F., Kiefer, C., Magnusson, T. (2020). A Signal Engine for a Live Code Language Ecosystem. Journal of Audio Engineering Society, Vol. 68, No. 1, October, DOI: [https://doi.org/10.17743/jaes.2020.0016](https://doi.org/10.17743/jaes.2020.0016)
