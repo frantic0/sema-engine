@@ -1,21 +1,21 @@
 # sema-engine
 
 ![Node.js CI](https://github.com/frantic0/sema-engine/workflows/Node.js%20CI/badge.svg)
-![version](https://img.shields.io/badge/version-0.0.11-red)
+![version](https://img.shields.io/badge/version-0.0.16-red)
 [![stability-experimental](https://img.shields.io/badge/stability-experimental-orange.svg)](https://github.com/emersion/stability-badges#experimental)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-yellow.svg)](https://github.com/frantic0/sema-engine/blob/main)
 [![Website](https://img.shields.io/website?url=https%3A%2F%2Fsema.codes)](https://frantic0.github.io/sema-engine/)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/frantic0/sema-engine/blob/main/LICENSE)
 
-*sema-engine* is a Javascript library that provides a high-performance audio engine for modern Web applications, with an easy-to-use API. It was extracted from [sema](https://github.com/mimic-sussex/sema), which was developed at MIMIC-Sussex with @[chriskiefer](https://github.com/chriskiefer) and @[thormagnusson](https://github.com/thormagnusson).
+*sema-engine* is a Javascript library that provides a high-performance audio engine for modern Web applications, with an easy-to-use API. It was extracted from [sema](https://github.com/mimic-sussex/sema), an app developed with @[chriskiefer](https://github.com/chriskiefer) and @[thormagnusson](https://github.com/thormagnusson) for project MIMIC.
 
 *sema-engine* builds upon the following components:
 
 * the Maximilian DSP C++ library – from which *sema-engine* consumes DSP objects, as a git submodule
 
-* the Web Audio API Audio Worklet – packs a bespoke Audio Worklet node (src/engine.js) and processor (maxi-processor), which loads Maximilian DSP objects and dynamic program specifications.
+* the Web Audio API Audio Worklet – packs a bespoke Audio Worklet node (src/engine.js) and processor (maxi-processor), which loads Maximilian DSP objects and dynamic program specifications
 
-* the Nearley compiler – generates parsers from an EBNF grammar
+* the Nearley compiler – generates parsers from an EBNF grammar specification
 
 The *sema-engine* library exposes ES and UMD modules (works on the browser, with modern native JS modules and older JS module formats—amd, cjs for nodejs applications—think electron!).
 

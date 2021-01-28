@@ -105,9 +105,7 @@
 
     $("evalButton", () => {
       try{
-        const grammarSource = editorGrammar.getValue();
-        const livecodeSource = editorLivecode.getValue();
-        let { errors, dspCode } = compile(grammarSource, livecodeSource);
+        const { errors, dspCode } = compile(editorGrammar.getValue(), editorLivecode.getValue());
         if(dspCode && engine){
           engine.eval(dspCode);
         }

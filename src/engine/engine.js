@@ -209,7 +209,7 @@ export class Engine {
 	 * Initialises audio context and sets worklet processor code
 	 * @play
 	 */
-	async init(audioWorkletURL, callback /*numClockPeers*/) {
+	async init(audioWorkletURL/*numClockPeers*/) {
 		// AudioContext needs lazy loading to workaround the Chrome warning
 		// Audio Engine first play() call, triggered by user, prevents the warning
 		// by setting this.audioContext = new AudioContext();

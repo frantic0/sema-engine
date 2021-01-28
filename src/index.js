@@ -1,5 +1,8 @@
 /**
  * sema-engine library interface
+ * * exports the Engine class and all its public methods
+ * @Engine
+ * @compile
  */
 export { Engine } from './engine/engine.js';
 import compileGrammar from './compiler/compiler.js';
@@ -7,8 +10,6 @@ import ASTreeToJavascript from "./compiler/IR.js";
 import nearley from "../node_modules/nearley/lib/nearley.js";
 import mooo from "../node_modules/moo/moo.js";
 import semaa from "./compiler/sema.js";
-// import * as semaa from "./compiler/sema.js";
-import ParserWorker from "web-worker:./compiler/parser.worker.js";
 
 let parseLiveCodeAsync = async (compiledParser, livecodeSource) => {
   if(window.Worker){
@@ -53,11 +54,13 @@ let parseLiveCodeAsync = async (compiledParser, livecodeSource) => {
  * Loads the modules dependencies in the compiled parser source code (moo, sema)
  * before dynamically loading it with eval
  * @param {*} source
+ * * sema.num('3') is a hack to force the module to load before eval,
+ * TODO need to check how the module is built differently from moo
  */
 function getParserModuleExports(source) {
 	let moo = mooo; //  local scope, works with eval – does NOT work with geval
 	let sema = semaa; // does NOT work with eval, works with geval?
-  sema.num('4');
+	sema.num("3"); // hack to force the module to load before eval
 	let module = { exports: "" };
 	// var geval = eval; // eval in the global scope, avoiding rollup warning - https://rollupjs.org/guide/en/#avoiding-eval
 	eval(source);
@@ -66,33 +69,23 @@ function getParserModuleExports(source) {
 
 
 /**
- * Given the grammar code, compiles the livecode
- * @param {*} grammar
- * @param {*} livecode
+ * Given a livecode's grammar source code, compile a livecode's source
+ * @param {*} grammarSource
+ * @param {*} livecodeSource
  */
-export function compile(grammarCode, livecode){
+export function compile(grammarSource, livecodeSource) {
+	let dspCode;
+	let sema = semaa;
 
-  let dspCode;
-  let sema = semaa;
+	const { errors, output } = compileGrammar(grammarSource);
+	const grammar = getParserModuleExports(output);
+	const compiledParser = new nearley.Parser(grammar);
 
-  const { errors, output } = compileGrammar(grammarCode);
-  const grammar = getParserModuleExports(output);
-  console.log(grammar);
-  const compiledParser = new nearley.Parser(grammar);
-
-  // let compiledParser = parseLiveCodeAsync(output, code);
-
-
-  if(!errors && compiledParser){
-    const livecodeParseTree = compiledParser.feed(livecode);
-
-    if(livecodeParseTree){
-      dspCode = ASTreeToJavascript.treeToCode(livecodeParseTree.results, 0);
-    }
-  }
-
-
-  // parserOutputs = JSON.parse(JSON.stringify(parser.results));
-  // console.log(parser.results)
-  return { errors, dspCode };
+	if (!errors && compiledParser) {
+		const livecodeParseTree = compiledParser.feed(livecodeSource);
+		if (livecodeParseTree) {
+			dspCode = ASTreeToJavascript.treeToCode(livecodeParseTree.results, 0);
+		}
+	}
+	return { errors, dspCode };
 }

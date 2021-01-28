@@ -1,8 +1,6 @@
+// const test = require("ava");
 
-import { expect } from "chai";
-// const engine = require("../dist/sema-engine.js");
-// import engine from "../dist/sema-engine.mjs";
-// import { Engine } from "../src";
+// import test from "ava";
 
 
 
@@ -46,25 +44,8 @@ const patch2_DSP = {
           }`,
 };
 
-describe("engine", function () {
-	it("should return the sum of two arguments", function () {
-    // const engine = new Engine();
-    expect((1+2)).to.equal(3);
-	});
-});
 
-describe("engine-2", function () {
-	it("should return the sum of two arguments", function () {
-		// const engine = new Engine();
-    expect((1+2)).to.equal(3);
-	});
-});
-
-
-
-// test('compile-default-patch1', (t) => {
-
-//   const engine = new Engine();
+// test('compile-patch1', (t) => {
 
 //   const { errors, dspCode } = compile(patch1_Livecode, patch1_DSP);
 // 	if (dspCode && engine) {
@@ -73,11 +54,11 @@ describe("engine-2", function () {
 //   t.pass();
 // })
 
-// test("foo", (t) => {
-//   t.pass();
-// });
+test("foo", (t) => {
+  t.pass();
+});
 
-// test("bar", async (t) => {
-//   const bar = Promise.resolve("bar");
-//   t.is(await bar, "bar");
-// });
+test("bar", async (t) => {
+  const bar = Promise.resolve("bar");
+  t.is(await bar, "bar");
+});
