@@ -679,7 +679,7 @@ export default class ASTreeToJavascript {
     } else {
       Object.keys(t).map((k) => {
         // console.log("DEBUG:traverseTree:@OBJECTAttribMap");
-        console.log(k);
+        // console.log(k);
         code = attribMap[k](code, t[k]);
       });
     }

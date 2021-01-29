@@ -1,8 +1,8 @@
 
 import { expect } from "chai";
 // const engine = require("../dist/sema-engine.js");
-import engine from "../dist/sema-engine.mjs";
-import { Engine } from "../../srcsrc";
+// import engine from "../dist/sema-engine.mjs";
+// import { Engine } from "../../srcsrc";
 
 
 
@@ -47,8 +47,8 @@ const patch2_DSP = {
 };
 
 
-
-import "../../fixtures/AudioWorkletProcessor.jss";
+/*
+import "../../fixtures/AudioWorkletProcessor.js";
 import GainWorklet from "@/worklet/GainWorklet";
 import * as MockAudio from "../../fixtures/MockAudioDataa";
 
@@ -111,3 +111,4 @@ describe("GainWorkletTests", () => {
 		}
 	});
 });
+*/

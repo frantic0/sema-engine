@@ -1,0 +1,5 @@
+{
+  "setup": "() => {let q=this.newq();  q.b0u2 = new Maximilian.maxiOsc(); q.b0u2.phaseReset(0);; ;; return q;}",
+  "loop": "(q, inputs, mem) => {this.dacOutAll(q.b0u2.sinewave(550));}",
+  "paramMarkers": []
+}
