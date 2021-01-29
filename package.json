@@ -26,10 +26,8 @@
   "scripts": {
     "build": "rollup -c --environment BUILD:development",
     "dev": "rollup -c -w",
-    "pretest": "cpx 'assets/langs/*.txt' './test/fixtures/lang/'",
-    "test:unit": "mocha  './test/unit' --require esm",
-    "test:integration": "mocha --recursive --require esm",
-    "test": "npm run test:unit && npm run test:integration",
+    "pretest": "cpx 'assets/langs/*' './test/fixtures/lang/'",
+    "test": "mocha --recursive --require esm",
     "coverage": "nyc npm run test",
     "clean": "rm -rf build dist",
     "clean-all": "rm -rf .cache dist node_modules package-lock.json"

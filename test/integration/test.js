@@ -70,7 +70,7 @@ describe("test compile Default livecode source with Default grammar source", fun
 
 	});
 
-	describe("#compile(grammar, livecode)", function () {
+	describe("#compile(default_grammar, default_1_lc)", function () {
 		it("should return an object with the same `setup` and `loop` properties", function () {
 			const dspCode = compile(default_grammar, default_1_lc).dspCode;
 			expect(dspCode.setup.replace(/\s/g, "")).to.equal(
@@ -82,7 +82,7 @@ describe("test compile Default livecode source with Default grammar source", fun
 		});
 	});
 
-	describe("#compile(grammar, livecode)", function () {
+	describe("#compile(default_grammar, default_2_lc)", function () {
 		it("should return an object with the same `setup` and `loop` properties", function () {
 			const dspCode = compile(default_grammar, default_2_lc).dspCode;
 			expect(dspCode.setup.replace(/\s/g, "")).to.equal(
