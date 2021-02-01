@@ -19,12 +19,13 @@ export { semaa } from "./compiler/sema.js";
 // here we use the default pattern but any RegEx can be configured
 import  mlworker from 'web-worker:./learning/ml.worker.js';
 
-export function createLearner(url){
+export function createLearner(url, sab){
 
   const worker = new mlworker();
   // const worker = new mlworker({ type: "module" });
   worker.postMessage({
 		url: url,
+    sab: sab
 	});
   return worker;
 }

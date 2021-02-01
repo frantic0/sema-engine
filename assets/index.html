@@ -125,20 +125,22 @@
 
     $("testWorker", () => {
 
-      worker = createLearner(document.location.origin);
-
       const channelId = "mxy",
       ttype = "mouseXY",
       blockSize = 2;
 
-      engine.createSharedArrayBuffer(channelId, ttype, blockSize);
+      let sab = engine.createSharedArrayBuffer(channelId, ttype, blockSize);
+
+      worker = createLearner(document.location.origin, sab);
+
 
       let onMouseMove = e => {
 
-        const x = parseFloat(e.offsetX/window.innerWidth).toFixed(4);
-        const y = parseFloat(e.offsetY/window.innerHeight).toFixed(4);
+        const x = parseFloat(e.offsetX/window.innerWidth).toFixed(5);
+        const y = parseFloat(e.offsetY/window.innerHeight).toFixed(5);
         document.getElementById('outputText').innerText = `${x} ${y}`;
 
+        engine.pushDataToSharedArrayBuffer({ x, y }, channelId);
 
         worker.postMessage({
           data: 'test'

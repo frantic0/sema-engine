@@ -100,10 +100,25 @@ export class Engine {
 		});
 
 		this.sharedArrayBuffers[channelId] = {
-			sab: sab,
+			sab: sab, // TODO: this is redundant, you can access the sab from the rb,
+                // also change hashmap name it is confusing and induces error
 			rb: ringbuf,
 		};
+
+    return sab;
 	}
+
+  /**
+   * Push data to shared array buffer for communicating with the audio engine and ML worker
+   * @param {*} e
+   * @param {*} channelId
+   */
+  pushDataToSharedArrayBuffer(e, channelId) {
+    if (this.sharedArrayBuffers && this.sharedArrayBuffers[channelId]) {
+      this.sharedArrayBuffers[channelId].rb.push(e);
+    }
+  }
+
 
 	/**
 	 * Polls data from connected WAAPI analyser return structured object with data and time data in arrays

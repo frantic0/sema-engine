@@ -209,6 +209,17 @@ onmessage = m => {
     };
     console.log("ML", inputSABs);
   }
+  else if (m.data.sab) {
+    console.log("buf received", m);
+    let sab = m.data.sab;
+    let rb = new RingBuffer(sab, Float64Array);
+    inputSABs[m.data.channelID] = {
+      sab: sab,
+      rb: rb,
+      blocksize: m.data.blocksize
+    };
+    console.log("ML", inputSABs);
+  }
   // else if(m.data.type === "model-output-data-request"){
   // 	postMessage({
   // 		func: "data",
