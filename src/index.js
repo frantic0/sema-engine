@@ -15,3 +15,18 @@ export * as ASTreeToJavascript from "./compiler/IR.js";
 export { nearley } from "../node_modules/nearley/lib/nearley.js";
 export { mooo } from "../node_modules/moo/moo.js";
 export { semaa } from "./compiler/sema.js";
+
+// here we use the default pattern but any RegEx can be configured
+import  mlworker from 'web-worker:./learning/ml.worker.js';
+
+export function createLearner(url){
+
+  const worker = new mlworker();
+  // const worker = new mlworker({ type: "module" });
+  worker.postMessage({
+		url: url,
+	});
+  return worker;
+}
+
+// mlworker.postMessage(e);

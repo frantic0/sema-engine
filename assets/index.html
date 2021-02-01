@@ -67,13 +67,16 @@
     <button id="loadSamplesButton">Load Samples</button>
     <button id="evalButton">Eval</button>
     <button id="createAnalyserButton">Analyser++</button>
+    <button id="testWorker">Test Worker</button>
+    <span id="outputText"></span>
   </div>
 
   <script type="module">
 
     import {
       Engine,
-      compile
+      compile,
+      createLearner
     } from "./sema-engine.mjs";
 
     let engine,
@@ -82,7 +85,8 @@
         grammarCompilationErrors = "",
         livecodeParseErrors,
         livecodeParseTree,
-        dspCode
+        dspCode,
+        worker
         ;
 
     const $ = (elemId, callback) =>
@@ -90,8 +94,10 @@
 
     $("playButton", () => {
       let audioWorkletURL = document.location.origin + "/maxi-processor.js";
+      // let audioWorkletURL = document.location.origin + "/bypass-processor.js";
       engine = new Engine();
-      engine.init(audioWorkletURL);
+      engine.init("maxi-processor", audioWorkletURL);
+      // engine.init("bypass", audioWorkletURL);
       engine.play();
     });
     $("stopButton", () => engine.stop());
@@ -115,6 +121,46 @@
     });
 
     $("createAnalyserButton", () => engine.createAnalyser(analyser++, data => console.log(data)) );
+
+
+    $("testWorker", () => {
+
+      worker = createLearner(document.location.origin);
+
+      const channelId = "mxy",
+      ttype = "mouseXY",
+      blockSize = 2;
+
+      engine.createSharedArrayBuffer(channelId, ttype, blockSize);
+
+      let onMouseMove = e => {
+
+        const x = parseFloat(e.offsetX/window.innerWidth).toFixed(4);
+        const y = parseFloat(e.offsetY/window.innerHeight).toFixed(4);
+        document.getElementById('outputText').innerText = `${x} ${y}`;
+
+
+        worker.postMessage({
+          data: 'test'
+        });
+      }
+
+      // Subscribe `Alt`-key down event to subscribe mouse move
+      document.addEventListener("keydown", e => {
+        e.which === 18?
+          document.addEventListener( 'mousemove', onMouseMove, true )
+          : null;
+      });
+
+      // Subscribe `Alt`-key UP event to unsubscribe mouse move
+      document.addEventListener("keyup", e => {
+        document.getElementById('outputText').innerText = ``;
+        document.removeEventListener( 'mousemove', onMouseMove, true )
+      });
+
+    });
+
+
 
   </script>
   <script>

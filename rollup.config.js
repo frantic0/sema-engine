@@ -5,7 +5,7 @@ import pkg from "./package.json";
 import copy from "rollup-plugin-copy";
 import serve from "rollup-plugin-serve";
 import livereload from "rollup-plugin-livereload";
-// import workerLoader from "rollup-plugin-web-worker-loader";
+import workerLoader from "rollup-plugin-web-worker-loader";
 // import eslint from "@rollup/plugin-eslint";
 
 const isDevelopment = !process.env.BUILD;
@@ -39,7 +39,7 @@ export default [
 				? [
 						resolve(), // so Rollup can find `nearley`
 						commonjs(), // so Rollup can convert `nearley` to an ES module
-						// workerLoader(),
+						workerLoader(),
 						// {
 						// 	transform(code, id) {
 						// 		// debug the Rollup bundling process by injecting a hook in the plugin chain!
@@ -71,6 +71,16 @@ export default [
 									src: "assets/*",
 									dest: "dist",
 								},
+								{
+									// lalolib is imported dynamically (importScripts) by the ml.worker, needs to be served in 'dist'
+									src: "src/learning/lalolib.js",
+									dest: "dist",
+								},
+								{
+									// svd is imported dynamically (importScripts) by the ml.worker, needs to be served in 'dist'
+									src: "src/learning/svd.js",
+									dest: ["dist"],
+								}
 							],
 						}),
 						serve({
@@ -95,7 +105,7 @@ export default [
 				: [
 						resolve(), // so Rollup can find `nearley`
 						commonjs(), // so Rollup can convert `nearley` to an ES module
-						// webWorkerLoader(/* configuration */),
+						workerLoader(/* configuration */),
 						terser(),
 						copy({
 							targets: [
@@ -113,12 +123,18 @@ export default [
 								},
 								{
 									// ringbuf is imported by both the Engine (AW node) and maxi-processor (AWP) so needs to be both bundled AND copied!
-									src: "src/engine/ringbuf.js",
+									src: "src/common/ringbuf.js",
 									dest: ["dist"],
 								},
 								{
-									src: "assets/open303.wasmmodule.js",
+									// lalolib is imported dynamically (importScripts) by the ml.worker, needs to be served in 'dist'
+									src: "src/learning/lalolib.js",
 									dest: "dist",
+								},
+								{
+									// svd is imported dynamically (importScripts) by the ml.worker, needs to be served in 'dist'
+									src: "src/learning/svd.js",
+									dest: ["dist"],
 								},
 							],
 						}),

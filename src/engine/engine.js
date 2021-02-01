@@ -1,4 +1,4 @@
-import RingBuffer from './ringbuf.js'; //thanks padenot
+import RingBuffer from '../common/ringbuf.js'; //thanks padenot
 import {
   loadSampleToArray
 } from './maximilian.util.js';
@@ -52,6 +52,8 @@ export class Engine {
 
 		// Shared array buffers for sharing client side data to the audio engine- e.g. mouse coords
 		this.sharedArrayBuffers = {};
+
+		this.samplesLoaded = false;
 	}
 
 	/**
@@ -209,26 +211,35 @@ export class Engine {
 	 * Initialises audio context and sets worklet processor code
 	 * @play
 	 */
-	async init(audioWorkletURL/*numClockPeers*/) {
-		// AudioContext needs lazy loading to workaround the Chrome warning
-		// Audio Engine first play() call, triggered by user, prevents the warning
-		// by setting this.audioContext = new AudioContext();
-		this.audioContext;
-		this.audioWorkletProcessorName = "maxi-processor";
-		this.audioWorkletUrl = audioWorkletURL;
-		this.samplesLoaded = false;
+	async init(audioWorkletName, audioWorkletURL /*numClockPeers*/) {
 
-		if (this.audioContext === undefined) {
-			this.audioContext = new AudioContext({
-				// create audio context with latency optimally configured for playback
-				latencyHint: "playback",
-				// latencyHint: 32/44100,  //this doesn't work below 512 on chrome (?)
-				// sampleRate: 44100
-			});
+    if (audioWorkletName && audioWorkletURL && new URL(audioWorkletURL) ) {
 
-			await this.loadWorkletProcessorCode();
+      // AudioContext needs lazy loading to workaround the Chrome warning
+			// Audio Engine first play() call, triggered by user, prevents the warning
+			// by setting this.audioContext = new AudioContext();
+			this.audioContext;
+			this.audioWorkletName = audioWorkletName;
+			this.audioWorkletUrl = audioWorkletURL;
 
-			this.connectWorkletNode();
+			if (this.audioContext === undefined) {
+				this.audioContext = new AudioContext({
+					// create audio context with latency optimally configured for playback
+					latencyHint: "playback",
+					// latencyHint: 32/44100,  //this doesn't work below 512 on chrome (?)
+					// sampleRate: 44100
+				});
+			}
+
+  		let isWorkletProcessorLoaded = await this.loadWorkletProcessorCode();
+
+      if(isWorkletProcessorLoaded){
+        this.connectWorkletNode();
+        return true;
+      }
+      else
+        return false;
+
 
 			// No need to inject the callback here, messaging is built in KuraClock
 			// this.kuraClock = new kuramotoNetClock((phase, idx) => {
@@ -241,6 +252,9 @@ export class Engine {
 			// 		console.log(`DEBUG:AudioEngine:init:numClockPeers: ${numClockPeers}`);
 			// 	});
 			// }
+		} else {
+			throw new Error("Name and valid URL required for AudioWorklet processor");
+			return false;
 		}
 	}
 
@@ -334,8 +348,8 @@ export class Engine {
 	}
 
 	onAudioInputFail(error) {
-		console.log(
-			`DEBUG:AudioEngine:AudioInputFail: ${error.message} ${error.name}`
+		console.error(
+			`ERROR:Engine:AudioInputFail: ${error.message} ${error.name}`
 		);
 	}
 
@@ -366,21 +380,22 @@ export class Engine {
 				await this.audioContext.audioWorklet.addModule(this.audioWorkletUrl);
 			} catch (err) {
 				console.error(
-					"ERROR: AudioEngine:loadWorkletProcessorCode: AudioWorklet not supported in this browser: ",
+					"ERROR:Engine:loadWorkletProcessorCode: AudioWorklet not supported in this browser: ",
 					err.message
 				);
 				return false;
 			}
 			try {
 				// Custom node constructor with required parameters
-				this.audioWorkletNode = new CustomMaxiNode(
+				// this.audioWorkletNode = new CustomMaxiNode(
+				this.audioWorkletNode = new AudioWorkletNode(
 					this.audioContext,
-					this.audioWorkletProcessorName
+					this.audioWorkletName
 				);
 				return true;
 			} catch (err) {
 				console.error(
-					"ERROR: AudioEngine:loadWorkletProcessorCode: Custom AudioWorklet node creation: ",
+					"ERROR:Engine:loadWorkletProcessorCode: Error on custom AudioWorklet node creation: ",
 					err.message
 				);
 				return false;
@@ -403,12 +418,14 @@ export class Engine {
 				// All possible error event handlers subscribed
 				this.audioWorkletNode.onprocessorerror = (event) => {
 					// Errors from the processor
-					console.error(`Engine: maxi-processor ERROR detected`);
+					console.error(
+						`ERROR:Engine: maxi-processor 'onprocess' error detected`
+					);
 				};
 
 				this.audioWorkletNode.port.onmessageerror = (event) => {
 					//  error from the processor port
-					console.error(`Engine: ERROR message from port: ` + event.data);
+					console.error(`ERROR:Engine: Error message from port: ` + event.data);
 				};
 
 				// State changes in the audio worklet processor
@@ -418,23 +435,24 @@ export class Engine {
 							audioWorkletNode.processorState
 					);
 				};
-
 			} catch (err) {
-				console.error("Engine: ERROR connecting WorkletNode: ", err.message);
+				console.error(
+					"ERROR:Engine: Error connecting WorkletNode: ",
+					err.message
+				);
 			}
 		}
 	}
 
-  /**
-   * Public method for subscribing async messaging from the Audio Worklet Processor scope
-   * @param callback
-   */
-	subscribeAsyncMessage(callback){
-	  if (callback !== undefined && this.audioWorkletNode !== undefined)
-      // Worklet Processor message handler
-      this.audioWorkletNode.port.onmessage = callback;
-
-  }
+	/**
+	 * Public method for subscribing async messaging from the Audio Worklet Processor scope
+	 * @param callback
+	 */
+	subscribeAsyncMessage(callback) {
+		if (callback !== undefined && this.audioWorkletNode !== undefined)
+			// Worklet Processor message handler
+			this.audioWorkletNode.port.onmessage = callback;
+	}
 
 	loadSample(objectName, url) {
 		if (this.audioContext !== undefined) {
