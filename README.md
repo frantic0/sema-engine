@@ -7,7 +7,7 @@
 [![Website](https://img.shields.io/website?url=https%3A%2F%2Fsema.codes)](https://frantic0.github.io/sema-engine/)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/frantic0/sema-engine/blob/main/LICENSE)
 
-*sema-engine* is a Javascript library that provides a high-performance audio engine for modern Web applications, with an easy-to-use API. It was extracted from [sema](https://github.com/mimic-sussex/sema), an app developed with @[chriskiefer](https://github.com/chriskiefer) and @[thormagnusson](https://github.com/thormagnusson) for project MIMIC.
+*sema-engine* is a Javascript library that provides a high-performance audio engine for modern Web applications, with an easy-to-use API. It was extracted from [sema](https://github.com/mimic-sussex/sema), an app developed with @[chriskiefer](https://github.com/chriskiefer) and @[thormagnusson](https://github.com/thormagnusson), and refactored for project MIMIC.
 
 *sema-engine* builds upon the following components:
 
@@ -19,7 +19,7 @@
 
 The *sema-engine* library exposes ES and UMD modules (works on the browser, with modern native JS modules and older JS module formats—amd, cjs for nodejs applications—think electron!).
 
-We use Github Actions workflows for build automation and continuous integration. The development builds propagate source maps (.map files)—so you can have modern debugging features like using breakpoints in the context of the client application. The production build ships all formats optimised and minified.
+*sema-engine* uses Github Actions workflows for build automation and continuous integration. The development builds propagate source maps (.map files)—so you can have modern debugging features like using breakpoints in the context of the client application. The production build ships all formats optimised and minified.
 
 
 ## Usage
@@ -30,7 +30,7 @@ The *sema-engine* is published in the Node Package Manager (NPM) registry. If yo
 npm install sema-engine
 ```
 
-Check how *sema-engine* is used in [Sema](https://github.com/mimic-sussex/sema), a full-fledged application from which *sema-engine* was extracted.
+For an advanced use, check how *sema-engine* is integrated in [Sema](https://github.com/mimic-sussex/sema), a full-fledged application from which *sema-engine* was extracted.
 
 
 You can use also use the *sema-engine* library modules in an a HTML file using inline `<script>` tags (check the published [example](https://frantic0.github.io/sema-engine/) which is output by the development build).
@@ -89,8 +89,8 @@ You can use also use the *sema-engine* library modules in an a HTML file using i
 Note the following:
 
 * the script tag for the main module `sema-engine.mjs` has `type = module`
-* when initialising *sema-engine*, you need to pass the `audioWorkletURL` URL which points to where package dependencies – maxi-processor.js, maximilian.wasmmodule.js and maximilian.transpile.js (check the `dist/` folder) – should be served.
-*
+* when initialising *sema-engine*, you need to pass the `audioWorkletURL` URL which points to where package dependencies – maxi-processor.js and maximilian.wasmmodule.js (check the `dist/` folder) – should be served.
+
 
 
 ## Build
