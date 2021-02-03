@@ -59,27 +59,19 @@ export class Engine {
 	/**
 	 * Handler of the Pub/Sub message events
 	 * whose topics are subscribed to in the audio engine constructor
-	 * @postAsyncMessageToProcessor
+	 * @asyncPostToProcessor
 	 * @param {*} event
 	 */
-	postAsyncMessageToProcessor(event) {
-		if (event !== undefined) {
+	asyncPostToProcessor(event) {
+		if ( event && this.audioWorkletNode && this.audioWorkletNode.port ){
 			// Receive notification from 'model-output-data' topic
 			console.log("DEBUG:AudioEngine:onMessagingEventHandler:");
 			console.log(event);
 			this.audioWorkletNode.port.postMessage(event);
 		}
+    else throw new Error("Error posting to processor")
 	}
 
-	/**
-	 * @pushToSharedArrayBuffers
-	 * @param {*} event
-	 */
-	pushToSharedArrayBuffer(sabName, event) {
-		if (this.sharedArrayBuffers[sabName]) {
-			this.sharedArrayBuffers[sabName].rb.push(event);
-		}
-	}
 
 	/**
 	 * Create a shared array buffer for communicating with the audio engine
@@ -87,7 +79,7 @@ export class Engine {
 	 * @param ttype
 	 * @param blocksize
 	 */
-	createSharedArrayBuffer(channelId, ttype, blocksize) {
+	createSharedBuffer(channelId, ttype, blocksize) {
 		let sab = RingBuffer.getStorageForCapacity(32 * blocksize, Float64Array);
 		let ringbuf = new RingBuffer(sab, Float64Array);
 
@@ -113,7 +105,7 @@ export class Engine {
    * @param {*} e
    * @param {*} channelId
    */
-  pushDataToSharedArrayBuffer(e, channelId) {
+  pushToSharedBuffer(e, channelId) {
     if (this.sharedArrayBuffers && this.sharedArrayBuffers[channelId]) {
       this.sharedArrayBuffers[channelId].rb.push(e);
     }
@@ -407,6 +399,11 @@ export class Engine {
 					this.audioContext,
 					this.audioWorkletName
 				);
+
+        this.audioWorkletNode.channelInterpretation = "discrete";
+        this.audioWorkletNode.channelCountMode = "explicit";
+        this.audioWorkletNode.channelCount = this.audioContext.destination.maxChannelCount;
+
 				return true;
 			} catch (err) {
 				console.error(

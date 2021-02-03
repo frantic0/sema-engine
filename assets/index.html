@@ -67,7 +67,7 @@
     <button id="loadSamplesButton">Load Samples</button>
     <button id="evalButton">Eval</button>
     <button id="createAnalyserButton">Analyser++</button>
-    <button id="testWorker">Test Worker</button>
+    <button id="learnerButton">Create Learner</button>
     <span id="outputText"></span>
   </div>
 
@@ -76,7 +76,7 @@
     import {
       Engine,
       compile,
-      createLearner
+      Learner
     } from "./sema-engine.mjs";
 
     let engine,
@@ -86,7 +86,7 @@
         livecodeParseErrors,
         livecodeParseTree,
         dspCode,
-        worker
+        learner
         ;
 
     const $ = (elemId, callback) =>
@@ -123,15 +123,16 @@
     $("createAnalyserButton", () => engine.createAnalyser(analyser++, data => console.log(data)) );
 
 
-    $("testWorker", () => {
+    $("learnerButton", () => {
 
       const channelId = "mxy",
       ttype = "mouseXY",
       blockSize = 2;
 
-      let sab = engine.createSharedArrayBuffer(channelId, ttype, blockSize);
+      let sab = engine.createSharedBuffer(channelId, ttype, blockSize);
 
-      worker = createLearner(document.location.origin, sab);
+      learner = new Learner();
+      learner.init(document.location.origin);
 
 
       let onMouseMove = e => {
@@ -140,7 +141,7 @@
         const y = parseFloat(e.offsetY/window.innerHeight).toFixed(5);
         document.getElementById('outputText').innerText = `${x} ${y}`;
 
-        engine.pushDataToSharedArrayBuffer({ x, y }, channelId);
+        engine.pushToSharedBuffer({ x, y }, channelId);
 
         worker.postMessage({
           data: 'test'

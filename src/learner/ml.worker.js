@@ -17,7 +17,8 @@ import RingBuffer from "../common/ringbuf.js";
 
 
 
-let a = tf.tensor([100]);
+// let a = tf.tensor([100]);
+
 var geval = eval; // puts eval into global scope https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/eval
 geval("var input = (value, channel) => {}");
 geval("var output = (value,channel) => {postMessage({func:'data', val:value, ch:channel});}");
@@ -177,16 +178,16 @@ onmessage = m => {
     importScripts(m.data.url + "/svd.js");
   }
 
-  if (m.data.eval !== undefined) {
+  if (m.data.eval) {
     try {
       let evalRes = geval(m.data.eval);
-      // if (evalRes != undefined) { //you need to see when things are undefined
-        console.log(evalRes);
-      // } else
-        // console.log("done");
+
+      console.log("DEBUG:ml.worker:geval");
+      console.log(evalRes);
     } catch (e) {
-      console.log(`Code eval exception: ${e} `, m.data.eval);
+      console.error(`ERROR:ml.worker:geval exception: ${e} `, m.data.eval);
     }
+
   } else if ("val" in m.data) {
     // console.log("DEBUG:ml.worker:onmessage:val");
     let val = m.data.val;
@@ -196,21 +197,31 @@ onmessage = m => {
     // console.log(loadResponders);
     loadResponders[m.data.name](val);
     delete loadResponders[m.data.name];
+
   } else if (m.data.type === "model-input-data") {
+
     input(m.data.value, m.data.ch);
+
   } else if (m.data.type === "model-input-buffer") {
+
     console.log("buf received", m);
+
     let sab = m.data.value;
     let rb = new RingBuffer(sab, Float64Array);
+
     inputSABs[m.data.channelID] = {
       sab: sab,
       rb: rb,
       blocksize: m.data.blocksize
     };
+
     console.log("ML", inputSABs);
+
   }
   else if (m.data.sab) {
+
     console.log("buf received", m);
+
     let sab = m.data.sab;
     let rb = new RingBuffer(sab, Float64Array);
     inputSABs[m.data.channelID] = {
@@ -220,14 +231,6 @@ onmessage = m => {
     };
     console.log("ML", inputSABs);
   }
-  // else if(m.data.type === "model-output-data-request"){
-  // 	postMessage({
-  // 		func: "data",
-  // 		worker: "testmodel",
-  // 		value: output(m.data.value),
-  // 		tranducerName: m.data.transducerName
-  // 	});
-  // }
 };
 
 function sabChecker() {
