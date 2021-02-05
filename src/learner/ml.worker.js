@@ -1,16 +1,11 @@
 "use strict";
 // import * as tf from "@tensorflow/tfjs";  // Can not use it this way, only through import scripts
-// importScripts("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs");
-importScripts("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs/dist/tf.min.js");
+importScripts("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs");
+importScripts("http://localhost:9002/svd.js");
+importScripts("http://localhost:9002/lalolib.js");
+importScripts("http://localhost:9002/mlworkerscripts.js");
 
-// import * as tf from "@tensorflow/tfjs";  // Can not use it this way, only through import scripts
-// import RingBuffer from "../common/ringbuf.js";
-// importScripts("http://mlweb.loria.fr/lalolib-module.min.js");
-// importScripts("lalolib.js");
-// importScripts("svd.js");
-// importScripts("ringbuf.js");
-
-
+// importScripts("./ringbuf.js");
 //importScripts("https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.15/lodash.js");
 // import "./magenta/magentamusic.js";
 
@@ -18,13 +13,9 @@ importScripts("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs/dist/tf.min.js");
 
 
 // let a = tf.tensor([100]);
-
 var geval = eval; // puts eval into global scope https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/eval
 geval("var input = (value, channel) => {}");
 geval("var output = (value,channel) => {postMessage({func:'data', val:value, ch:channel});}");
-
-
-
 geval(`
 
 var outputSABs = {};
@@ -76,10 +67,6 @@ class MLSABOutputTransducer {
 var createOutputChannel = (id, blocksize) => {
   return new MLSABOutputTransducer('ML', id, blocksize);
 };
-`);
-
-
-geval(`
 var loadResponders = {};
 var inputSABs={};
 var sema = {
@@ -175,85 +162,27 @@ var sema = {
 };
 `);
 
-/*
-var outputSABs = {};
-class MLSABOutputTransducer {
-	constructor(bufferType, channel, blocksize) {
-		this.channel = channel;
-		this.blocksize = blocksize;
-
-		//check for existing channels
-		if (channel in outputSABs && outputSABs[channel].blocksize == blocksize) {
-			//reuse existing
-			this.ringbuf = outputSABs[channel].rb;
-		} else {
-			//create a new SAB and notify the receiver
-			this.sab = RingBuffer.getStorageForCapacity(32 * blocksize, Float64Array);
-			this.ringbuf = new RingBuffer(this.sab, Float64Array);
-			outputSABs[channel] = {
-				rb: this.ringbuf,
-				sab: this.sab,
-				created: Date.now(),
-				blocksize: blocksize,
-			};
-
-			postMessage({
-				func: "sab",
-				value: this.sab,
-				ttype: bufferType,
-				channelID: channel,
-				blocksize: blocksize,
-			});
-		}
-	}
-
-	send(value) {
-		if (this.ringbuf.available_write() > 1) {
-			if (typeof value == "number") {
-				this.ringbuf.push(new Float64Array([value]));
-			} else {
-				if (value.length == this.blocksize) {
-					this.ringbuf.push(value);
-				} else if (value.length < this.blocksize) {
-					let newVal = new Float64Array(this.blocksize);
-					for (let i in value) newVal[i] = value[i];
-					this.ringbuf.push(newVal);
-				} else {
-					this.ringbuf.push(value.slice(0, this.blocksize));
-				}
-			}
-		}
-	}
-}
-
-var createOutputChannel = (id, blocksize) => {
-	return new MLSABOutputTransducer("ML", id, blocksize);
-};
-*/
-
+console.log('init worker, worker side')
 
 onmessage = m => {
-  console.log("DEBUG:ml.worker:onmessage");
-	console.log(m);
 
-  // Init message only
-  if(m.data.url){
-    importScripts(m.data.url + "/lalolib.js");
-    importScripts(m.data.url + "/svd.js");
-    console.log('import lalo and svd');
-  }
+  // console.log('DEBUG:ml.worker:onmessage');
+  // console.log(m);
 
-  if (m.data.eval) {
+  if (m.data.eval !== undefined) {
+
     try {
       let evalRes = geval(m.data.eval);
-
-      console.log("DEBUG:ml.worker:geval");
-      console.log(evalRes);
+      // if (evalRes != undefined) { //you need to see when things are undefined
+        console.log(evalRes);
+      // } else
+        // console.log("done");
     } catch (e) {
-      console.error(`ERROR:ml.worker:geval exception: ${e} `, m.data.eval);
+      console.log(`Code eval exception: ${e} `, m.data.eval);
     }
 
   } else if ("val" in m.data) {
+
     // console.log("DEBUG:ml.worker:onmessage:val");
     let val = m.data.val;
     // console.log(val);
@@ -270,25 +199,8 @@ onmessage = m => {
   } else if (m.data.type === "model-input-buffer") {
 
     console.log("buf received", m);
-
     let sab = m.data.value;
     let rb = new RingBuffer(sab, Float64Array);
-
-    inputSABs[m.data.channelID] = {
-      sab: sab,
-      rb: rb,
-      blocksize: m.data.blocksize
-    };
-
-    console.log("ML", inputSABs);
-
-  }
-  else if (m.data.sab) {
-
-    console.log("buf received", m);
-
-    let sab = m.data.sab;
-    let rb = new RingBuffer(sab, Float64Array);
     inputSABs[m.data.channelID] = {
       sab: sab,
       rb: rb,
@@ -296,6 +208,14 @@ onmessage = m => {
     };
     console.log("ML", inputSABs);
   }
+  // else if(m.data.type === "model-output-data-request"){
+  // 	postMessage({
+  // 		func: "data",
+  // 		worker: "testmodel",
+  // 		value: output(m.data.value),
+  // 		tranducerName: m.data.transducerName
+  // 	});
+  // }
 };
 
 function sabChecker() {

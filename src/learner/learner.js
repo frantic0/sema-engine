@@ -1,6 +1,6 @@
 // here we use the default pattern but any RegEx can be configured
-import mlworker from 'web-worker:./mlworker.js';
-// import mlworker from 'web-worker:./ml.worker.js';
+// import mlworker from 'web-worker:./mlworker.js';
+import mlworker from 'web-worker:./worker.js';
 import * as Comlink from "../../node_modules/comlink/dist/esm/comlink.mjs";
 
 export class Learner {
@@ -13,13 +13,14 @@ export class Learner {
 		// const worker = new mlworker({ type: "module" });
 	}
 
-	// /**
-	//  * Initialises worker with origin URL
-	//  * @param {*} url
-	//  * @param {*} sab
-	//  */
+	/**
+	 * Initialises worker with origin URL
+	 * @param {*} url
+	 * @param {*} sab
+	 */
 	// init(url) {
 	// 	this.worker = new mlworker();
+	//   console.log('init worker')
 	// 	this.worker.onmessage = this.onMessageHandler;
 	// 	this.worker.onerror = this.onErrorHandler;
 
@@ -28,32 +29,31 @@ export class Learner {
 	// 	}
 	// }
 
-	async init(url) {
-		// WebWorkers use `postMessage` and therefore work with Comlink.
-		const MLWorker = Comlink.wrap(new mlworker());
-		this.worker = await new MLWorker(url);
-
-		if (this.worker && new URL(url)) {
-			await this.worker.loadScripts(url);
-			return true;
-		}
-		// alert(`Counter: ${await obj.counter}`);
-		// await obj.inc();
-		// alert(`Counter: ${await obj.counter}`);
-	}
-
 	/**
-	 *
+	 * Initialises worker with origin URL
+	 * @param {*} url
+	 * @param {*} sab
 	 */
-	eval(expression) {
-		this.worker.eval(expression);
-		// this.worker.postMessage({ eval: expression });
-		//console.log("DEBUG:ModelEditor:evalModelEditorExpression: " + code);
-		// window.localStorage.setItem("modelEditorValue", codeMirror.getValue());
-		// addToHistory("model-history-", modelCode);
+	async init(url) {
+
+    this.worker = new mlworker();
+
+		return new Promise( (resolve, reject) => {
+			let result = {};
+
+			if (this.worker && new URL(url)) {
+				this.worker.postMessage({ url });
+				this.worker.onerror = this.onErrorHandler;
+				this.worker.onmessage = (e) => {
+					result = e.data;
+          resolve(result);
+				};
+			}
+		});
 	}
 
 	onMessageHandler = (e) => {
+
 		e.data.isI;
 		console.log("onMsg");
 		console.log(e);
@@ -63,6 +63,28 @@ export class Learner {
 		console.log("onError");
 		console.log(e);
 	};
+
+	// async init(url) {
+	// 	// WebWorkers use `postMessage` and therefore work with Comlink.
+	// 	const MLWorker = Comlink.wrap(new mlworker());
+	// 	this.worker = await new MLWorker(url);
+
+	// 	if (this.worker && new URL(url)) {
+	// 		await this.worker.loadScripts(url);
+	// 		return true;
+	// 	}
+	// }
+
+	/**
+	 *
+	 */
+	eval(expression) {
+		// this.worker.eval(expression);
+		this.worker.postMessage({ eval: expression });
+		//console.log("DEBUG:ModelEditor:evalModelEditorExpression: " + code);
+		// window.localStorage.setItem("modelEditorValue", codeMirror.getValue());
+		// addToHistory("model-history-", modelCode);
+	}
 
 	/**
 	 *

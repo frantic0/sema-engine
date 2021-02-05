@@ -126,11 +126,11 @@
     $("learnerButton", async () => {
 
       learner = new Learner();
-      await learner.init(document.location.origin);
+      let learnerSABOut = await learner.init(document.location.origin);
       // let learnerOut = learner.eval(editorJS.getValue());
-      let learnerOut = learner.eval('var channel0 = createOutputChannel(0, 1)');
+      // let learnerSABOut = learner.eval('var channel0 = createOutputChannel(0, 1)');
       console.log('Learner out:');
-      console.log(learnerOut);
+      console.log(learnerSABOut);
 
     });
 
