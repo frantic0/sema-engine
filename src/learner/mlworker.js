@@ -1,10 +1,12 @@
 "use strict";
 // import * as tf from "@tensorflow/tfjs";  // Can not use it this way, only through import scripts
 // importScripts("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs");
-importScripts("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs/dist/tf.min.js");
+// importScripts("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs/dist/tf.min.js");
+
+import * as Comlink from "../../node_modules/comlink/dist/esm/comlink.mjs";
 
 // import * as tf from "@tensorflow/tfjs";  // Can not use it this way, only through import scripts
-// import RingBuffer from "../common/ringbuf.js";
+import RingBuffer from "../common/ringbuf.js";
 // importScripts("http://mlweb.loria.fr/lalolib-module.min.js");
 // importScripts("lalolib.js");
 // importScripts("svd.js");
@@ -14,8 +16,104 @@ importScripts("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs/dist/tf.min.js");
 //importScripts("https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.15/lodash.js");
 // import "./magenta/magentamusic.js";
 
+/*
+class MLSABOutputTransducer {
+	constructor(bufferType, channel, blocksize) {
+		this.channel = channel;
+		this.blocksize = blocksize;
+
+		//check for existing channels
+		if (channel in outputSABs && outputSABs[channel].blocksize == blocksize) {
+			//reuse existing
+			this.ringbuf = outputSABs[channel].rb;
+		} else {
+			//create a new SAB and notify the receiver
+			this.sab = RingBuffer.getStorageForCapacity(32 * blocksize, Float64Array);
+			this.ringbuf = new RingBuffer(this.sab, Float64Array);
+			outputSABs[channel] = {
+				rb: this.ringbuf,
+				sab: this.sab,
+				created: Date.now(),
+				blocksize: blocksize,
+			};
+
+			postMessage({
+				func: "sab",
+				value: this.sab,
+				ttype: bufferType,
+				channelID: channel,
+				blocksize: blocksize,
+			});
+		}
+	}
+
+	send(value) {
+		if (this.ringbuf.available_write() > 1) {
+			if (typeof value == "number") {
+				this.ringbuf.push(new Float64Array([value]));
+			} else {
+				if (value.length == this.blocksize) {
+					this.ringbuf.push(value);
+				} else if (value.length < this.blocksize) {
+					let newVal = new Float64Array(this.blocksize);
+					for (let i in value) newVal[i] = value[i];
+					this.ringbuf.push(newVal);
+				} else {
+					this.ringbuf.push(value.slice(0, this.blocksize));
+				}
+			}
+		}
+	}
+}
+
+var createOutputChannel = (id, blocksize) => {
+	return new MLSABOutputTransducer("ML", id, blocksize);
+};
+*/
+class MLWorker {
+	constructor(url) {
+		importScripts(url + "/lalolib.js");
+		importScripts(url + "/svd.js");
+		importScripts(url + "/ringbuf.js");
+		importScripts(
+			"https://cdn.jsdelivr.net/npm/@tensorflow/tfjs/dist/tf.min.js"
+		);
+		var geval = eval();
+		this.initialised = false;
+		console.log('init ML worker');
+	}
+
+	get isInitialised() {
+		return this.initialised;
+	}
+
+  eval(expression){
+    try{
+			let evalRes = geval(expression);
+		}catch(err){
+      console.error('ERROR:eval:', err)
+
+    }
+  }
+
+	// createOutputChannel = (id, blocksize) => {
+	// 	return new MLSABOutputTransducer("ML", id, blocksize);
+	// };
+
+	loadScripts(url) {
+		// url validated in the proxy
+		// importScripts execute synch
+		// importScripts(url + "/lalolib.js");
+		// importScripts(url + "/svd.js");
+		// importScripts(
+		// 	"https://cdn.jsdelivr.net/npm/@tensorflow/tfjs/dist/tf.min.js"
+		// );
+		this.initialised = true;
+	}
+}
 
 
+Comlink.expose(MLWorker);
 
 // let a = tf.tensor([100]);
 

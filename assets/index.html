@@ -68,6 +68,7 @@
     <button id="evalButton">Eval</button>
     <button id="createAnalyserButton">Analyser++</button>
     <button id="learnerButton">Create Learner</button>
+    <button id="mouseButton">Mouse input</button>
     <span id="outputText"></span>
   </div>
 
@@ -122,18 +123,26 @@
 
     $("createAnalyserButton", () => engine.createAnalyser(analyser++, data => console.log(data)) );
 
+    $("learnerButton", async () => {
 
-    $("learnerButton", () => {
+      learner = new Learner();
+      await learner.init(document.location.origin);
+      // let learnerOut = learner.eval(editorJS.getValue());
+      let learnerOut = learner.eval('var channel0 = createOutputChannel(0, 1)');
+      console.log('Learner out:');
+      console.log(learnerOut);
+
+    });
+
+    $("mouseButton", () => {
 
       const channelId = "mxy",
       ttype = "mouseXY",
       blockSize = 2;
 
       let sab = engine.createSharedBuffer(channelId, ttype, blockSize);
-
-      learner = new Learner();
-      learner.init(document.location.origin);
-
+      if(learner && sab)
+        learner.pushInputBuffer(sab);
 
       let onMouseMove = e => {
 
@@ -143,9 +152,9 @@
 
         engine.pushToSharedBuffer({ x, y }, channelId);
 
-        worker.postMessage({
-          data: 'test'
-        });
+        // learner.postMessage({
+        //   data: 'test'
+        // });
       }
 
       // Subscribe `Alt`-key down event to subscribe mouse move
