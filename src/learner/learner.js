@@ -35,10 +35,9 @@ export class Learner {
 	 * @param {*} sab
 	 */
 	async init(url) {
+		this.worker = new mlworker();
 
-    this.worker = new mlworker();
-
-		return new Promise( (resolve, reject) => {
+		return new Promise((resolve, reject) => {
 			let result = {};
 
 			if (this.worker && new URL(url)) {
@@ -46,15 +45,15 @@ export class Learner {
 				this.worker.onerror = this.onErrorHandler;
 				this.worker.onmessage = (e) => {
 					result = e.data;
-          resolve(result);
+					resolve(result);
+					this.worker.onmessage = this.onMessageHandler;
 				};
 			}
 		});
 	}
 
 	onMessageHandler = (e) => {
-
-		e.data.isI;
+		if (e.data);
 		console.log("onMsg");
 		console.log(e);
 	};
@@ -79,13 +78,18 @@ export class Learner {
 	 *
 	 */
 	eval(expression) {
-		// this.worker.eval(expression);
-		this.worker.postMessage({ eval: expression });
+    if(this.worker && expression)
+	  	this.worker.postMessage({ eval: expression });
 		//console.log("DEBUG:ModelEditor:evalModelEditorExpression: " + code);
 		// window.localStorage.setItem("modelEditorValue", codeMirror.getValue());
 		// addToHistory("model-history-", modelCode);
 	}
 
+	pushInputBuffer(sab, blocksize, channelID){
+    if (this.worker && sab && blocksize && channelID) {
+			this.worker.postMessage({ sab, blocksize, channelID });
+		}
+  }
 	/**
 	 *
 	 */

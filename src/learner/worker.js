@@ -175,11 +175,11 @@ onmessage = m => {
       importScripts(m.data.url + "/svd.js");
       importScripts(m.data.url + "/mlworkerscripts.js");
       importScripts(
-            "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs/dist/tf.min.js"
+        "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs/dist/tf.min.js"
       );
       gevalAll();
       sabChecker();
-      console.log('DEBUG: importScripts, gevalAll and sabChecker succeeded');
+      console.log('DEBUG:worker: importScripts, gevalAll and sabChecker succeeded');
     }
     catch(err){
       console.error("ERROR: on importScripts, gevalAll and sabChecker");
@@ -190,7 +190,7 @@ onmessage = m => {
     try {
       let evalRes = geval(m.data.eval);
 
-      console.log("DEBUG:ml.worker:geval");
+      console.log("DEBUG:worker:geval");
       console.log(evalRes);
     } catch (e) {
       console.error(`ERROR:ml.worker:geval exception: ${e} `, m.data.eval);
@@ -210,16 +210,17 @@ onmessage = m => {
 
     input(m.data.value, m.data.ch);
 
-  } else if (m.data.type === "model-input-buffer") {
+  // } else if (m.data.type === "model-input-buffer") {
+  } else if (m.data.sab){
 
-    console.log("buf received", m);
+    console.log("DEBUG: SAB received", m);
 
-    let sab = m.data.value;
+    let sab = m.data.sab;
     let rb = new RingBuffer(sab, Float64Array);
 
     inputSABs[m.data.channelID] = {
-      sab: sab,
-      rb: rb,
+      sab,
+      rb,
       blocksize: m.data.blocksize
     };
 

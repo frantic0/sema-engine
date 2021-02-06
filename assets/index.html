@@ -126,11 +126,11 @@
     $("learnerButton", async () => {
 
       learner = new Learner();
-      let learnerSABOut = await learner.init(document.location.origin);
+      let sharedBuffer = await learner.init(document.location.origin);
       // let learnerOut = learner.eval(editorJS.getValue());
       // let learnerSABOut = learner.eval('var channel0 = createOutputChannel(0, 1)');
       console.log('Learner out:');
-      console.log(learnerSABOut);
+      console.log(sharedBuffer);
 
     });
 
@@ -142,7 +142,7 @@
 
       let sab = engine.createSharedBuffer(channelId, ttype, blockSize);
       if(learner && sab)
-        learner.pushInputBuffer(sab);
+        learner.pushInputBuffer(sab, blockSize, channelId);
 
       let onMouseMove = e => {
 
