@@ -18,22 +18,6 @@ export class Learner {
 	 * @param {*} url
 	 * @param {*} sab
 	 */
-	// init(url) {
-	// 	this.worker = new mlworker();
-	//   console.log('init worker')
-	// 	this.worker.onmessage = this.onMessageHandler;
-	// 	this.worker.onerror = this.onErrorHandler;
-
-	//   if (this.worker && new URL(url)) {
-	// 		this.worker.postMessage({ url });
-	// 	}
-	// }
-
-	/**
-	 * Initialises worker with origin URL
-	 * @param {*} url
-	 * @param {*} sab
-	 */
 	async init(url) {
 		this.worker = new mlworker();
 
@@ -63,18 +47,7 @@ export class Learner {
 		console.log(e);
 	};
 
-	// async init(url) {
-	// 	// WebWorkers use `postMessage` and therefore work with Comlink.
-	// 	const MLWorker = Comlink.wrap(new mlworker());
-	// 	this.worker = await new MLWorker(url);
-
-	// 	if (this.worker && new URL(url)) {
-	// 		await this.worker.loadScripts(url);
-	// 		return true;
-	// 	}
-	// }
-
-	/**
+  /**
 	 *
 	 */
 	eval(expression) {
@@ -85,15 +58,17 @@ export class Learner {
 		// addToHistory("model-history-", modelCode);
 	}
 
+  /**
+   *
+   * @param {*} sab
+   * @param {*} blocksize
+   * @param {*} channelID
+   */
 	pushInputBuffer(sab, blocksize, channelID){
     if (this.worker && sab && blocksize && channelID) {
 			this.worker.postMessage({ sab, blocksize, channelID });
 		}
   }
-	/**
-	 *
-	 */
-	createOutputChannel() {}
 
 	evalBlock(block) {
 		// let modelCode = codeMirror.getBlock();
