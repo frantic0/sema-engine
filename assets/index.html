@@ -51,7 +51,7 @@
 
   <div class="flex-container">
     <div class="editor-container">
-      <span class="editor-header">Live Code Editor</span>
+      <span class="editor-header">Livecode Editor</span>
       <textarea id="textArea-livecode"></textarea>
     </div>
     <div class="editor-container">
@@ -70,6 +70,12 @@
     <button id="learnerButton">Create Learner</button>
     <button id="mouseButton">Mouse input</button>
     <span id="outputText"></span>
+  </div>
+  <div class="flex-container">
+    <div class="editor-container">
+      <span class="editor-header">JS Editor</span>
+      <textarea id="textArea-js"></textarea>
+    </div>
   </div>
 
   <script type="module">
@@ -99,6 +105,7 @@
       engine = new Engine();
       engine.init("maxi-processor", audioWorkletURL);
       // engine.init("bypass", audioWorkletURL);
+      engine.subscribeAsyncMessage
       engine.play();
     });
     $("stopButton", () => engine.stop());
@@ -115,11 +122,8 @@
     $("evalButton", () => {
       try{
         const { errors, dspCode } = compile(editorGrammar.getValue(), editorLivecode.getValue());
-        if(dspCode && engine){
-
+        if(dspCode && engine)
           engine.eval(dspCode);
-
-        }
       } catch (err) {
         console.error("ERROR: Failed to compile and eval: ", err);
       }
@@ -136,16 +140,10 @@
         learner.pushInputBuffer(sab, blockSize, channelId);
 
       let onMouseMove = e => {
-
         const x = parseFloat(e.offsetX/window.innerWidth).toFixed(5);
         const y = parseFloat(e.offsetY/window.innerHeight).toFixed(5);
         document.getElementById('outputText').innerText = `${x} ${y}`;
-
-        engine.pushToSharedBuffer({ x, y }, channelId);
-
-        // learner.postMessage({
-        //   data: 'test'
-        // });
+        engine.pushDataToSharedBuffer({ x, y }, channelId);
       }
 
       // Subscribe `Alt`-key down event to subscribe mouse move
@@ -166,29 +164,16 @@
     $("learnerButton", async () => {
 
       learner = new Learner();
-
       // refactor addSharedBufferHandler to allow multiple handlers
       // learner to onSharedBuffer
+      if(engine){
+        engine.onSharedBuffer = e => learner.createSharedBuffer(e); // Engine's SAB emissions subscribed by Learner
+        learner.onSharedBuffer = e => engine.pushSharedBuffer(e);  // Learner's SAB emissions subscribed by Engine
+      }
 
-      // Learner subscribes Engine's SAB emissions
-      engine.onSharedBuffer = e => learner.createSharedBuffer(e);
-
-      // Engine subscribes Learner's SAB emissions
-      learner.onSharedBuffer = e => engine.pushSharedBuffer(e);
-
-      const isInitialized = await learner.init(document.location.origin);
-
-      // TODO
-      // Separate the return of a buffer from init
-      // apply a subscription pattern to eval
-      // where engine subscribe learner
-      // let learnerOut = learner.eval(editorJS.getValue());
-
-      await learner.eval('var channel0 = createOutputChannel(0, 1)');
-      // console.log('Learner out:');
-      // console.log(sharedBuffer);
-
-
+      if( await learner.init(document.location.origin) ){
+        learner.eval('var channel0 = createOutputChannel(0, 1)');
+      }
     });
 
   </script>
@@ -203,7 +188,11 @@
       lineNumbers: true,
     });
 
-    fetch(document.location.origin + '/langs/default-1-lc.txt')
+    const editorJS = CodeMirror.fromTextArea(document.getElementById("textArea-js"), {
+      lineNumbers: true,
+    });
+
+    fetch(document.location.origin + '/langs/default-3-lc.txt')
       .then( response => response.text() )
       .then( data => editorLivecode.setValue(data) )
 

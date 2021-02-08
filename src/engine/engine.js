@@ -58,14 +58,12 @@ export class Engine {
 			sab;
 		};
 
-    this.queue = [];
+		this.queue = [];
 
 		this.samplesLoaded = false;
 	}
 
-	addEventListener(callback){
-
-  }
+	addEventListener(event, callback) {}
 
 	/**
 	 * Handler of the Pub/Sub message events
@@ -114,7 +112,7 @@ export class Engine {
 	 * @param {*} e
 	 */
 	pushSharedBuffer(e) {
-   	// let sab = RingBuffer.getStorageForCapacity(32 * blocksize, Float64Array);
+		// let sab = RingBuffer.getStorageForCapacity(32 * blocksize, Float64Array);
 		let ringbuf = new RingBuffer(e.value, Float64Array);
 
 		this.audioWorkletNode.port.postMessage({
@@ -137,7 +135,7 @@ export class Engine {
 	 * @param {*} e
 	 * @param {*} channelId
 	 */
-	pushToSharedBuffer(e, channelId) {
+	pushDataToSharedBuffer(e, channelId) {
 		if (this.sharedArrayBuffers && this.sharedArrayBuffers[channelId]) {
 			this.sharedArrayBuffers[channelId].rb.push(e);
 		}
@@ -454,25 +452,26 @@ export class Engine {
 				this.audioWorkletNode.connect(this.audioContext.destination);
 
 				// All possible error event handlers subscribed
-				this.audioWorkletNode.onprocessorerror = (event) => {
+				this.audioWorkletNode.onprocessorerror = (e) =>
 					// Errors from the processor
 					console.error(
 						`ERROR:Engine: maxi-processor 'onprocess' error detected`
 					);
-				};
-
-				this.audioWorkletNode.port.onmessageerror = (event) => {
-					//  error from the processor port
-					console.error(`ERROR:Engine: Error message from port: ` + event.data);
-				};
 
 				// State changes in the audio worklet processor
-				this.audioWorkletNode.onprocessorstatechange = (event) => {
+				this.audioWorkletNode.onprocessorstatechange = (e) =>
 					console.log(
 						`maxi-processor state change detected: ` +
 							audioWorkletNode.processorState
 					);
-				};
+
+				this.audioWorkletNode.port.onmessageerror = (e) =>
+					//  error from the processor port
+					console.error(`ERROR:Engine: Error message from port: ` + e.data);
+
+				// Worklet Processor message handler
+				this.audioWorkletNode.port.onmessage = (e) =>
+					this.onProcessorMessageHandler(e);
 			} catch (err) {
 				console.error(
 					"ERROR:Engine: Error connecting WorkletNode: ",
@@ -481,6 +480,11 @@ export class Engine {
 			}
 		}
 	}
+
+	onProcessorMessageHandler(event){
+
+
+  }
 
 	/**
 	 * Public method for subscribing async messaging from the Audio Worklet Processor scope
