@@ -472,6 +472,7 @@ export class Engine {
 				// Worklet Processor message handler
 				this.audioWorkletNode.port.onmessage = (e) =>
 					this.onProcessorMessageHandler(e);
+
 			} catch (err) {
 				console.error(
 					"ERROR:Engine: Error connecting WorkletNode: ",
@@ -482,8 +483,35 @@ export class Engine {
 	}
 
 	onProcessorMessageHandler(event){
-
-
+    if (event && event.data) {
+      if(event.data.rq && event.data.rq === "send"){
+        switch (event.data.ttype) {
+          case 'ML':
+            // this.messaging.publish("model-input-data", {
+            //   type: "model-input-data",
+            //   value: event.data.value,
+            //   ch: event.data.ch
+            // });
+            break;
+          case 'NET':
+            this.peerNet.send(event.data.ch[0], event.data.value, event.data.ch[1]);
+            break;
+        }
+      }
+      else if (event.data.rq && event.data.rq === "buf") {
+        switch (event.data.ttype) {
+          case 'ML':
+            this.onSharedBuffer({
+            // this.messaging.publish("model-input-buffer", {
+              type: "model-input-buffer",
+              value: event.data.value,
+              channelID: event.data.channelID, //channel ID
+              blocksize: event.data.blocksize
+            });
+            break;
+        }
+      }
+    }
   }
 
 	/**

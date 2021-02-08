@@ -171,7 +171,7 @@
         learner.onSharedBuffer = e => engine.pushSharedBuffer(e);  // Learner's SAB emissions subscribed by Engine
       }
 
-      if( await learner.init(document.location.origin) ){
+      if( await learner.init(document.location.origin) ){ // IF/WHEN Learner initializes
         learner.eval('var channel0 = createOutputChannel(0, 1)');
       }
     });
@@ -179,30 +179,49 @@
   </script>
   <script>
 
-    const editorLivecode = CodeMirror.fromTextArea(document.getElementById("textArea-livecode"), {
-      lineNumbers: true,
-      mode: "javascript"
-    });
+    const setupEditorWithContent = (elementId, contentFileRelativeURL) => {
 
-    const editorGrammar = CodeMirror.fromTextArea(document.getElementById("textArea-grammar"), {
-      lineNumbers: true,
-    });
+      const editor = CodeMirror.fromTextArea(document.getElementById(elementId), {
+        lineNumbers: true
+      });
 
-    const editorJS = CodeMirror.fromTextArea(document.getElementById("textArea-js"), {
-      lineNumbers: true,
-    });
+      fetch( document.location.origin + contentFileRelativeURL )
+        .then( response => response.text() )
+        .then( data => editor.setValue(data) )
 
-    fetch(document.location.origin + '/langs/default-3-lc.txt')
-      .then( response => response.text() )
-      .then( data => editorLivecode.setValue(data) )
+      return editor;
+    }
 
-    fetch(document.location.origin + '/langs/default-grammar.txt')
-      .then( response => response.text() )
-      .then( data => editorGrammar.setValue(data) );
+    const editorLivecode = setupEditorWithContent("textArea-livecode", '/langs/default-3-lc.txt');
+    const editorGrammar =  setupEditorWithContent("textArea-grammar",  '/langs/default-grammar.txt');
+    const editorJS =       setupEditorWithContent("textArea-js",       '/js/default-1-js.txt');
 
-    fetch(document.location.origin + '/js/default-1-js.txt')
-      .then( response => response.text() )
-      .then( data => editorJS.setValue(data) );
+
+
+    // const editorLivecode = CodeMirror.fromTextArea(document.getElementById("textArea-livecode"), {
+    //   lineNumbers: true,
+    //   mode: "javascript"
+    // });
+
+    // const editorGrammar = CodeMirror.fromTextArea(document.getElementById("textArea-grammar"), {
+    //   lineNumbers: true,
+    // });
+
+    // const editorJS = CodeMirror.fromTextArea(document.getElementById("textArea-js"), {
+    //   lineNumbers: true,
+    // });
+
+    // fetch(document.location.origin + '/langs/default-3-lc.txt')
+    //   .then( response => response.text() )
+    //   .then( data => editorLivecode.setValue(data) )
+
+    // fetch(document.location.origin + '/langs/default-grammar.txt')
+    //   .then( response => response.text() )
+    //   .then( data => editorGrammar.setValue(data) );
+
+    // fetch(document.location.origin + '/js/default-1-js.txt')
+    //   .then( response => response.text() )
+    //   .then( data => editorJS.setValue(data) );
 
   </script>
 </body>

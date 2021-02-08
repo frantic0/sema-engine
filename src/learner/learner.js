@@ -74,8 +74,8 @@ export class Learner {
 	 * @param {*} channelID
 	 */
 	createSharedBuffer(e) {
-		if (this.worker && e.sab && e.blocksize && e.channelID) {
-			this.worker.postMessage({ sab, blocksize, channelID });
+		if (this.worker && e.value && e.blocksize && e.channelID) {
+			this.worker.postMessage({ sab: e.value, blocksize, channelID });
 		}
 	}
 

@@ -1,7 +1,8 @@
 import Maximilian from './maximilian.wasmmodule.js';
 import RingBuffer from "./ringbuf.js"; //thanks padenot
 import Open303 from './open303.wasmmodule.js';
-
+import { SABInputTransducer, SABOutputTransducer } from './transducers.js';
+// import SABOutputTransducer from './SABOutputTransducer.js';
 
 // import {PostMsgTransducer} from './transducer.js'
 // import {
@@ -143,6 +144,7 @@ class mfcc {
 var inputSABs = {};
 var outputSABs = {};
 
+/*
 class SABOutputTransducer {
 
   constructor(port, bufferType, channel, now, blocksize) {
@@ -225,6 +227,7 @@ class SABInputTransducer {
   }
 
 }
+*/
 
 
 class poll {
@@ -300,9 +303,9 @@ class MaxiProcessor extends AudioWorkletProcessor {
 		};
 		this.codeSwapState = this.codeSwapStates.NONE;
 
-		this.port.onmessage = this.onAudioWorkletNodeMessageEventHandler;
+		this.port.onmessage = this.onMessageHandler;
 
-		this.port.postMessage("giveMeSomeSamples");
+		// this.port.postMessage("giveMeSomeSamples");
 
 		// CLOCK VARIABLES
 
@@ -470,7 +473,7 @@ class MaxiProcessor extends AudioWorkletProcessor {
 	/**
 	 * Writes the resulting computed signal from each component in the heap (mems)
 	 * to each DAC's channel
-   *
+	 *
 	 * * this is dynamically invoked from the LOOP function upon EVAL
 	 */
 	dacOutAll = (x) => {
@@ -521,11 +524,11 @@ class MaxiProcessor extends AudioWorkletProcessor {
 	};
 
 	/**
-	 * @onAudioWorkletNodeMessageEventHandler
+	 * @onMessageHandler
 	 * * message port async handler
 	 * @param {*} event
 	 */
-	onAudioWorkletNodeMessageEventHandler = (event) => {
+	onMessageHandler = (event) => {
 		if ("address" in event.data) {
 			//this must be an OSC message
 			this.OSCMessages[event.data.address] = event.data.args;
@@ -543,6 +546,7 @@ class MaxiProcessor extends AudioWorkletProcessor {
 			//   }
 		} else if ("func" in event.data && "sab" == event.data.func) {
 			console.log("buf received", event.data);
+
 			let sab = event.data.value;
 			let rb = new RingBuffer(sab, Float64Array);
 
@@ -553,6 +557,7 @@ class MaxiProcessor extends AudioWorkletProcessor {
 				value:
 					event.data.blocksize > 1 ? new Float64Array(event.data.blocksize) : 0,
 			};
+
 			//TEMP DEPR.ECATED
 			// } else if ('peermsg' in event.data) {
 			//   console.log('peer', event);
@@ -587,7 +592,7 @@ class MaxiProcessor extends AudioWorkletProcessor {
 
 				this.nextSignalFunction = 1 - this.currentSignalFunction;
 
-        // setup function with the  types
+				// setup function with the  types
 				this._q[this.nextSignalFunction] = setupFunction();
 				//allow feedback between evals
 				this._mems[this.nextSignalFunction] = this._mems[
@@ -656,8 +661,7 @@ class MaxiProcessor extends AudioWorkletProcessor {
 	 * @param {*} parameters
 	 */
 	process(inputs, outputs, parameters) {
-
-    if (!this.DACInitialised) {
+		if (!this.DACInitialised) {
 			this.initialiseDAC(sampleRate, outputs[0].length, 512);
 		}
 
@@ -795,9 +799,6 @@ class MaxiProcessor extends AudioWorkletProcessor {
 				this._cleanup[oldIdx] = 1;
 			}
 		}
-
-
-
 
 		return true;
 	}

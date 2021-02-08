@@ -68,6 +68,11 @@ export default [
 									dest: ["dist"],
 								},
 								{
+									// transducers is imported by Engine maxi-processor (AWP) so needs to be both bundled AND copied!
+									src: "src/engine/transducers.js",
+									dest: ["dist"],
+								},
+								{
 									src: "assets/*",
 									dest: "dist",
 								},
@@ -80,7 +85,7 @@ export default [
 									// svd is imported dynamically (importScripts) by the ml.worker, needs to be served in 'dist'
 									src: "src/learning/svd.js",
 									dest: ["dist"],
-								}
+								},
 							],
 						}),
 						serve({
