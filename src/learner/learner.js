@@ -11,6 +11,11 @@ export class Learner {
 	 */
 	constructor() {
 		// const worker = new mlworker({ type: "module" });
+
+    // Event emitter that should be subscribed by SAB receivers
+		this.onSharedBuffer = e => {
+			sab: e.data.sab
+		};
 	}
 
 	/**
@@ -23,21 +28,25 @@ export class Learner {
 
 		return new Promise((resolve, reject) => {
 			let result = {};
-
 			if (this.worker && new URL(url)) {
 				this.worker.postMessage({ url });
 				this.worker.onerror = this.onErrorHandler;
 				this.worker.onmessage = (e) => {
-					result = e.data;
-					resolve(result);
+          result = e.data.init;
+          resolve(result);
 					this.worker.onmessage = this.onMessageHandler;
 				};
 			}
 		});
 	}
 
-	onMessageHandler = (e) => {
+	onSharedBuffer = e => {
+		sab: e.data.sab
+	};
+
+	onMessageHandler = e => {
 		if (e.data);
+		this.onSharedBuffer(e.data);
 		console.log("onMsg");
 		console.log(e);
 	};
@@ -47,28 +56,28 @@ export class Learner {
 		console.log(e);
 	};
 
-  /**
+	/**
 	 *
 	 */
 	eval(expression) {
-    if(this.worker && expression)
-	  	this.worker.postMessage({ eval: expression });
+		if (this.worker && expression)
+			this.worker.postMessage({ eval: expression });
 		//console.log("DEBUG:ModelEditor:evalModelEditorExpression: " + code);
 		// window.localStorage.setItem("modelEditorValue", codeMirror.getValue());
 		// addToHistory("model-history-", modelCode);
 	}
 
-  /**
-   *
-   * @param {*} sab
-   * @param {*} blocksize
-   * @param {*} channelID
-   */
-	pushInputBuffer(sab, blocksize, channelID){
-    if (this.worker && sab && blocksize && channelID) {
+	/**
+	 *
+	 * @param {*} sab
+	 * @param {*} blocksize
+	 * @param {*} channelID
+	 */
+	createSharedBuffer(e) {
+		if (this.worker && e.sab && e.blocksize && e.channelID) {
 			this.worker.postMessage({ sab, blocksize, channelID });
 		}
-  }
+	}
 
 	evalBlock(block) {
 		// let modelCode = codeMirror.getBlock();

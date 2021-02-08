@@ -157,12 +157,34 @@ var sema = {
 `);
 		}
 		try {
-			let evalRes = geval("var channel0 = createOutputChannel(0, 1)");
+      postMessage({ init: true });
+			// let evalRes = geval("var channel0 = createOutputChannel(0, 1)");
 		} catch (err) {
 			console.error("ERROR:eval:", err);
 		}
 	}
 
+  function initWithURL(url){
+    if(new URL(url))
+      try {
+        importScripts(url + "/lalolib.js");
+        importScripts(url + "/svd.js");
+        importScripts(url + "/mlworkerscripts.js");
+        importScripts(
+          "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs/dist/tf.min.js"
+        );
+        gevalAll();
+        sabChecker();
+        console.log(
+          "DEBUG:worker: importScripts, gevalAll and sabChecker succeeded"
+        );
+      } catch (err) {
+        console.error("ERROR: on importScripts, gevalAll and sabChecker");
+      }
+    else
+      console.error("ERROR:worker:initWithURL: Invalid URL");
+
+  }
 
 onmessage = m => {
   console.log("DEBUG:worker:onmessage");
@@ -170,24 +192,12 @@ onmessage = m => {
 
   // Init message only
   if(m.data.url){
-    try{
-      importScripts(m.data.url + "/lalolib.js");
-      importScripts(m.data.url + "/svd.js");
-      importScripts(m.data.url + "/mlworkerscripts.js");
-      importScripts(
-        "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs/dist/tf.min.js"
-      );
-      gevalAll();
-      sabChecker();
-      console.log('DEBUG:worker: importScripts, gevalAll and sabChecker succeeded');
-    }
-    catch(err){
-      console.error("ERROR: on importScripts, gevalAll and sabChecker");
-    }
+    initWithURL(m.data.url);
   }
 
   if (m.data.eval) {
     try {
+      if (!geval) var geval = eval;
       let evalRes = geval(m.data.eval);
 
       console.log("DEBUG:worker:geval");

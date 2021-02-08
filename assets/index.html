@@ -110,28 +110,19 @@
       engine.loadSample("snare1.wav", "./audio/snare1.wav");
     });
 
+    $("createAnalyserButton", () => engine.createAnalyser(analyser++, data => console.log(data)) );
+
     $("evalButton", () => {
       try{
         const { errors, dspCode } = compile(editorGrammar.getValue(), editorLivecode.getValue());
         if(dspCode && engine){
+
           engine.eval(dspCode);
+
         }
       } catch (err) {
         console.error("ERROR: Failed to compile and eval: ", err);
       }
-    });
-
-    $("createAnalyserButton", () => engine.createAnalyser(analyser++, data => console.log(data)) );
-
-    $("learnerButton", async () => {
-
-      learner = new Learner();
-      let sharedBuffer = await learner.init(document.location.origin);
-      // let learnerOut = learner.eval(editorJS.getValue());
-      // let learnerSABOut = learner.eval('var channel0 = createOutputChannel(0, 1)');
-      console.log('Learner out:');
-      console.log(sharedBuffer);
-
     });
 
     $("mouseButton", () => {
@@ -172,7 +163,33 @@
 
     });
 
+    $("learnerButton", async () => {
 
+      learner = new Learner();
+
+      // refactor addSharedBufferHandler to allow multiple handlers
+      // learner to onSharedBuffer
+
+      // Learner subscribes Engine's SAB emissions
+      engine.onSharedBuffer = e => learner.createSharedBuffer(e);
+
+      // Engine subscribes Learner's SAB emissions
+      learner.onSharedBuffer = e => engine.pushSharedBuffer(e);
+
+      const isInitialized = await learner.init(document.location.origin);
+
+      // TODO
+      // Separate the return of a buffer from init
+      // apply a subscription pattern to eval
+      // where engine subscribe learner
+      // let learnerOut = learner.eval(editorJS.getValue());
+
+      await learner.eval('var channel0 = createOutputChannel(0, 1)');
+      // console.log('Learner out:');
+      // console.log(sharedBuffer);
+
+
+    });
 
   </script>
   <script>
@@ -193,6 +210,10 @@
     fetch(document.location.origin + '/langs/default-grammar.txt')
       .then( response => response.text() )
       .then( data => editorGrammar.setValue(data) );
+
+    fetch(document.location.origin + '/js/default-1-js.txt')
+      .then( response => response.text() )
+      .then( data => editorJS.setValue(data) );
 
   </script>
 </body>

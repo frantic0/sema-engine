@@ -53,8 +53,19 @@ export class Engine {
 		// Shared array buffers for sharing client side data to the audio engine- e.g. mouse coords
 		this.sharedArrayBuffers = {};
 
+		// Event emitter that should be subscribed by SAB receivers
+		this.onSharedBuffer = () => {
+			sab;
+		};
+
+    this.queue = [];
+
 		this.samplesLoaded = false;
 	}
+
+	addEventListener(callback){
+
+  }
 
 	/**
 	 * Handler of the Pub/Sub message events
@@ -63,15 +74,13 @@ export class Engine {
 	 * @param {*} event
 	 */
 	asyncPostToProcessor(event) {
-		if ( event && this.audioWorkletNode && this.audioWorkletNode.port ){
+		if (event && this.audioWorkletNode && this.audioWorkletNode.port) {
 			// Receive notification from 'model-output-data' topic
 			console.log("DEBUG:AudioEngine:onMessagingEventHandler:");
 			console.log(event);
 			this.audioWorkletNode.port.postMessage(event);
-		}
-    else throw new Error("Error posting to processor")
+		} else throw new Error("Error posting to processor");
 	}
-
 
 	/**
 	 * Create a shared array buffer for communicating with the audio engine
@@ -93,24 +102,46 @@ export class Engine {
 
 		this.sharedArrayBuffers[channelId] = {
 			sab: sab, // TODO: this is redundant, you can access the sab from the rb,
-                // also change hashmap name it is confusing and induces error
+			// also change hashmap name it is confusing and induces error
 			rb: ringbuf,
 		};
 
-    return sab;
+		return sab;
 	}
 
-  /**
-   * Push data to shared array buffer for communicating with the audio engine and ML worker
-   * @param {*} e
-   * @param {*} channelId
-   */
-  pushToSharedBuffer(e, channelId) {
-    if (this.sharedArrayBuffers && this.sharedArrayBuffers[channelId]) {
-      this.sharedArrayBuffers[channelId].rb.push(e);
-    }
-  }
+	/**
+	 * Push data to shared array buffer for communicating with the audio engine and ML worker
+	 * @param {*} e
+	 */
+	pushSharedBuffer(e) {
+   	// let sab = RingBuffer.getStorageForCapacity(32 * blocksize, Float64Array);
+		let ringbuf = new RingBuffer(e.value, Float64Array);
 
+		this.audioWorkletNode.port.postMessage({
+			func: "sab",
+			value: e.value,
+			ttype: e.ttype,
+			channelID: e.channelID,
+			blocksize: e.blocksize,
+		});
+
+		this.sharedArrayBuffers[e.channelID] = {
+			sab: e.value, // TODO: this is redundant, you can access the sab from the rb,
+			// also change hashmap name it is confusing and induces error
+			rb: ringbuf,
+		};
+	}
+
+	/**
+	 * Push data to shared array buffer for communicating with the audio engine and ML worker
+	 * @param {*} e
+	 * @param {*} channelId
+	 */
+	pushToSharedBuffer(e, channelId) {
+		if (this.sharedArrayBuffers && this.sharedArrayBuffers[channelId]) {
+			this.sharedArrayBuffers[channelId].rb.push(e);
+		}
+	}
 
 	/**
 	 * Polls data from connected WAAPI analyser return structured object with data and time data in arrays
@@ -219,10 +250,8 @@ export class Engine {
 	 * @play
 	 */
 	async init(audioWorkletName, audioWorkletURL /*numClockPeers*/) {
-
-    if (audioWorkletName && audioWorkletURL && new URL(audioWorkletURL) ) {
-
-      // AudioContext needs lazy loading to workaround the Chrome warning
+		if (audioWorkletName && audioWorkletURL && new URL(audioWorkletURL)) {
+			// AudioContext needs lazy loading to workaround the Chrome warning
 			// Audio Engine first play() call, triggered by user, prevents the warning
 			// by setting this.audioContext = new AudioContext();
 			this.audioContext;
@@ -238,15 +267,12 @@ export class Engine {
 				});
 			}
 
-  		let isWorkletProcessorLoaded = await this.loadWorkletProcessorCode();
+			let isWorkletProcessorLoaded = await this.loadWorkletProcessorCode();
 
-      if(isWorkletProcessorLoaded){
-        this.connectWorkletNode();
-        return true;
-      }
-      else
-        return false;
-
+			if (isWorkletProcessorLoaded) {
+				this.connectWorkletNode();
+				return true;
+			} else return false;
 
 			// No need to inject the callback here, messaging is built in KuraClock
 			// this.kuraClock = new kuramotoNetClock((phase, idx) => {
@@ -400,9 +426,9 @@ export class Engine {
 					this.audioWorkletName
 				);
 
-        this.audioWorkletNode.channelInterpretation = "discrete";
-        this.audioWorkletNode.channelCountMode = "explicit";
-        this.audioWorkletNode.channelCount = this.audioContext.destination.maxChannelCount;
+				this.audioWorkletNode.channelInterpretation = "discrete";
+				this.audioWorkletNode.channelCountMode = "explicit";
+				this.audioWorkletNode.channelCount = this.audioContext.destination.maxChannelCount;
 
 				return true;
 			} catch (err) {
