@@ -175,9 +175,9 @@ var sema = {
         );
         gevalAll();
         sabChecker();
-        console.log(
-          "DEBUG:worker: importScripts, gevalAll and sabChecker succeeded"
-        );
+        // console.log(
+        //   "DEBUG:worker: importScripts, gevalAll and sabChecker succeeded"
+        // );
       } catch (err) {
         console.error("ERROR: on importScripts, gevalAll and sabChecker");
       }
@@ -200,10 +200,10 @@ onmessage = m => {
       if (!geval) var geval = eval;
       let evalRes = geval(m.data.eval);
 
-      console.log("DEBUG:worker:geval");
-      console.log(evalRes);
+      // console.log("DEBUG:worker:geval");
+      // console.log(evalRes);
     } catch (e) {
-      console.error(`ERROR:ml.worker:geval exception: ${e} `, m.data.eval);
+      console.error(`ERROR:worker:geval exception: ${e} `, m.data.eval);
     }
 
   } else if ("val" in m.data) {

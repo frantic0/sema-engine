@@ -422,14 +422,9 @@ class MaxiProcessor extends AudioWorkletProcessor {
 			//   for (let idx in targetTransducers) {
 			//     targetTransducers[idx].setValue(event.data.val);
 			//   }
-		} else if ("sample" in event.data) {
-			//from a worker
-			// console.log("sample received");
-			// console.log(event.data);
+		} else if (event.data.sample) {
 			let sampleKey = event.data.sample.substr(0, event.data.sample.length - 4);
-			// this.sampleBuffers[sampleKey] = event.data.buffer;
 			this.addSampleBuffer(sampleKey, event.data.buffer);
-			// this.sampleVectorBuffers[sampleKey] = this.translateFloat32ArrayToBuffer(event.data.buffer);
 		} else if ("phase" in event.data) {
 			// console.log(this.kuraPhaseIdx);
 			// console.log(event);

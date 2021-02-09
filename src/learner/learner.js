@@ -22,7 +22,7 @@ export class Learner {
 	}
 
 	/**
-	 * Engine's event subscription
+	 * Learner's event subscription
 	 * @addEventListener
 	 * @param {*} event
 	 * @param {*} callback
@@ -32,6 +32,12 @@ export class Learner {
 			this.dispatcher.addEventListener(event, callback);
 		else throw new Error("Error adding event listener to Learner");
 	}
+
+	removeEventListner(event, callback) {
+		if (this.dispatcher && event && callback)
+			this.dispatcher.removeEventListener(event, callback);
+		else throw new Error("Error removing event listener to Learner");
+  }
 
 	/**
 	 * Initialises worker with origin URL
@@ -55,14 +61,9 @@ export class Learner {
 		});
 	}
 
-	onSharedBuffer = (e) => {
-		sab: e.data.sab;
-	};
-
 	onMessageHandler = (e) => {
-		if (e.data);
-		this.onSharedBuffer(e.data);
-		console.log("onMsg");
+		this.dispatcher.dispatch("onSharedBuffer", e.data);
+		console.log("onSharedBuffer");
 		console.log(e);
 	};
 
@@ -110,14 +111,6 @@ export class Learner {
 			window.localStorage.setItem("modelEditorValue", codeMirror.getValue());
 			addToHistory("model-history-", block);
 		}
-	}
-
-	/**
-	 *
-	 * @param {*} callback
-	 */
-	subscribe(callback) {
-		this.worker.onmessage;
 	}
 
 	/**
