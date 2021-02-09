@@ -54,6 +54,7 @@ export class Learner {
 				this.worker.onerror = this.onErrorHandler;
 				this.worker.onmessage = (e) => {
 					result = e.data.init;
+          console.info("running Learner");
 					resolve(result);
 					this.worker.onmessage = this.onMessageHandler;
 				};
@@ -90,9 +91,15 @@ export class Learner {
 	 * @param {*} channelID
 	 */
 	createSharedBuffer(e) {
-		if (this.worker && e.value && e.blocksize && e.channelID) {
-			this.worker.postMessage({ sab: e.value, blocksize, channelID });
+		if (this.worker && e.sab) {
+			this.worker.postMessage({
+				sab: e.sab,
+				blocksize: e.blocksize,
+				channelID: e.channelID
+			});
 		}
+    else
+      throw new Error("Error creating shared buffer in Learner")
 	}
 
 	evalBlock(block) {

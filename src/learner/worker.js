@@ -157,7 +157,7 @@ var sema = {
 `);
 		}
 		try {
-      postMessage({ init: true });
+
 			// let evalRes = geval("var channel0 = createOutputChannel(0, 1)");
 		} catch (err) {
 			console.error("ERROR:eval:", err);
@@ -175,6 +175,8 @@ var sema = {
         );
         gevalAll();
         sabChecker();
+
+        postMessage({ init: true });
         // console.log(
         //   "DEBUG:worker: importScripts, gevalAll and sabChecker succeeded"
         // );
@@ -234,20 +236,6 @@ onmessage = m => {
       blocksize: m.data.blocksize
     };
 
-    console.log("ML", inputSABs);
-
-  }
-  else if (m.data.sab) {
-
-    console.log("buf received", m);
-
-    let sab = m.data.sab;
-    let rb = new RingBuffer(sab, Float64Array);
-    inputSABs[m.data.channelID] = {
-      sab: sab,
-      rb: rb,
-      blocksize: m.data.blocksize
-    };
     console.log("ML", inputSABs);
   }
 };

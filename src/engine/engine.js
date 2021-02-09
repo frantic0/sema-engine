@@ -520,7 +520,7 @@ export class Engine {
 						// this.messaging.publish("model-input-buffer", {
 						// type: "model-input-buffer",
 						this.dispatcher.dispatch("onSharedBuffer", {
-							value: event.data.value,
+              sab: event.data.value,
 							channelID: event.data.channelID, //channel ID
 							blocksize: event.data.blocksize,
 						});
