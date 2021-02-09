@@ -121,9 +121,6 @@ class MaxiProcessor extends AudioWorkletProcessor {
 	constructor() {
 		super();
 
-		// this.sampleRate = 44100;
-		console.log("SAMPLERATE", sampleRate);
-
 		//indicate audio settings in WASM and JS domains
 		Maximilian.maxiSettings.setup(sampleRate, 1, 512);
 		Maximilian.maxiJSSettings.setup(sampleRate, 1, 512);
@@ -185,6 +182,8 @@ class MaxiProcessor extends AudioWorkletProcessor {
 
 		this.bitTime = Maximilian.maxiBits.sig(0); //this needs to be decoupled from the audio engine? or not... maybe a 'permenant block' with each grammar?
 		this.dt = 0;
+
+		console.info(`Sample rate: ${sampleRate}`); // moving this to end of ctor for console feedback on successful processor initialisation
 	}
 
 	/**
@@ -244,12 +243,12 @@ class MaxiProcessor extends AudioWorkletProcessor {
 		this.barPhaseMultiplier =
 			this.maxTimeLength / this.beatLengthInSamples / this.beatsPerBar;
 
-		console.log(
-			"DEBUG:maxi-processor:clockUpdate: ",
-			this.barPhaseMultiplier,
-			this.maxTimeLength,
-			this.beatsPerBar
-		);
+		// console.info(
+		// 	"clockUpdate: ",
+		// 	this.barPhaseMultiplier,
+		// 	this.maxTimeLength,
+		// 	this.beatsPerBar
+		// );
 	};
 
 	/**
@@ -502,7 +501,7 @@ class MaxiProcessor extends AudioWorkletProcessor {
 	initialiseDAC = (sampleRate, channels, bufferSize) => {
 		for (let i = 0; i < channels; i++) this.DAC[i] = 0.0;
 
-		console.log("DEBUG:maxi-processor:initialiseDAC: ", channels);
+		console.info(`DAC initialised with ${channels} channels`);
 
 		Maximilian.maxiJSSettings.setup(sampleRate, channels, bufferSize);
 		Maximilian.maxiSettings.setup(sampleRate, channels, bufferSize);
