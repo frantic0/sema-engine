@@ -26,7 +26,7 @@ export class SABInputTransducer {
 }
 
 export class SABOutputTransducer {
-	constructor(port, bufferType, channel, now, blocksize) {
+	constructor(outputSABs, port, bufferType, channel, now, blocksize) {
 		this.port = port;
 		this.zx = new Maximilian.maxiTrigger();
 		this.channel = channel;

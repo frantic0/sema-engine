@@ -357,10 +357,8 @@ export class Engine {
 	}
 
 	eval(dspFunction) {
-		// console.log('DEBUG:AudioEngine:evalDSP:');
-		// console.log(dspFunction);
 
-		if (this.audioWorkletNode !== undefined) {
+		if ( this.audioWorkletNode && this.audioWorkletNode.port ) {
 			if (this.audioContext.state === "suspended") {
 				this.audioContext.resume();
 			}
@@ -370,7 +368,9 @@ export class Engine {
 				loop: dspFunction.loop,
 			});
 			return true;
+
 		} else return false;
+
 	}
 
 	sendClockPhase(phase, idx) {
@@ -517,9 +517,9 @@ export class Engine {
 			} else if (event.data.rq && event.data.rq === "buf") {
 				switch (event.data.ttype) {
 					case "ML":
-						this.onSharedBuffer({
-							// this.messaging.publish("model-input-buffer", {
-							type: "model-input-buffer",
+						// this.messaging.publish("model-input-buffer", {
+						// type: "model-input-buffer",
+						this.dispatcher.dispatch("onSharedBuffer", {
 							value: event.data.value,
 							channelID: event.data.channelID, //channel ID
 							blocksize: event.data.blocksize,

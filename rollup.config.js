@@ -127,6 +127,11 @@ export default [
 									dest: "dist",
 								},
 								{
+									// transducers is imported by Engine maxi-processor (AWP) so needs to be both bundled AND copied!
+									src: "src/engine/transducers.js",
+									dest: ["dist"],
+								},
+								{
 									// ringbuf is imported by both the Engine (AW node) and maxi-processor (AWP) so needs to be both bundled AND copied!
 									src: "src/common/ringbuf.js",
 									dest: ["dist"],
