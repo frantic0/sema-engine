@@ -121,9 +121,12 @@
 
     $("evalButton", () => {
       try{
-        const { errors, dspCode } = compile(editorGrammar.getValue(), editorLivecode.getValue());
+
+        const { errors, dspCode } = compile( editorGrammar.getValue(), editorLivecode.getValue() );
+
         if(dspCode && engine)
           engine.eval(dspCode);
+
       } catch (err) {
         console.error("ERROR: Failed to compile and eval: ", err);
       }
@@ -132,14 +135,14 @@
     $("mouseButton", () => {
 
       const channelId = "mxy",
-      ttype = "mouseXY",
-      blockSize = 2;
+            ttype = "mouseXY",
+            blockSize = 2;
 
       let sab = engine.createSharedBuffer(channelId, ttype, blockSize);
       if(learner && sab)
         learner.pushInputBuffer(sab, blockSize, channelId);
 
-      let onMouseMove = e => {
+      const onMouseMove = e => {
         const x = parseFloat(e.offsetX/window.innerWidth).toFixed(5);
         const y = parseFloat(e.offsetY/window.innerHeight).toFixed(5);
         document.getElementById('outputText').innerText = `${x} ${y}`;
@@ -167,11 +170,11 @@
       // refactor addSharedBufferHandler to allow multiple handlers
       // learner to onSharedBuffer
       if(engine){
-        engine.onSharedBuffer = e => learner.createSharedBuffer(e); // Engine's SAB emissions subscribed by Learner
-        learner.onSharedBuffer = e => engine.pushSharedBuffer(e);  // Learner's SAB emissions subscribed by Engine
+        engine.addEventListener('onSharedBuffer', e => learner.createSharedBuffer(e) ); // Engine's SAB emissions subscribed by Learner
+        learner.addEventListener('onSharedBuffer', e => engine.pushSharedBuffer(e) );  // Learner's SAB emissions subscribed by Engine
       }
 
-      if( await learner.init(document.location.origin) ){ // IF/WHEN Learner initializes
+      if( await learner.init(document.location.origin) ){ // IF && WHEN Learner initializes
         learner.eval('var channel0 = createOutputChannel(0, 1)');
       }
     });
@@ -179,7 +182,7 @@
   </script>
   <script>
 
-    const setupEditorWithContent = (elementId, contentFileRelativeURL) => {
+    const setupEditorWithContent = ( elementId, contentFileRelativeURL ) => {
 
       const editor = CodeMirror.fromTextArea(document.getElementById(elementId), {
         lineNumbers: true
@@ -195,33 +198,6 @@
     const editorLivecode = setupEditorWithContent("textArea-livecode", '/langs/default-3-lc.txt');
     const editorGrammar =  setupEditorWithContent("textArea-grammar",  '/langs/default-grammar.txt');
     const editorJS =       setupEditorWithContent("textArea-js",       '/js/default-1-js.txt');
-
-
-
-    // const editorLivecode = CodeMirror.fromTextArea(document.getElementById("textArea-livecode"), {
-    //   lineNumbers: true,
-    //   mode: "javascript"
-    // });
-
-    // const editorGrammar = CodeMirror.fromTextArea(document.getElementById("textArea-grammar"), {
-    //   lineNumbers: true,
-    // });
-
-    // const editorJS = CodeMirror.fromTextArea(document.getElementById("textArea-js"), {
-    //   lineNumbers: true,
-    // });
-
-    // fetch(document.location.origin + '/langs/default-3-lc.txt')
-    //   .then( response => response.text() )
-    //   .then( data => editorLivecode.setValue(data) )
-
-    // fetch(document.location.origin + '/langs/default-grammar.txt')
-    //   .then( response => response.text() )
-    //   .then( data => editorGrammar.setValue(data) );
-
-    // fetch(document.location.origin + '/js/default-1-js.txt')
-    //   .then( response => response.text() )
-    //   .then( data => editorJS.setValue(data) );
 
   </script>
 </body>

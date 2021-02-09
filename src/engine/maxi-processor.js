@@ -2,63 +2,6 @@ import Maximilian from './maximilian.wasmmodule.js';
 import RingBuffer from "./ringbuf.js"; //thanks padenot
 import Open303 from './open303.wasmmodule.js';
 import { SABInputTransducer, SABOutputTransducer } from './transducers.js';
-// import SABOutputTransducer from './SABOutputTransducer.js';
-
-// import {PostMsgTransducer} from './transducer.js'
-// import {
-//   MMLLOnsetDetector
-// } from '../machineListening/MMLLOnsetDetector.js';
-//
-
-
-//DEPRECATED
-class OutputTransducer {
-  constructor(port, sampleRate, sendFrequency = 2, transducerType) {
-    if (sendFrequency == 0)
-      this.sendPeriod = Number.MAX_SAFE_INTEGER;
-    else
-      this.sendPeriod = 1.0 / sendFrequency * sampleRate;
-    this.sendCounter = this.sendPeriod;
-    this.transducerType = transducerType;
-    this.port = port;
-  }
-
-  send(data, channelID) {
-    if (this.sendCounter >= this.sendPeriod) {
-      // console.log(data);
-      this.port.postMessage({
-        rq: "send",
-        value: data,
-        ttype: this.transducerType,
-        ch: channelID
-      });
-      this.sendCounter -= this.sendPeriod;
-    } else {
-      this.sendCounter++;
-    }
-    return 0;
-  }
-}
-
-//DEPRECATED
-class InputTransducer {
-  constructor(transducerType, channelID) {
-    this.transducerType = transducerType;
-    this.channelID = channelID;
-    this.value = 0;
-  }
-
-  setValue(data) {
-    this.value = data;
-    console.log(data);
-  }
-
-  getValue() {
-    return this.value;
-  }
-}
-
-
 
 
 // class pvshift {
@@ -141,93 +84,7 @@ class mfcc {
   }
 }
 
-var inputSABs = {};
-var outputSABs = {};
 
-/*
-class SABOutputTransducer {
-
-  constructor(port, bufferType, channel, now, blocksize) {
-    this.port = port;
-    this.zx = new Maximilian.maxiTrigger();
-    this.channel = channel;
-    this.blocksize = blocksize;
-
-    //check for existing channels
-    if (channel in outputSABs && outputSABs[channel].blocksize == blocksize) {
-      //reuse existing
-      this.ringbuf = outputSABs[channel].rb;
-    } else {
-      //create a new SAB and notify the receiver
-      this.sab = RingBuffer.getStorageForCapacity(32 * blocksize, Float64Array);
-      this.ringbuf = new RingBuffer(this.sab, Float64Array);
-      outputSABs[channel] = {
-        rb: this.ringbuf,
-        sab: this.sab,
-        created: now,
-        blocksize: blocksize
-      };
-
-      this.port.postMessage({
-        rq: 'buf',
-        value: this.sab,
-        ttype: bufferType,
-        channelID: channel,
-        blocksize: blocksize
-      });
-    }
-  }
-
-  send(trig, value) {
-    if (this.zx.onZX(trig)) {
-      //console.log("tr", this.ringbuf.available_write(), value, this);
-      if (this.ringbuf.available_write() > this.blocksize) {
-        if (typeof (value) == "number") {
-          this.ringbuf.push(new Float64Array([value]));
-        } else {
-          // console.log("SAB", value.length, this.blocksize);
-          if (value.length == this.blocksize) {
-            this.ringbuf.push(value);
-          } else if (value.length < this.blocksize) {
-            let newVal = new Float64Array(this.blocksize);
-            for (let i in value) newVal[i] = value[i];
-            this.ringbuf.push(newVal);
-          } else {
-            this.ringbuf.push(value.slice(0, this.blocksize));
-          }
-        }
-        // console.log('val written', value);
-      }
-    }
-    return value;
-  }
-}
-
-class SABInputTransducer {
-
-  constructor(id, triggered = 0) {
-    this.value = 0;
-    this.id = id;
-    this.triggered = triggered;
-    this.zx = new Maximilian.maxiTrigger();
-  }
-
-  getSABValue(inputBuffers, trigger) {
-    let reading = 1;
-    if (this.triggered) {
-      reading = this.zx.onZX(trigger);
-    }
-    if (reading) {
-      let sab = inputBuffers[this.id];
-      if (sab) {
-        this.value = sab.value;
-      }
-    }
-    return this.value;
-  }
-
-}
-*/
 
 
 class poll {
@@ -245,6 +102,11 @@ class poll {
 function mtof(midinote) {
   return Math.pow(2, (midinote - 69) / 12) * 440.0;
 }
+
+var inputSABs = {};
+
+var outputSABs = {};
+
 
 /**
  * The main Maxi Audio wrapper with a WASM-powered AudioWorkletProcessor.
@@ -535,16 +397,10 @@ class MaxiProcessor extends AudioWorkletProcessor {
 			//console.log(this.OSCMessages);
 		} else if ("func" in event.data && "sendbuf" == event.data.func) {
 			console.log("aesendbuf", event.data);
-			this.addSampleBuffer(event.data.name, event.data.data);
-			//DEPRECATED
-			// } else if ('func' in event.data && 'data' == event.data.func) {
-			//   // console.log('ML', event.data);
-			//   //this is from the ML window, map it on to any listening transducers
-			//   let targetTransducers = this.matchTransducers('ML', event.data.ch);
-			//   for (let idx in targetTransducers) {
-			//     targetTransducers[idx].setValue(event.data.val);
-			//   }
-		} else if ("func" in event.data && "sab" == event.data.func) {
+
+  		this.addSampleBuffer(event.data.name, event.data.data);
+
+  	} else if ("func" in event.data && "sab" == event.data.func) {
 			console.log("buf received", event.data);
 
 			let sab = event.data.value;

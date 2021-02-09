@@ -8,86 +8,88 @@ var jsFuncMap = {
 	saw: {
 		setup: (o, p) => `${o} = new Maximilian.maxiOsc();
                       ${o}.phaseReset(${p.length > 1 ? p[1].loop : 0.0});`,
-		loop:  (o, p) => `${o}.saw(${p[0].loop})`
+		loop: (o, p) => `${o}.saw(${p[0].loop})`,
 	},
 	sin: {
 		setup: (o, p) => `${o} = new Maximilian.maxiOsc();
                       ${o}.phaseReset(${p.length > 1 ? p[1].loop : 0.0});`,
-		loop:  (o, p) => `${o}.sinewave(${p[0].loop})`
+		loop: (o, p) => `${o}.sinewave(${p[0].loop})`,
 	},
 	tri: {
 		setup: (o, p) => `${o} = new Maximilian.maxiOsc();
                       ${o}.phaseReset(${p.length > 1 ? p[1].loop : 0.0});`,
-		loop:  (o, p) => `${o}.triangle(${p[0].loop})`
+		loop: (o, p) => `${o}.triangle(${p[0].loop})`,
 	},
 	pha: {
 		setup: (o, p) => `${o} = new Maximilian.maxiOsc();
                       ${o}.phaseReset(${p.length > 1 ? p[1].loop : 0.0});`,
-		loop:  (o, p) => `${o}.phasor(${p[0].loop})`
+		loop: (o, p) => `${o}.phasor(${p[0].loop})`,
 	},
 	ph2: {
 		setup: (o, p) => `${o} = new Maximilian.maxiOsc();
                       ${o}.phaseReset(${p.length > 3 ? p[3].loop : 0.0});`,
-		loop:  (o, p) => `${o}.phasorBetween(${p[0].loop},${p[1].loop},${p[2].loop})`
+		loop: (o, p) =>
+			`${o}.phasorBetween(${p[0].loop},${p[1].loop},${p[2].loop})`,
 	},
 	sqr: {
 		setup: (o, p) => `${o} = new Maximilian.maxiOsc();
                       ${o}.phaseReset(${p.length > 1 ? p[1].loop : 0.0});`,
-		loop:  (o, p) => `${o}.square(${p[0].loop})`
+		loop: (o, p) => `${o}.square(${p[0].loop})`,
 	},
 	pul: {
 		setup: (o, p) => `${o} = new Maximilian.maxiOsc();
                       ${o}.phaseReset(${p.length > 2 ? p[2].loop : 0.0});`,
-		loop:  (o, p) => `${o}.pulse(${p[0].loop},${p[1].loop})`
+		loop: (o, p) => `${o}.pulse(${p[0].loop},${p[1].loop})`,
 	},
 	imp: {
 		setup: (o, p) => `${o} = new Maximilian.maxiOsc();
                       ${o}.phaseReset(${p.length > 1 ? p[1].loop : 0.0});`,
-		loop:  (o, p) => `${o}.impulse(${p[0].loop})`
+		loop: (o, p) => `${o}.impulse(${p[0].loop})`,
 	},
 	sawn: {
 		setup: (o, p) => `${o} = new Maximilian.maxiOsc();
                       ${o}.phaseReset(${p.length > 1 ? p[1].loop : 0.0});`,
-		loop:  (o, p) => `${o}.sawn(${p[0].loop})`
-  },
+		loop: (o, p) => `${o}.sawn(${p[0].loop})`,
+	},
 	noiz: {
 		setup: (o, p) => `${o} = new Maximilian.maxiOsc()`,
-		loop:  (o, p) => `${o}.noise()*${p[0].loop}`
+		loop: (o, p) => `${o}.noise()*${p[0].loop}`,
 	},
 	gt: {
 		setup: (o, p) => "",
-		loop:  (o, p) => `((${p[0].loop} > ${p[1].loop}) ? 1 : 0)`
+		loop: (o, p) => `((${p[0].loop} > ${p[1].loop}) ? 1 : 0)`,
 	},
 	lt: {
 		setup: (o, p) => "",
-		loop:  (o, p) => `((${p[0].loop} < ${p[1].loop}) ? 1 : 0)`
+		loop: (o, p) => `((${p[0].loop} < ${p[1].loop}) ? 1 : 0)`,
 	},
 	mod: {
-    setup: (o, p) => "",
-    loop:  (o, p) => `(${p[0].loop} % ${p[1].loop})` },
+		setup: (o, p) => "",
+		loop: (o, p) => `(${p[0].loop} % ${p[1].loop})`,
+	},
 	add: {
 		setup: (o, p) => "",
-		loop:  (o, p) => `(${p[0].loop} + ${p[1].loop})`
+		loop: (o, p) => `(${p[0].loop} + ${p[1].loop})`,
 	},
 	mul: {
 		setup: (o, p) => "",
-		loop:  (o, p) => `(${p[0].loop} * ${p[1].loop})`
+		loop: (o, p) => `(${p[0].loop} * ${p[1].loop})`,
 	},
 	sub: {
 		setup: (o, p) => "",
-		loop:  (o, p) => `(${p[0].loop} - ${p[1].loop})`
+		loop: (o, p) => `(${p[0].loop} - ${p[1].loop})`,
 	},
 	div: {
 		setup: (o, p) => "",
-		loop:  (o, p) => `(${p[1].loop} != 0 ? ${p[0].loop}/${p[1].loop} : 0)`
+		loop: (o, p) => `(${p[1].loop} != 0 ? ${p[0].loop}/${p[1].loop} : 0)`,
 	},
 	pow: {
 		setup: (o, p) => "",
-		loop:  (o, p) => `Math.pow(${p[0].loop},${p[1].loop})`
+		loop: (o, p) => `Math.pow(${p[0].loop},${p[1].loop})`,
 	},
 	abs: {
 		setup: (o, p) => "",
-		loop:  (o, p) => `Math.abs(${p[0].loop})`
+		loop: (o, p) => `Math.abs(${p[0].loop})`,
 	},
 	env: {
 		setup: (o, p) => `${o} = new Maximilian.maxiEnv();
@@ -95,138 +97,155 @@ var jsFuncMap = {
                       ${o}.setDecay(${p[2].loop});
                       ${o}.setSustain(${p[3].loop});
                       ${o}.setRelease(${p[4].loop})`,
-		loop:  (o, p) => `${o}.adsr(1,${p[0].loop})`
+		loop: (o, p) => `${o}.adsr(1,${p[0].loop})`,
 	},
 	sum: {
 		setup: (o, p) => "",
-		loop:  (o, p) => {
-      let s = `(${p[0].loop}`;
-			for (let i = 1; i < p.length; i++)
-        s += `+${p[i].loop}`;
-			return s + ")";	}
+		loop: (o, p) => {
+			let s = `(${p[0].loop}`;
+			for (let i = 1; i < p.length; i++) s += `+${p[i].loop}`;
+			return s + ")";
+		},
 	},
 	mix: {
 		setup: (o, p) => "",
-		loop:  (o, p) => {
+		loop: (o, p) => {
 			let s = `((${p[0].loop}`;
-				for (let i = 1; i < p.length; i++)
-        s += `+${p[i].loop}`;
+			for (let i = 1; i < p.length; i++) s += `+${p[i].loop}`;
 			return s + `)/${p.length})`;
-		}
+		},
 	},
 	prod: {
 		setup: (o, p) => "",
-		loop:  (o, p) => {
+		loop: (o, p) => {
 			let s = `(${p[0].loop}`;
-			for (let i = 1; i < p.length; i++)
-        s += `*${p[i].loop}`;
+			for (let i = 1; i < p.length; i++) s += `*${p[i].loop}`;
 			return s + ")";
-		}
+		},
 	},
 	blin: {
 		setup: (o, p) => "",
-		loop:  (o, p) => `Maximilian.maxiMap.linlin(${p[0].loop}, -1, 1, ${p[1].loop}, ${p[2].loop})`
+		loop: (o, p) =>
+			`Maximilian.maxiMap.linlin(${p[0].loop}, -1, 1, ${p[1].loop}, ${p[2].loop})`,
 	},
 	ulin: {
 		setup: (o, p) => "",
-		loop:  (o, p) => `Maximilian.maxiMap.linlin(${p[0].loop}, 0, 1, ${p[1].loop}, ${p[2].loop})`
+		loop: (o, p) =>
+			`Maximilian.maxiMap.linlin(${p[0].loop}, 0, 1, ${p[1].loop}, ${p[2].loop})`,
 	},
 	bexp: {
 		setup: (o, p) => "",
-		loop:  (o, p) => `Maximilian.maxiMap.linexp(${p[0].loop}, -1, 1, ${p[1].loop}, ${p[2].loop})`
+		loop: (o, p) =>
+			`Maximilian.maxiMap.linexp(${p[0].loop}, -1, 1, ${p[1].loop}, ${p[2].loop})`,
 	},
 	uexp: {
 		setup: (o, p) => "",
-		loop:  (o, p) => `Maximilian.maxiMap.linexp(${p[0].loop}, 0.0000001, 1, ${p[1].loop}, ${p[2].loop})`
+		loop: (o, p) =>
+			`Maximilian.maxiMap.linexp(${p[0].loop}, 0.0000001, 1, ${p[1].loop}, ${p[2].loop})`,
 	},
 	linlin: {
 		setup: (o, p) => "",
-		loop:  (o, p) => `Maximilian.maxiMap.linlin(${p[0].loop}, ${p[1].loop}, ${p[2].loop},${p[3].loop}, ${p[4].loop})`
+		loop: (o, p) =>
+			`Maximilian.maxiMap.linlin(${p[0].loop}, ${p[1].loop}, ${p[2].loop},${p[3].loop}, ${p[4].loop})`,
 	},
 	linexp: {
 		setup: (o, p) => "",
-		loop:  (o, p) => `Maximilian.maxiMap.linexp(${p[0].loop}, ${p[1].loop}, ${p[2].loop}, ${p[3].loop}, ${p[4].loop})`
+		loop: (o, p) =>
+			`Maximilian.maxiMap.linexp(${p[0].loop}, ${p[1].loop}, ${p[2].loop}, ${p[3].loop}, ${p[4].loop})`,
 	},
 	dist: {
 		setup: (o, p) => `${o} = new Maximilian.maxiNonlinearity()`,
-		loop:  (o, p) => `${o}.atanDist(${p[0].loop},${p[1].loop})`
+		loop: (o, p) => `${o}.atanDist(${p[0].loop},${p[1].loop})`,
 	},
 	softclip: {
 		setup: (o, p) => `${o} = new Maximilian.maxiNonlinearity()`,
-		loop:  (o, p) => `${o}.softclip(${p[0].loop})`
+		loop: (o, p) => `${o}.softclip(${p[0].loop})`,
 	},
 	hardclip: {
 		setup: (o, p) => `${o} = new Maximilian.maxiNonlinearity()`,
-		loop:  (o, p) => `${o}.hardclip(${p[0].loop})`
+		loop: (o, p) => `${o}.hardclip(${p[0].loop})`,
 	},
 	asymclip: {
 		setup: (o, p) => `${o} = new Maximilian.maxiNonlinearity()`,
-		loop:  (o, p) => `${o}.asymclip(${p[0].loop},${p[1].loop},${p[2].loop})`
+		loop: (o, p) => `${o}.asymclip(${p[0].loop},${p[1].loop},${p[2].loop})`,
 	},
 	flange: {
 		setup: (o, p) => `${o} = new Maximilian.maxiFlanger()`,
-		loop:  (o, p) => `${o}.flange(${p[0].loop},${p[1].loop},${p[2].loop},${p[3].loop},${p[4].loop})`
+		loop: (o, p) =>
+			`${o}.flange(${p[0].loop},${p[1].loop},${p[2].loop},${p[3].loop},${p[4].loop})`,
 	},
 	chor: {
 		setup: (o, p) => `${o} = new Maximilian.maxiChorus()`,
-		loop:  (o, p) => `${o}.chorus(${p[0].loop},${p[1].loop},${p[2].loop},${p[3].loop},${p[4].loop})`
+		loop: (o, p) =>
+			`${o}.chorus(${p[0].loop},${p[1].loop},${p[2].loop},${p[3].loop},${p[4].loop})`,
 	},
 	dl: {
 		setup: (o, p) => `${o} = new Maximilian.maxiDelayline()`,
-		loop:  (o, p) => `${o}.dl(${p[0].loop},${p[1].loop},${p[2].loop})`
+		loop: (o, p) => `${o}.dl(${p[0].loop},${p[1].loop},${p[2].loop})`,
 	},
 	lpf: {
 		setup: (o, p) => `${o} = new Maximilian.maxiFilter()`,
-		loop:  (o, p) => `${o}.lopass(${p[0].loop},${p[1].loop})`
+		loop: (o, p) => `${o}.lopass(${p[0].loop},${p[1].loop})`,
 	},
 	hpf: {
 		setup: (o, p) => `${o} = new Maximilian.maxiFilter()`,
-		loop:  (o, p) => `${o}.hipass(${p[0].loop},${p[1].loop})`
+		loop: (o, p) => `${o}.hipass(${p[0].loop},${p[1].loop})`,
 	},
 	lpz: {
 		setup: (o, p) => `${o} = new Maximilian.maxiFilter()`,
-		loop:  (o, p) => `${o}.lores(${p[0].loop},${p[1].loop},${p[2].loop})`
+		loop: (o, p) => `${o}.lores(${p[0].loop},${p[1].loop},${p[2].loop})`,
 	},
 	hpz: {
 		setup: (o, p) => `${o} = new Maximilian.maxiFilter()`,
-		loop:  (o, p) => `${o}.hires(${p[0].loop},${p[1].loop},${p[2].loop})`
+		loop: (o, p) => `${o}.hires(${p[0].loop},${p[1].loop},${p[2].loop})`,
 	},
 
 	// `toJS`: { //freq, data, channel
 	// 	setup: (o, p) => `${o} = this.createMLOutputTransducer(${p[0].loop})`,
 	// 	loop:  (o, p) => `${o}.send(${p[1].loop}, ${p[2].loop})`
 	// },
-	toJS: { //freq, data, channel, [blocksize]
-		setup: (o, p) => `${o} = new SABOutputTransducer(this.port, 'ML', ${p[1].loop}, this.currentSample, ${p.length==3 ? 1: p[3].loop})`,
-		loop:  (o, p) => `${o}.send(${p[0].loop}, ${p[2].loop})`
+	toJS: {
+		//freq, data, channel, [blocksize]
+		setup: (o, p) =>
+			`${o} = new SABOutputTransducer(outputSABs,
+                                      this.port,
+                                      'ML',
+                                      ${p[1].loop},
+                                      this.currentSample,
+                                      ${p.length == 3 ? 1 : p[3].loop})`,
+		loop: (o, p) => `${o}.send(${p[0].loop}, ${p[2].loop})`,
 	},
-	fromJS: { //channel
+	fromJS: {
+		//channel
 		// setup: (o, p) => `${o} = this.registerInputTransducer('ML', ${p[0].loop})`,
 		// loop:  (o, p) => `${o}.getValue()`
-		setup: (o, p) => `${o} = new SABInputTransducer(${p[0].loop}, ${p.length==2 ? 1 : 0})`,
-		loop:  (o, p) => `${o}.getSABValue(inputSABs, ${p.length==2 ? p[1].loop: 0})`
+		setup: (o, p) =>
+			`${o} = new SABInputTransducer(${p[0].loop}, ${p.length == 2 ? 1 : 0})`,
+		loop: (o, p) =>
+			`${o}.getSABValue(inputSABs, ${p.length == 2 ? p[1].loop : 0})`,
 	},
 	mouseX: {
 		setup: (o, p) => ``,
-		loop:  (o, p) => `this.getSABValue('mxy')[0]`
+		loop: (o, p) => `this.getSABValue('mxy')[0]`,
 	},
 	mouseY: {
 		setup: (o, p) => ``,
-		loop:  (o, p) => `this.getSABValue('mxy')[1]`
+		loop: (o, p) => `this.getSABValue('mxy')[1]`,
 	},
 	at: {
 		setup: (o, p) => ``,
-		loop:  (o, p) => `${p[0].loop}[Math.min(${p[1].loop}, ${p[0].loop}.length-1)]`
+		loop: (o, p) =>
+			`${p[0].loop}[Math.min(${p[1].loop}, ${p[0].loop}.length-1)]`,
 	},
 
 	// toPeer: { //value, dest, channel, frequency
-  //   setup: (o, p) => `${o} = this.createNetOutputTransducer(${p[3].loop})`,
+	//   setup: (o, p) => `${o} = this.createNetOutputTransducer(${p[3].loop})`,
 	// 	loop:  (o, p) => `${o}.send(${p[0].loop},[${p[1].loop},${p[2].loop}])`
-  // },
+	// },
 	// fromPeer: { //source, channel
 	// 	setup: (o, p) => `${o} = this.registerInputTransducer('NET', [${p[0].loop}, ${p[1].loop}])`,
 	// 	loop:  (o, p) => `${o}.getValue()`
-  // },
+	// },
 
 	// oscin: {
 	// 	setup: (o, p) => "",
@@ -239,205 +258,222 @@ var jsFuncMap = {
 
 	sah: {
 		setup: (o, p) => `${o} = new Maximilian.maxiSampleAndHold();`,
-		loop:  (o, p) => `${o}.sah(${p[0].loop},${p[1].loop})`
+		loop: (o, p) => `${o}.sah(${p[0].loop},${p[1].loop})`,
 	},
 	stretch: {
 		setup: (o, p) => `${o} = new Maximilian.maxiSample();
                       ${o}.setSample(this.getSampleBuffer(${p[4].loop}));
                       ${o}stretch = new Maximilian.maxiStretch();
                       ${o}stretch.setSample(${o});`,
-		loop:  (o, p) => `(${o}.isReady() ? ${ o}stretch.play(${p[0].loop},${p[1].loop},${p[2].loop},${p[3].loop},0.0) : 0.0)`
+		loop: (o, p) =>
+			`(${o}.isReady() ? ${o}stretch.play(${p[0].loop},${p[1].loop},${p[2].loop},${p[3].loop},0.0) : 0.0)`,
 	},
 	// 'adc': {"setup":(o,p)=>"", "loop":(o,p)=>`inputs[${p[0].loop}]`},
 	adc: { setup: (o, p) => "", loop: (o, p) => `(inputs * ${p[0].loop})` },
 	sampler: {
 		setup: (o, p) => `${o} = new Maximilian.maxiSample();
-                      ${o}.setSample(this.getSampleBuffer(${p[p.length-1].loop}));`,
-		loop:  (o, p) => {
+                      ${o}.setSample(this.getSampleBuffer(${
+			p[p.length - 1].loop
+		}));`,
+		loop: (o, p) => {
 			let playArgs = `${p[0].loop}`;
-			if (p.length==3) {playArgs += `,${p[1].loop}`}
-			else if (p.length==4) {playArgs += `,${p[1].loop},${p[2].loop}`};
-			return `(${o}.isReady() ? ${o}.playOnZX(${playArgs}) : 0.0)`}
+			if (p.length == 3) {
+				playArgs += `,${p[1].loop}`;
+			} else if (p.length == 4) {
+				playArgs += `,${p[1].loop},${p[2].loop}`;
+			}
+			return `(${o}.isReady() ? ${o}.playOnZX(${playArgs}) : 0.0)`;
+		},
 	},
-  loop: {
+	loop: {
 		setup: (o, p) => `${o} = new Maximilian.maxiSample();
                       ${o}.setSample(this.getSampleBuffer(${p[1].loop}));`,
-		loop:  (o, p) => `(${o}.isReady() ? ${o}.play(${p[0].loop}) : 0.0)`
+		loop: (o, p) => `(${o}.isReady() ? ${o}.play(${p[0].loop}) : 0.0)`,
 	},
-  slice: {
+	slice: {
 		setup: (o, p) => `${o} = new Maximilian.maxiSample();
                       ${o}.setSample(this.getSampleBuffer(${p[2].loop}));`,
-		loop:  (o, p) => `(${o}.isReady() ? ${o}.loopSetPosOnZX(${p[0].loop},${p[1].loop}) : 0.0)`
+		loop: (o, p) =>
+			`(${o}.isReady() ? ${o}.loopSetPosOnZX(${p[0].loop},${p[1].loop}) : 0.0)`,
 	},
 	oscin: {
 		setup: (o, p) => "",
-		loop:  (o, p) => `this.OSCTransducer(${p[0].loop},${p[1].loop})`
+		loop: (o, p) => `this.OSCTransducer(${p[0].loop},${p[1].loop})`,
 	},
 	oscout: {
 		setup: (o, p) => "",
-		loop:  (o, p) => `this.OSCTransducer(${p[0].loop},${p[1].loop})`
+		loop: (o, p) => `this.OSCTransducer(${p[0].loop},${p[1].loop})`,
 	},
 	sah: {
 		setup: (o, p) => `${o} = new Maximilian.maxiSampleAndHold();`,
-		loop:  (o, p) => `${o}.sah(${p[0].loop},${p[1].loop})`
+		loop: (o, p) => `${o}.sah(${p[0].loop},${p[1].loop})`,
 	},
 	stretch: {
 		setup: (o, p) => `${o} = new Maximilian.maxiSample();
                       ${o}.setSample(this.getSampleBuffer(${p[4].loop}));
                       ${o}stretch = new Maximilian.maxiStretch();
                       ${o}stretch.setSample(${o});`,
-		loop:  (o, p) => `(${o}.isReady() ? ${o}stretch.play(${p[0].loop},${p[1].loop},${p[2].loop},${p[3].loop},0.0) : 0.0)`
+		loop: (o, p) =>
+			`(${o}.isReady() ? ${o}stretch.play(${p[0].loop},${p[1].loop},${p[2].loop},${p[3].loop},0.0) : 0.0)`,
 	},
-  bitToSig: {
+	bitToSig: {
 		setup: (o, p) => "",
-		loop:  (o, p) => `Maximilian.maxiBits.toSignal(${p[0].loop})`
+		loop: (o, p) => `Maximilian.maxiBits.toSignal(${p[0].loop})`,
 	},
-  bitToTrigSig: {
-  		setup: (o, p) => "",
-  		loop:  (o, p) => `Maximilian.maxiBits.toTrigSignal(${p[0].loop})`
-  	},
-  bitNeg: {
+	bitToTrigSig: {
 		setup: (o, p) => "",
-		loop:  (o, p) => `Maximilian.maxiBits.neg(${p[0].loop})`
+		loop: (o, p) => `Maximilian.maxiBits.toTrigSignal(${p[0].loop})`,
 	},
-  bitInc: {
+	bitNeg: {
 		setup: (o, p) => "",
-		loop:  (o, p) => `Maximilian.maxiBits.inc(${p[0].loop})`
+		loop: (o, p) => `Maximilian.maxiBits.neg(${p[0].loop})`,
 	},
-  bitDec: {
+	bitInc: {
 		setup: (o, p) => "",
-		loop:  (o, p) => `Maximilian.maxiBits.dec(${p[0].loop})`
+		loop: (o, p) => `Maximilian.maxiBits.inc(${p[0].loop})`,
 	},
-  bitAnd: {
+	bitDec: {
 		setup: (o, p) => "",
-		loop:  (o, p) => `Maximilian.maxiBits.land(${p[0].loop},${p[1].loop})`
+		loop: (o, p) => `Maximilian.maxiBits.dec(${p[0].loop})`,
 	},
-  bitOr: {
+	bitAnd: {
 		setup: (o, p) => "",
-		loop:  (o, p) => `Maximilian.maxiBits.lor(${p[0].loop},${p[1].loop})`
+		loop: (o, p) => `Maximilian.maxiBits.land(${p[0].loop},${p[1].loop})`,
 	},
-  bitXor: {
+	bitOr: {
 		setup: (o, p) => "",
-		loop:  (o, p) => `Maximilian.maxiBits.lxor(${p[0].loop},${p[1].loop})`
+		loop: (o, p) => `Maximilian.maxiBits.lor(${p[0].loop},${p[1].loop})`,
 	},
-  bitShl: {
+	bitXor: {
 		setup: (o, p) => "",
-		loop:  (o, p) => `Maximilian.maxiBits.shl(${p[0].loop},${p[1].loop})`
+		loop: (o, p) => `Maximilian.maxiBits.lxor(${p[0].loop},${p[1].loop})`,
 	},
-  bitShr: {
+	bitShl: {
 		setup: (o, p) => "",
-		loop:  (o, p) => `Maximilian.maxiBits.shr(${p[0].loop},${p[1].loop})`
+		loop: (o, p) => `Maximilian.maxiBits.shl(${p[0].loop},${p[1].loop})`,
 	},
-  bitAt: {
+	bitShr: {
 		setup: (o, p) => "",
-		loop:  (o, p) => `Maximilian.maxiBits.at(${p[0].loop},${p[1].loop})`
+		loop: (o, p) => `Maximilian.maxiBits.shr(${p[0].loop},${p[1].loop})`,
 	},
-  bitAdd: {
+	bitAt: {
 		setup: (o, p) => "",
-		loop:  (o, p) => `Maximilian.maxiBits.add(${p[0].loop},${p[1].loop})`
+		loop: (o, p) => `Maximilian.maxiBits.at(${p[0].loop},${p[1].loop})`,
 	},
-  bitSub: {
+	bitAdd: {
 		setup: (o, p) => "",
-		loop:  (o, p) => `Maximilian.maxiBits.sub(${p[0].loop},${p[1].loop})`
+		loop: (o, p) => `Maximilian.maxiBits.add(${p[0].loop},${p[1].loop})`,
 	},
-  bitMul: {
+	bitSub: {
 		setup: (o, p) => "",
-		loop:  (o, p) => `Maximilian.maxiBits.mul(${p[0].loop},${p[1].loop})`
+		loop: (o, p) => `Maximilian.maxiBits.sub(${p[0].loop},${p[1].loop})`,
 	},
-  bitEq: {
+	bitMul: {
 		setup: (o, p) => "",
-		loop:  (o, p) => `Maximilian.maxiBits.eq(${p[0].loop},${p[1].loop})`
+		loop: (o, p) => `Maximilian.maxiBits.mul(${p[0].loop},${p[1].loop})`,
 	},
-  bitGt: {
+	bitEq: {
 		setup: (o, p) => "",
-		loop:  (o, p) => `Maximilian.maxiBits.gt(${p[0].loop},${p[1].loop})`
+		loop: (o, p) => `Maximilian.maxiBits.eq(${p[0].loop},${p[1].loop})`,
 	},
-  bitGte: {
+	bitGt: {
 		setup: (o, p) => "",
-		loop:  (o, p) => `Maximilian.maxiBits.gte(${p[0].loop},${p[1].loop})`
+		loop: (o, p) => `Maximilian.maxiBits.gt(${p[0].loop},${p[1].loop})`,
 	},
-  bitLte: {
+	bitGte: {
 		setup: (o, p) => "",
-		loop:  (o, p) => `Maximilian.maxiBits.lte(${p[0].loop},${p[1].loop})`
+		loop: (o, p) => `Maximilian.maxiBits.gte(${p[0].loop},${p[1].loop})`,
 	},
-  bitLt: {
+	bitLte: {
 		setup: (o, p) => "",
-		loop:  (o, p) => `Maximilian.maxiBits.lt(${p[0].loop},${p[1].loop})`
+		loop: (o, p) => `Maximilian.maxiBits.lte(${p[0].loop},${p[1].loop})`,
 	},
-  setup: (o, p) => "",
-  bitDiv: {
-		loop:  (o, p) => `Maximilian.maxiBits.div(${p[0].loop},${p[1].loop})`
-	},
-  bitr: {
+	bitLt: {
 		setup: (o, p) => "",
-		loop:  (o, p) => `Maximilian.maxiBits.at(${p[0].loop},${p[1].loop},${p[2].loop})`
+		loop: (o, p) => `Maximilian.maxiBits.lt(${p[0].loop},${p[1].loop})`,
 	},
-  bitnoise: {
+	setup: (o, p) => "",
+	bitDiv: {
+		loop: (o, p) => `Maximilian.maxiBits.div(${p[0].loop},${p[1].loop})`,
+	},
+	bitr: {
 		setup: (o, p) => "",
-		loop:  (o, p) => `Maximilian.maxiBits.noise()`
+		loop: (o, p) =>
+			`Maximilian.maxiBits.at(${p[0].loop},${p[1].loop},${p[2].loop})`,
 	},
-  btime: {
-		setup: (o, p) =>``,
-		loop:  (o, p) => `this.bitTime`
-	},
-  bitFromSig: {
+	bitnoise: {
 		setup: (o, p) => "",
-		loop:  (o, p) => `Maximilian.maxiBits.fromSignal(${p[0].loop})`
+		loop: (o, p) => `Maximilian.maxiBits.noise()`,
+	},
+	btime: {
+		setup: (o, p) => ``,
+		loop: (o, p) => `this.bitTime`,
+	},
+	bitFromSig: {
+		setup: (o, p) => "",
+		loop: (o, p) => `Maximilian.maxiBits.fromSignal(${p[0].loop})`,
 	},
 	//basic clock functions
-  clp: {
+	clp: {
 		setup: (o, p) => "",
-		loop:  (o, p) => `this.clockPhase(${p[0].loop},${p.length > 1 ? p[1].loop : 0})`
+		loop: (o, p) =>
+			`this.clockPhase(${p[0].loop},${p.length > 1 ? p[1].loop : 0})`,
 	},
-  clt: {
+	clt: {
 		setup: (o, p) => "",
-		loop:  (o, p) => `this.clockTrig(${p[0].loop},${p.length > 1 ? p[1].loop : 0})`
+		loop: (o, p) =>
+			`this.clockTrig(${p[0].loop},${p.length > 1 ? p[1].loop : 0})`,
 	},
 	//clock meta
 	clk: {
 		setup: (o, p) => "",
-		loop:  (o, p) => `(()=>{this.setBPM(${p[0].loop}); this.setBeatsPerBar(${p[1].loop});})()`
+		loop: (o, p) =>
+			`(()=>{this.setBPM(${p[0].loop}); this.setBeatsPerBar(${p[1].loop});})()`,
 	},
 
-  onzx: {
+	onzx: {
 		setup: (o, p) => `${o} = new Maximilian.maxiTrigger();`,
-		loop:  (o, p) => `${o}.onZX(${p[0].loop})`
+		loop: (o, p) => `${o}.onZX(${p[0].loop})`,
 	},
-  onchange: {
+	onchange: {
 		setup: (o, p) => `${o} = new Maximilian.maxiTrigger();`,
-		loop:  (o, p) => `${o}.onChanged(${p[0].loop},${p[1].loop})`
+		loop: (o, p) => `${o}.onChanged(${p[0].loop},${p[1].loop})`,
 	},
-  count: {
+	count: {
 		setup: (o, p) => `${o} = new Maximilian.maxiCounter();`,
-		loop:  (o, p) => `${o}.count(${p[0].loop},${p[1].loop})`
+		loop: (o, p) => `${o}.count(${p[0].loop},${p[1].loop})`,
 	},
-  idx: {
+	idx: {
 		setup: (o, p) => `${o} = new Maximilian.maxiIndex();`,
-		loop:  (o, p) => `${o}.pull(${p[0].loop},${p[1].loop},${p[2].loop})`
-  },
-  svf: {
-    //set cutoff and resonance only when params change to save CPU
+		loop: (o, p) => `${o}.pull(${p[0].loop},${p[1].loop},${p[2].loop})`,
+	},
+	svf: {
+		//set cutoff and resonance only when params change to save CPU
 		setup: (o, p) => `${o} = new Maximilian.maxiSVF();
                       ${o}_p1 = new Maximilian.maxiTrigger();
                       ${o}_p2 = new Maximilian.maxiTrigger();`,
-		loop:  (o, p) => `( () => { ${o}_cutoff = ${p[1].loop};
+		loop: (o, p) => `( () => { ${o}_cutoff = ${p[1].loop};
                                 if (${o}_p1.onChanged(${o}_cutoff, 1e-5)) {${o}.setCutoff(${o}_cutoff)};
                                 ${o}_res = ${p[2].loop};
                                 if (${o}_p2.onChanged(${o}_res, 1e-5)) {${o}.setResonance(${o}_res)};
-                                return ${o}.play(${p[0].loop},${p[3].loop},${p[4].loop},${p[5].loop},${p[6].loop})})()`
-  },
-  bitclock: {
-    setup: (o, p) => "",
-		loop:  (o, p) => `this.bitclock`
-  },
+                                return ${o}.play(${p[0].loop},${p[3].loop},${p[4].loop},${p[5].loop},${p[6].loop})})()`,
+	},
+	bitclock: {
+		setup: (o, p) => "",
+		loop: (o, p) => `this.bitclock`,
+	},
 	pvshift: {
 		setup: (o, p) => `${o} = new pvshift();`,
-		loop:  (o, p) => `${o}.play(${p[0].loop},${p[1].loop})`
+		loop: (o, p) => `${o}.play(${p[0].loop},${p[1].loop})`,
 	},
 
 	rsq: {
 		setup: (o, p) => `${o} = new Maximilian.maxiRatioSeq();`,
-		loop:  (o, p) => {return p.length == 2 ? `${o}.playTrig(${p[0].loop},${p[1].loop})` : `${o}.playValues(${p[0].loop},${p[1].loop},${p[2].loop})`}
+		loop: (o, p) => {
+			return p.length == 2
+				? `${o}.playTrig(${p[0].loop},${p[1].loop})`
+				: `${o}.playValues(${p[0].loop},${p[1].loop},${p[2].loop})`;
+		},
 	},
 	o303: {
 		setup: (o, p) => `${o} = new Open303.Open303();
@@ -450,7 +486,7 @@ var jsFuncMap = {
                       ${o}_tdec = new Maximilian.maxiTrigger();
                       ${o}_tnoteoff = new Maximilian.maxiTrigger();
                       ${o}_tatt = new Maximilian.maxiTrigger();`,
-		loop:  (o, p) => `(()=>{
+		loop: (o, p) => `(()=>{
 			let newNote = ${o}_tnote.onZX(${p[0].loop});
 			let accent = ${p[3].loop};
 			if (newNote) {
@@ -469,47 +505,49 @@ var jsFuncMap = {
 			if (${o}_tatt.onChanged(${p[9].loop}, 1e-5)) {${o}.setNormalAttack(${p[9].loop})};
 			if (${o}_tdec.onChanged(${p[10].loop}, 1e-5)) {${o}.setDecay(${p[10].loop})};
 			${o}.setAccent(${p[11].loop});
-			return ${o}.play();})()`
+			return ${o}.play();})()`,
 	},
 	freeverb: {
 		setup: (o, p) => `${o} = new Maximilian.maxiFreeVerb();`,
-		loop:  (o, p) => `${o}.play(${p[0].loop},${p[1].loop},${p[2].loop})`
+		loop: (o, p) => `${o}.play(${p[0].loop},${p[1].loop},${p[2].loop})`,
 	},
-	line: { //creates a triggered line from 0-1 - use other functions to shape the line
-		setup: (o, p) => `${o} = new Maximilian.maxiLine(); ${o}.prepare(0,1,${p[1].loop}, false); ${o}.triggerEnable(1);`,
-		loop:  (o, p) => `${o}.play(${p[0].loop})`
+	line: {
+		//creates a triggered line from 0-1 - use other functions to shape the line
+		setup: (o, p) =>
+			`${o} = new Maximilian.maxiLine(); ${o}.prepare(0,1,${p[1].loop}, false); ${o}.triggerEnable(1);`,
+		loop: (o, p) => `${o}.play(${p[0].loop})`,
 	},
 	const: {
 		setup: (o, p) => ``,
-		loop:  (o, p) => `${p[0].loop}`
+		loop: (o, p) => `${p[0].loop}`,
 	},
 	poll: {
 		setup: (o, p) => `${o} = new poll()`,
-		loop:  (o, p) => `${o}.play(${p[0].loop})`
+		loop: (o, p) => `${o}.play(${p[0].loop})`,
 	},
 	dac: {
 		setup: (o, p) => ``,
-		loop:  (o, p) => {
-			if (p.length==1) {
+		loop: (o, p) => {
+			if (p.length == 1) {
 				return `this.dacOutAll(${p[0].loop})`;
-			}
-			else {
+			} else {
 				return `this.dacOut(${p[0].loop},${p[1].loop})`;
 			}
-		}
+		},
 	},
 	fft: {
 		setup: (o, p) => `${o} = new fft(${p[1].loop}, ${p[2].loop})`,
-		loop:  (o, p) => `${o}.play(${p[0].loop})`
+		loop: (o, p) => `${o}.play(${p[0].loop})`,
 	},
 	ifft: {
 		setup: (o, p) => `${o} = new ifft(${p[3].loop}, ${p[4].loop})`,
-		loop:  (o, p) => `${o}.play(${p[0].loop}, ${p[1].loop}, ${p[2].loop})`
+		loop: (o, p) => `${o}.play(${p[0].loop}, ${p[1].loop}, ${p[2].loop})`,
 	},
 	mfcc: {
-		setup: (o, p) => `${o} = new mfcc(${p[1].loop}, ${p[2].loop}, ${p[3].loop})`,
-		loop:  (o, p) => `${o}.play(${p[0].loop})`
-	}
+		setup: (o, p) =>
+			`${o} = new mfcc(${p[1].loop}, ${p[2].loop}, ${p[3].loop})`,
+		loop: (o, p) => `${o}.play(${p[0].loop})`,
+	},
 };
 
 // if (${o}_twf.onChanged(${p[2].loop}, 1e-5)) {${o}.setWaveform(${p[2].loop})};

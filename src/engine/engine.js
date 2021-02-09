@@ -2,6 +2,7 @@ import RingBuffer from '../common/ringbuf.js'; //thanks padenot
 import {
   loadSampleToArray
 } from './maximilian.util.js';
+import Dispatcher from '../common/dispatcher.js';
 // import {
 //   kuramotoNetClock
 // } from './interfaces/clockInterface.js';
@@ -34,6 +35,9 @@ class CustomMaxiNode extends AudioWorkletNode {
  * The Engine is a singleton class that encapsulates the AudioContext
  * and all WASM and Maximilian -powered Audio Worklet Processor
  * @class AudioEngine
+ * TODO more error handling
+ * TODO more checking of arguments passed to methods
+ * TODO optimise performance, especially on analysers which are pumping data continuously
  */
 export class Engine {
 	/**
@@ -54,16 +58,22 @@ export class Engine {
 		this.sharedArrayBuffers = {};
 
 		// Event emitter that should be subscribed by SAB receivers
-		this.onSharedBuffer = () => {
-			sab;
-		};
-
-		this.queue = [];
+		this.dispatcher = new Dispatcher();
 
 		this.samplesLoaded = false;
 	}
 
-	addEventListener(event, callback) {}
+	/**
+	 * Engine's event subscription
+   * @addEventListener
+	 * @param {*} event
+	 * @param {*} callback
+	 */
+	addEventListener(event, callback) {
+		if (this.dispatcher && event && callback)
+			this.dispatcher.addEventListener(event, callback);
+		else throw new Error("Error adding event listener to Engine");
+	}
 
 	/**
 	 * Handler of the Pub/Sub message events
@@ -77,7 +87,7 @@ export class Engine {
 			console.log("DEBUG:AudioEngine:onMessagingEventHandler:");
 			console.log(event);
 			this.audioWorkletNode.port.postMessage(event);
-		} else throw new Error("Error posting to processor");
+		} else throw new Error("Error async posting to processor");
 	}
 
 	/**
@@ -472,7 +482,6 @@ export class Engine {
 				// Worklet Processor message handler
 				this.audioWorkletNode.port.onmessage = (e) =>
 					this.onProcessorMessageHandler(e);
-
 			} catch (err) {
 				console.error(
 					"ERROR:Engine: Error connecting WorkletNode: ",
@@ -482,37 +491,44 @@ export class Engine {
 		}
 	}
 
-	onProcessorMessageHandler(event){
-    if (event && event.data) {
-      if(event.data.rq && event.data.rq === "send"){
-        switch (event.data.ttype) {
-          case 'ML':
-            // this.messaging.publish("model-input-data", {
-            //   type: "model-input-data",
-            //   value: event.data.value,
-            //   ch: event.data.ch
-            // });
-            break;
-          case 'NET':
-            this.peerNet.send(event.data.ch[0], event.data.value, event.data.ch[1]);
-            break;
-        }
-      }
-      else if (event.data.rq && event.data.rq === "buf") {
-        switch (event.data.ttype) {
-          case 'ML':
-            this.onSharedBuffer({
-            // this.messaging.publish("model-input-buffer", {
-              type: "model-input-buffer",
-              value: event.data.value,
-              channelID: event.data.channelID, //channel ID
-              blocksize: event.data.blocksize
-            });
-            break;
-        }
-      }
-    }
-  }
+	/**
+	 *
+	 * @param {*} event
+	 */
+	onProcessorMessageHandler(event) {
+		if (event && event.data) {
+			if (event.data.rq && event.data.rq === "send") {
+				switch (event.data.ttype) {
+					case "ML":
+						// this.messaging.publish("model-input-data", {
+						//   type: "model-input-data",
+						//   value: event.data.value,
+						//   ch: event.data.ch
+						// });
+						break;
+					case "NET":
+						this.peerNet.send(
+							event.data.ch[0],
+							event.data.value,
+							event.data.ch[1]
+						);
+						break;
+				}
+			} else if (event.data.rq && event.data.rq === "buf") {
+				switch (event.data.ttype) {
+					case "ML":
+						this.onSharedBuffer({
+							// this.messaging.publish("model-input-buffer", {
+							type: "model-input-buffer",
+							value: event.data.value,
+							channelID: event.data.channelID, //channel ID
+							blocksize: event.data.blocksize,
+						});
+						break;
+				}
+			}
+		}
+	}
 
 	/**
 	 * Public method for subscribing async messaging from the Audio Worklet Processor scope

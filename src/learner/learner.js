@@ -1,21 +1,36 @@
+
+import Dispatcher from "../common/dispatcher.js";
+
 // here we use the default pattern but any RegEx can be configured
 // import mlworker from 'web-worker:./mlworker.js';
 import mlworker from 'web-worker:./worker.js';
-import * as Comlink from "../../node_modules/comlink/dist/esm/comlink.mjs";
 
+/**
+ * The Learner class encapsulates a worker thread
+ * and does async initialization and manages all async communication with it
+ * @class Learner
+ * TODO more error handling
+ * TODO more checking of arguments passed to methods
+ */
 export class Learner {
 	/**
 	 * @constructor
-	 * @param {*} url
-	 * @param {*} sab
 	 */
 	constructor() {
-		// const worker = new mlworker({ type: "module" });
+		// Manager of events subscrition and emission, that should be subscribed by SAB receivers
+		this.dispatcher = new Dispatcher();
+	}
 
-    // Event emitter that should be subscribed by SAB receivers
-		this.onSharedBuffer = e => {
-			sab: e.data.sab
-		};
+	/**
+	 * Engine's event subscription
+	 * @addEventListener
+	 * @param {*} event
+	 * @param {*} callback
+	 */
+	addEventListener(event, callback) {
+		if (this.dispatcher && event && callback)
+			this.dispatcher.addEventListener(event, callback);
+		else throw new Error("Error adding event listener to Learner");
 	}
 
 	/**
@@ -32,19 +47,19 @@ export class Learner {
 				this.worker.postMessage({ url });
 				this.worker.onerror = this.onErrorHandler;
 				this.worker.onmessage = (e) => {
-          result = e.data.init;
-          resolve(result);
+					result = e.data.init;
+					resolve(result);
 					this.worker.onmessage = this.onMessageHandler;
 				};
 			}
 		});
 	}
 
-	onSharedBuffer = e => {
-		sab: e.data.sab
+	onSharedBuffer = (e) => {
+		sab: e.data.sab;
 	};
 
-	onMessageHandler = e => {
+	onMessageHandler = (e) => {
 		if (e.data);
 		this.onSharedBuffer(e.data);
 		console.log("onMsg");
