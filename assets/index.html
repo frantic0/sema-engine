@@ -90,7 +90,7 @@
     <button id="loadSamplesButton">Load Samples</button>
     <button id="evalButton">Eval Livecode</button>
     <button id="learnerButton">Create Learner</button>
-    <button id="evalJsButton">Eval JS</button>
+    <button id="evalJsButton">Eval JS block</button>
     <button id="createAnalyserButton">Analyser++</button>
     <button id="mouseButton">Mouse input</button>
     <span id="outputText"></span>
@@ -109,7 +109,8 @@
     import {
       Engine,
       compile,
-      Learner
+      Learner,
+      getBlock
     } from "./sema-engine.mjs";
 
     let engine,
@@ -200,7 +201,9 @@
     });
 
     $("evalJsButton", async () => {
-      learner.eval(editorJS.getValue());
+      const code = getBlock(editorJS);
+      console.log(code);
+      learner.eval(code);
     });
 
     // $("learnerButton3", async () => {

@@ -27,4 +27,4 @@ export { semaa } from "./compiler/sema.js";
  */
 export { Learner } from "./learner/learner.js";
 
-
+export { getBlock } from "./common/blockTracker.js";
