@@ -145,10 +145,13 @@ export class Engine {
 	 * @param {*} e
 	 * @param {*} channelId
 	 */
-	pushDataToSharedBuffer(e, channelId) {
-		if (this.sharedArrayBuffers && this.sharedArrayBuffers[channelId]) {
-			this.sharedArrayBuffers[channelId].rb.push(e);
-		}
+	pushDataToSharedBuffer(channelId, data) {
+    if(channelId && data && typeof Array.isArray(data) ){
+      if (this.sharedArrayBuffers && this.sharedArrayBuffers[channelId]) {
+        this.sharedArrayBuffers[channelId].rb.push(data);
+      }
+    }
+    else throw new Error("Error in function parameters");
 	}
 
 	/**

@@ -242,7 +242,7 @@ onmessage = m => {
 
 function sabChecker() {
   try {
-    // console.log(SABs);
+    // console.log(inputSABs);
     for (let v in inputSABs) {
       let avail = inputSABs[v].rb.available_read();
       // console.log(avail, inputSABs[v].rb.capacity, inputSABs[v].blocksize);

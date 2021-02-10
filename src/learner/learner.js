@@ -54,7 +54,7 @@ export class Learner {
 				this.worker.onerror = this.onErrorHandler;
 				this.worker.onmessage = (e) => {
 					result = e.data.init;
-          console.info("running Learner");
+					console.info("running Learner");
 					resolve(result);
 					this.worker.onmessage = this.onMessageHandler;
 				};

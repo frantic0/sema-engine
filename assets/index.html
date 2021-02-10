@@ -138,14 +138,14 @@
             blockSize = 2;
 
       let sab = engine.createSharedBuffer(channelId, ttype, blockSize);
-      if(learner && sab)
-        learner.pushInputBuffer(sab, blockSize, channelId);
+      // if(learner && sab)
+      //   learner.createSharedBuffer(sab, blockSize, channelId);
 
       const onMouseMove = e => {
         const x = parseFloat(e.offsetX/window.innerWidth).toFixed(5);
         const y = parseFloat(e.offsetY/window.innerHeight).toFixed(5);
         document.getElementById('outputText').innerText = `${x} ${y}`;
-        engine.pushDataToSharedBuffer({ x, y }, channelId);
+        engine.pushDataToSharedBuffer(channelId, [ x, y ]);
       }
 
       // Subscribe `Alt`-key down event to subscribe mouse move
