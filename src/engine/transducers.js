@@ -1,8 +1,6 @@
-import Maximilian from "./maximilian.wasmmodule.js";
+import Maximilian from "./sema-engine.wasmmodule.js";
 import RingBuffer from "./ringbuf.js";
-
 export class SABInputTransducer {
-
 	constructor(id, triggered = 0) {
 		this.value = 0;
 		this.id = id;
