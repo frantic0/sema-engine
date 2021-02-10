@@ -189,8 +189,8 @@ var sema = {
   }
 
 onmessage = m => {
-  console.log("DEBUG:worker:onmessage");
-	console.log(m);
+  // console.log("DEBUG:worker:onmessage");
+	// console.log(m);
 
   // Init message only
   if(m.data.url){
