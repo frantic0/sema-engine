@@ -68,14 +68,18 @@
       position:absolute;
       overflow: hidden;
       /* CM will manage its own scrollbars. */
-      /* resize: horizontal; */
+      resize: horizontal;
       /*  height: 10em; /* A fixed initial height is required in Chrome both for the resize handle to appear and to not fall into a shrinking loop due to the neg. offset in cm_resize()! */
+    }
+
+    button {
+      height: 25px;
     }
 
     #evalButton {
       grid-row: 5 / 5;
       width: 100px;
-      margin-top: 5px;
+      /* margin-top: 5px; */
     }
 
     .container-js {
@@ -97,9 +101,7 @@
       position:absolute;
       overflow: hidden;
        /* CM will manage its own scrollbars. */
-
       /* resize: both; */
-      /* height: 10em; A fixed initial height is required in Chrome both for the resize handle to appear and to not fall into a shrinking loop due to the neg. offset in cm_resize()! */
     }
 
     #evalJsButton {
@@ -133,11 +135,6 @@
       /* height: 10em; A fixed initial height is required in Chrome both for the resize handle to appear and to not fall into a shrinking loop due to the neg. offset in cm_resize()! */
     }
 
-
-
-
-
-
     .commands-container-b {
       grid-row:5;
       width: auto;
@@ -147,21 +144,15 @@
       padding-bottom: 5px;
     }
 
-
     .CodeMirror { border: 1px solid #ddd; }
-    /* .CodeMirror-scroll { max-height: 200px; } */
-  /* .CodeMirror pre { padding-left: 7px; line-height: 1.25; } */
 
-/* .CodeMirror {
-    max-height:150px;
-    resize: vertical;
-    overflow: auto !important;
-} */
+    .CodeMirror {
+      height: 100%;
+      resize: vertical;
+      /* overflow: auto !important; */
+    }
 
-/* .CodeMirror-scroll {
-    height: auto;
-    max-height:200px;
-} */
+
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.1/codemirror.min.js" integrity="sha512-9fASXXoC6x4BKdqe6IcEYZnt4KPMiQx5YJIsiWevf2QpSXfPcXMj4MTzIbwQuKJRysBlRh1LGHIaQm/415WyEA==" crossorigin="anonymous"></script>
   <link   rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.1/codemirror.min.css" integrity="sha512-MWdvo/Qqcf4pY1ecQUB1uBn0qLp19U/qJ1Rpp2BDZeuBA7YsFEwkvqR/+aG4BroPiAYDunKJ6X8R/Pmdt3p7oA==" crossorigin="anonymous" />
@@ -328,7 +319,7 @@
       });
       let container = textArea.parentElement;
 
-      // editor.setSize(container.clientWidth + 2, container.clientHeight )
+      // editor.setSize(container.clientWidth + 2, container.clientHeight -10);
 
 
       fetch( document.location.origin + contentFileRelativeURL )
