@@ -1,4 +1,5 @@
-import Maximilian from './maximilian.wasmmodule.js';
+// import Maximilian from './maximilian.wasmmodule.js';
+import Maximilian from './sema-engine.wasmmodule.js';
 import RingBuffer from "./ringbuf.js"; //thanks padenot
 import Open303 from './open303.wasmmodule.js';
 import { SABInputTransducer, SABOutputTransducer } from './transducers.js';

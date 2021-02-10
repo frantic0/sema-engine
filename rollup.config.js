@@ -55,7 +55,7 @@ export default [
 									dest: "dist",
 								},
 								{
-									src: "src/engine/maximilian.wasmmodule.js",
+									src: "src/engine/sema-engine.wasmmodule.js",
 									dest: "dist",
 								},
 								{
@@ -119,7 +119,7 @@ export default [
 									dest: "dist",
 								},
 								{
-									src: "src/engine/maximilian.wasmmodule.js",
+									src: "src/engine/sema-engine.wasmmodule.js",
 									dest: "dist",
 								},
 								{
