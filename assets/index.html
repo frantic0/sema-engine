@@ -15,52 +15,116 @@
       list-style-type: decimal
     }
 
-    .flex-container {
+    .main-container {
       width: 100%;
-      display: inline-flex;
+      display: grid;
+      grid-template-columns: auto 20px auto;
+      grid-template-rows: 60px 30px auto auto auto 200px;
       padding-right: 50px;
+    }
+
+    .header {
+      grid-row: 1;
+      grid-column: 1 / -1;
+    }
+
+    .instruction {
+      grid-row: 2;
+      grid-column: 1 / -1;
+    }
+
+    .commands-container-a {
+      grid-row:3;
+      grid-column: 1 / -1;
+      padding-top: 10px;
+      padding-bottom: 10px;
     }
 
     .editor-header {
       font-weight: bold;
-      margin-bottom: 50px;
+      /* height: 2em; */
+      width: auto;
+      /* margin-bottom: 50px; */
     }
 
     .editor-container {
-      width: 100%;
-      /* height: 250px; */
+      width: auto;
+      height: 250px;
       padding-top: 10px;
       padding-bottom: 10px;
+      position:relative;
+
+      overflow: hidden; /* CM will manage its own scrollbars. */
+      resize: both;
+
+      height: 10em; /* A fixed initial height is required in Chrome both for the resize handle to appear and to not fall into a shrinking loop due to the neg. offset in cm_resize()! */
     }
 
-    .js-editor-container {
-      width: 100%;
-      /* height: 200px; */
-      padding-top: 10px;
-      padding-bottom: 10px;
+    .editor-container-lc {
+      grid-row:4;
+      grid-column: 1/2;
+      display: grid;
+      grid-template-rows: auto 10em;
+      /* position:absolute; */
+      /* top:50%; */
+      height:10em;
+      width: auto;
+      /* margin-top:-5em; */
     }
+
+    .editor-container-ge {
+      grid-row: 4;
+      grid-column: 3/3;
+      display: grid;
+      grid-template-rows: auto 10em;
+      height:10em;
+      width: auto;
+      /* margin-top:-5em; */
+    }
+
+
+
+    .commands-container-b {
+      grid-row:5;
+      grid-column: 1 / -1;
+      padding-top: 5px;
+      padding-bottom: 5px;
+    }
+
+    .editor-container-js {
+      grid-row:5;
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-rows: auto 10em;
+      height:10em;
+      width: auto;
+    }
+
+    .CodeMirror {
+      border: 1px solid #eee;
+      height: 100%;
+      width: 100%;
+    }
+
     /* .textArea-js{
       height: 200px;
       width: 100%;
     } */
 
-    /* .CodeMirror { height: auto; border: 1px solid #ddd; }
+    /* .CodeMirror { height: auto; border: 1px solid #ddd; } */
     /* .CodeMirror-scroll { max-height: 200px; } */
-  .CodeMirror pre { padding-left: 7px; line-height: 1.25; } */
+  /* .CodeMirror pre { padding-left: 7px; line-height: 1.25; } */
 
-.CodeMirror {
-    /* border: 1px solid #ddd;
-    height: auto; */
+/* .CodeMirror {
     max-height:150px;
     resize: vertical;
     overflow: auto !important;
-}
+} */
 
 /* .CodeMirror-scroll {
     height: auto;
     max-height:200px;
 } */
-
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.1/codemirror.min.js" integrity="sha512-9fASXXoC6x4BKdqe6IcEYZnt4KPMiQx5YJIsiWevf2QpSXfPcXMj4MTzIbwQuKJRysBlRh1LGHIaQm/415WyEA==" crossorigin="anonymous"></script>
   <link   rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.1/codemirror.min.css" integrity="sha512-MWdvo/Qqcf4pY1ecQUB1uBn0qLp19U/qJ1Rpp2BDZeuBA7YsFEwkvqR/+aG4BroPiAYDunKJ6X8R/Pmdt3p7oA==" crossorigin="anonymous" />
@@ -69,41 +133,48 @@
 </head>
 
 <body>
-  <h1>Sema engine – Default language</h1>
-  <p>You might need to clean the cache when testing your worklet processor code (cmd-shift-backspace/ctrl-shift-backspace)</p>
-
-  <div class="flex-container">
-    <div class="editor-container">
+  <div class="main-container">
+    <div class='header'>
+      <h2>Sema engine – Default language</h2>
+    </div>
+    <div class='instruction'>
+      <span>You might need to clean the cache when testing your worklet processor code (cmd-shift-backspace/ctrl-shift-backspace)</span>
+    </div>
+    <div class="commands-container-a">
+      <button id="playButton">Play</button>
+      <button id="stopButton">Stop</button>
+      <button id="plusButton">Vol+</button>
+      <button id="minusButton">Vol–</button>
+      <button id="loadSamplesButton">Load Samples</button>
+      <button id="learnerButton">Create Learner</button>
+      <button id="createAnalyserButton">Analyser++</button>
+      <button id="mouseButton">Mouse input</button>
+    </div>
+    <div class="editor-container-lc">
       <span class="editor-header">Livecode Editor</span>
-      <textarea id="textArea-livecode"></textarea>
+      <div class="editor-container">
+        <textarea id="textArea-livecode"></textarea>
+      </div>
+      <button id="evalButton">Eval Livecode</button>
     </div>
-    <div class="editor-container">
-      <span class="editor-header">Grammar Editor</span>
-      <textarea id="textArea-grammar"></textarea>
-    </div>
-  </div>
-  <div class="commands-container">
-    <button id="playButton">Play</button>
-    <button id="stopButton">Stop</button>
-    <button id="plusButton">Vol+</button>
-    <button id="minusButton">Vol–</button>
-    <button id="loadSamplesButton">Load Samples</button>
-    <button id="evalButton">Eval Livecode</button>
-    <button id="learnerButton">Create Learner</button>
-    <button id="evalJsButton">Eval JS block</button>
-    <button id="createAnalyserButton">Analyser++</button>
-    <button id="mouseButton">Mouse input</button>
-    <span id="outputText"></span>
-  </div>
-  <div class="flex-container">
-    <div class="js-editor-container">
+    <div class="editor-container-js">
       <span class="editor-header">JS Editor</span>
-      <textarea id="textArea-js"></textarea>
+      <div class="editor-container">
+        <textarea id="textArea-js"></textarea>
+      </div>
+      <button id="evalJsButton">Eval JS block</button>
+    </div>
+    <div class="commands-container-b">
+      <span id="outputText"></span>
+    </div>
+    <div class="editor-container-ge">
+      <span class="editor-header">Grammar Editor</span>
+      <div class="editor-container">
+        <textarea id="textArea-grammar"></textarea>
+      </div>
     </div>
   </div>
-  <div class="commands-container">
 
-  </div>
   <script type="module">
 
     import {
@@ -206,26 +277,27 @@
 
     $("evalJsButton", async () => {
       const code = getBlock(editorJS);
-      console.log(code);
+      // console.log(code);
       learner.eval(code);
     });
-
-    // $("learnerButton3", async () => {
-    //   learner.eval('input = (id,x) => { console.log(id, x); channel0.send(x[0] + 40) }');
-    // });
-
-    // $("learnerButton4", async () => {
-    //   learner.eval('input = (id,x) => { console.log(id, x); channel0.send(x[0] + 40) }');
-    // });
 
   </script>
   <script>
 
     const setupEditorWithContent = ( elementId, contentFileRelativeURL ) => {
 
-      const editor = CodeMirror.fromTextArea( document.getElementById(elementId), {
+      let textArea = document.getElementById(elementId);
+
+      const editor = CodeMirror.fromTextArea(textArea, {
+        // lineWrapping: document.getElementById("linewrap").checked,
+        lineWrapping: true,
         lineNumbers: true
       });
+
+      let container = textArea.parentElement;
+
+      // editor.setSize(container.clientWidth + 2, container.clientHeight )
+
 
       fetch( document.location.origin + contentFileRelativeURL )
         .then( response => response.text() )
