@@ -28,15 +28,38 @@
 
     .editor-container {
       width: 100%;
-      height: 320px;
+      /* height: 250px; */
       padding-top: 10px;
       padding-bottom: 10px;
     }
 
-    #textArea {
-      height: 100%;
+    .js-editor-container {
       width: 100%;
+      /* height: 200px; */
+      padding-top: 10px;
+      padding-bottom: 10px;
     }
+    /* .textArea-js{
+      height: 200px;
+      width: 100%;
+    } */
+
+    /* .CodeMirror { height: auto; border: 1px solid #ddd; }
+    /* .CodeMirror-scroll { max-height: 200px; } */
+  .CodeMirror pre { padding-left: 7px; line-height: 1.25; } */
+
+.CodeMirror {
+    /* border: 1px solid #ddd;
+    height: auto; */
+    max-height:150px;
+    resize: vertical;
+    overflow: auto !important;
+}
+
+/* .CodeMirror-scroll {
+    height: auto;
+    max-height:200px;
+} */
 
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.1/codemirror.min.js" integrity="sha512-9fASXXoC6x4BKdqe6IcEYZnt4KPMiQx5YJIsiWevf2QpSXfPcXMj4MTzIbwQuKJRysBlRh1LGHIaQm/415WyEA==" crossorigin="anonymous"></script>
@@ -47,7 +70,7 @@
 
 <body>
   <h1>Sema engine – Default language</h1>
-  <p>You might need to clean the cache when testing your worklet processor code (Cmd-Shift-Backspace/Ctrl-Shift-Backspace)</p>
+  <p>You might need to clean the cache when testing your worklet processor code (cmd-shift-backspace/ctrl-shift-backspace)</p>
 
   <div class="flex-container">
     <div class="editor-container">
@@ -65,22 +88,22 @@
     <button id="plusButton">Vol+</button>
     <button id="minusButton">Vol–</button>
     <button id="loadSamplesButton">Load Samples</button>
-    <button id="evalButton">Eval</button>
-    <button id="createAnalyserButton">Analyser++</button>
+    <button id="evalButton">Eval Livecode</button>
     <button id="learnerButton">Create Learner</button>
-    <button id="learnerButton2">Learner eval 2</button>
-    <button id="learnerButton3">Learner eval 3</button>
-    <button id="learnerButton4">Learner eval 4</button>
+    <button id="evalJsButton">Eval JS</button>
+    <button id="createAnalyserButton">Analyser++</button>
     <button id="mouseButton">Mouse input</button>
     <span id="outputText"></span>
   </div>
   <div class="flex-container">
-    <div class="editor-container">
+    <div class="js-editor-container">
       <span class="editor-header">JS Editor</span>
       <textarea id="textArea-js"></textarea>
     </div>
   </div>
+  <div class="commands-container">
 
+  </div>
   <script type="module">
 
     import {
@@ -172,21 +195,21 @@
       }
       await learner.init(document.location.origin); // when Learner initializes
 
-      learner.eval('input = (id,x) => { console.log(id, x); };');
+      // learner.eval('input = (id,x) => { console.log(id, x); };');
 
     });
 
-    $("learnerButton2", async () => {
-      learner.eval('var channel0 = createOutputChannel(0, 1)');
+    $("evalJsButton", async () => {
+      learner.eval(editorJS.getValue());
     });
 
-    $("learnerButton3", async () => {
-      learner.eval('input = (id,x) => { console.log(id, x); channel0.send(x[0] + 40) }');
-    });
+    // $("learnerButton3", async () => {
+    //   learner.eval('input = (id,x) => { console.log(id, x); channel0.send(x[0] + 40) }');
+    // });
 
-    $("learnerButton4", async () => {
-      learner.eval('input = (id,x) => { console.log(id, x); channel0.send(x[0] + 40) }');
-    });
+    // $("learnerButton4", async () => {
+    //   learner.eval('input = (id,x) => { console.log(id, x); channel0.send(x[0] + 40) }');
+    // });
 
   </script>
   <script>

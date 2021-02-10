@@ -1,0 +1,5 @@
+var channel0 = createOutputChannel(0, 1);
+
+____
+
+channel0.send(200)
