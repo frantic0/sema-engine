@@ -21,25 +21,30 @@
       width: 100%;
       height: 100%;
       display: grid;
-      grid-gap: 5px;
-      grid-template-columns: 0.75fr 1fr;
-      grid-template-rows: 60px 30px 0.1fr auto 40px 0.45fr;
+      grid-gap: 3px;
+      grid-template-columns: 0.005fr 0.75fr 1fr 0.005fr;
+      grid-template-rows: 40px 20px 0.1fr auto 40px 0.45fr;
       /* margin: 50px; */
+    }
+
+    h3 {
+      margin-block-start: 0.5em;
+      margin-block-end: 0.5em;
     }
 
     .header {
       grid-row: 1;
-      grid-column: 1 / -1;
+      grid-column: 2 / -1;
     }
 
     .instruction {
       grid-row: 2;
-      grid-column: 1 / -1;
+      grid-column: 2 / -1;
     }
 
     .commands-container-a {
       grid-row:3;
-      grid-column: 1 / -1;
+      grid-column: 2 / -1;
       padding-top: 10px;
       padding-bottom: 10px;
     }
@@ -51,7 +56,7 @@
 
     .container-lc {
       grid-row: 4;
-      grid-column: 1/2;
+      grid-column: 2/2;
       display: grid;
       grid-template-rows: auto 1fr;
       position:relative;
@@ -62,7 +67,7 @@
     }
 
     .editor-container-lc {
-      grid-row: 2 / 2;
+      grid-row: 3 / 2;
       width: 100%;
       height: 100%;
       position:absolute;
@@ -78,13 +83,13 @@
 
     #evalButton {
       grid-row: 5 / 5;
+      grid-column: 2/2;
       width: 100px;
-      /* margin-top: 5px; */
     }
 
     .container-js {
       grid-row: 4;
-      grid-column: 2 / -1;
+      grid-column: 3 / 3;
       display: grid;
       grid-template-rows: auto 1fr;
       position:relative;
@@ -97,7 +102,6 @@
       grid-row: 2 /2;
       width: 100%;
       height: 100%;
-      /* padding-top: 5px; */
       position:absolute;
       overflow: hidden;
        /* CM will manage its own scrollbars. */
@@ -107,12 +111,13 @@
     #evalJsButton {
       grid-row: 5 / 5;
       width: 100px;
-      margin-top: 5px;
+      grid-column: 3/3;
+      /* margin-top: 5px; */
     }
 
     .container-ge {
       grid-row:6;
-      grid-column: 1/ -1;
+      grid-column: 2/ 4;
       position:relative;
       height:100%;
       width: 100%;
@@ -126,11 +131,8 @@
     .editor-container-ge {
       width: 100%;
       height: 100%;
-      padding-top: 10px;
-      padding-bottom: 10px;
       position:absolute;
       overflow: auto; /* CM will manage its own scrollbars. */
-
       /* resize: both; */
       /* height: 10em; A fixed initial height is required in Chrome both for the resize handle to appear and to not fall into a shrinking loop due to the neg. offset in cm_resize()! */
     }
@@ -163,7 +165,7 @@
 <body>
   <div class="main-container">
     <div class='header'>
-      <h2>Sema engine – Default language</h2>
+      <h3>Sema engine – Default language</h3>
     </div>
     <div class='instruction'>
       <span>You might need to clean the cache when testing your worklet processor code (cmd-shift-backspace/ctrl-shift-backspace)</span>
