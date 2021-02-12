@@ -23,8 +23,7 @@
       display: grid;
       grid-gap: 3px;
       grid-template-columns: 0.005fr 0.9fr 0.9fr 0.005fr;
-      grid-template-rows: 40px 20px 0.1fr auto 40px 0.45fr;
-      /* margin: 50px; */
+      grid-template-rows: 40px 20px 30px 20px 0.5fr 30px 0.45fr;
     }
 
     h3 {
@@ -45,8 +44,8 @@
     .commands-container-a {
       grid-row:3;
       grid-column: 2 / -1;
-      padding-top: 10px;
-      padding-bottom: 10px;
+      /* padding-top: 10px;
+      padding-bottom: 10px; */
     }
 
     .editor-header {
@@ -54,17 +53,32 @@
       width: auto;
     }
 
+    #editor-header-lc {
+      grid-row:4;
+      grid-column:2/2;
+      font-weight: bold;
+      width: auto;
+    }
+
+    #editor-header-js {
+      grid-row:4;
+      grid-column:3/3;
+      font-weight: bold;
+      width: auto;
+    }
+
     .container-lc {
-      grid-row: 4;
+      grid-row: 5;
       grid-column: 2/2;
       display: grid;
-      grid-template-rows: auto 1fr;
+      /* grid-template-rows: auto 1fr; */
       position:relative;
-      width: auto;
+      /* width: auto; */
+      border: 1px solid #ddd;
       /* height: 100vh; */
       /* min-width: 20em; */
-      /* overflow:auto; */
-      /* resize: both; */
+      overflow:auto;
+      resize: both;
     }
 
     .editor-container-lc {
@@ -83,19 +97,19 @@
     }
 
     #evalButton {
-      grid-row: 5 / 5;
+      grid-row: 6 / 6;
       grid-column: 2/2;
-      width: 100px;
+      width: 280px;
     }
 
     .container-js {
-      grid-row: 4;
+      grid-row: 5;
       grid-column: 3 / 3;
       display: grid;
-      grid-template-rows: auto 1fr;
-      position:relative;
+      border: 1px solid #ddd;
+      position: relative;
       width: auto;
-      /* overflow: auto; */
+      overflow: auto;
       resize: vertical;
     }
 
@@ -103,25 +117,26 @@
       grid-row: 2 /2;
       width: 100%;
       height: 100%;
-      position:absolute;
-      overflow: hidden;
+      position: absolute;
+      overflow: auto;
        /* CM will manage its own scrollbars. */
       /* resize: both; */
     }
 
     #evalJsButton {
-      grid-row: 5 / 5;
-      width: 100px;
+      grid-row: 6 / 6;
       grid-column: 3/3;
+      width: 280px;
       /* margin-top: 5px; */
     }
 
     .container-ge {
-      grid-row:6;
+      grid-row:7;
       grid-column: 2/ 4;
       position:relative;
       height:100%;
       width: 100%;
+      border: 1px solid #ddd;
       min-width: 20em;
       /* max-width: 0.5fr; */
       /* overflow:hidden; */
@@ -147,11 +162,13 @@
       padding-bottom: 5px;
     }
 
-    .CodeMirror { border: 1px solid #ddd; }
+    /* .CodeMirror {
+      border: 1px solid #ddd;
+    } */
 
     .CodeMirror {
       height: 100%;
-      resize: vertical;
+      /* resize: vertical; */
       /* overflow: auto !important; */
     }
 
@@ -174,30 +191,30 @@
     <div class="commands-container-a">
       <button id="playButton">Start Engine</button>
       <button id="stopButton">Stop Engine</button>
-      <button id="plusButton">Vol+</button>
-      <button id="minusButton">Vol–</button>
       <button id="loadSamplesButton">Load Samples</button>
       <button id="learnerButton">Create Learner</button>
-      <button id="createAnalyserButton">Analyser++</button>
+      <!-- <button id="plusButton">Vol+</button>
+      <button id="minusButton">Vol–</button>
+      <button id="createAnalyserButton">Create Analyser</button> -->
       <button id="mouseButton">Mouse input</button>
       <span id="outputText"></span>
     </div>
+    <span id="editor-header-lc" class="editor-header">Livecode Editor</span>
     <div class="container-lc">
-      <span class="editor-header">Livecode Editor</span>
       <div class="editor-container-lc">
         <textarea id="textArea-livecode"></textarea>
       </div>
     </div>
-    <button id="evalButton">Eval Livecode</button>
+    <button id="evalButton">Eval Livecode ( Left [CMD/CTRL]+ENTER )</button>
+    <span id="editor-header-js" class="editor-header">JS Editor</span>
     <div class="container-js">
-      <span class="editor-header">JS Editor</span>
       <div class="editor-container-js">
         <textarea id="textArea-js"></textarea>
       </div>
     </div>
-    <button id="evalJsButton">Eval JS block</button>
+    <button id="evalJsButton">Eval JS block ( Left [CMD/CTRL]+ENTER ) </button>
     <div class="container-ge">
-      <span class="editor-header">Grammar Editor</span>
+      <span id="editor-header-lc" class="editor-header">Grammar Editor</span>
       <div class="editor-container-ge">
         <textarea id="textArea-grammar"></textarea>
       </div>
@@ -233,8 +250,6 @@
       engine.play();
     });
     $("stopButton", () => engine.stop());
-    $("plusButton", () => engine.more());
-    $("minusButton", () => engine.less());
     $("loadSamplesButton", () => {
       engine.loadSample("909.wav", "./audio/909.wav");
       engine.loadSample("909b.wav", "./audio/909b.wav");
@@ -245,7 +260,6 @@
       engine.loadSample("snare1.wav", "./audio/snare1.wav");
     });
 
-    $("createAnalyserButton", () => engine.createAnalyser(analyser++, data => console.log(data)) );
 
     $("evalButton", () => {
       if(engine){
@@ -261,6 +275,31 @@
       }
       else throw new Error('ERROR: Engine not initialized. Please press Start Engine first.')
     });
+
+    $("learnerButton", async () => {
+
+      learner = new Learner();
+      if(engine){
+        engine.addEventListener('onSharedBuffer', e => learner.createSharedBuffer(e) ); // Engine's SAB emissions subscribed by Learner
+        learner.addEventListener('onSharedBuffer', e => engine.pushSharedBuffer(e) );  // Learner's SAB emissions subscribed by Engine
+      }
+      await learner.init(document.location.origin); // when Learner initializes
+
+      // learner.eval('input = (id,x) => { console.log(id, x); };');
+    });
+
+    $("evalJsButton", async () => {
+      if(learner && editorJS){
+        const code = getBlock(editorJS);
+        console.log(code);
+        learner.eval(code);
+      }
+      else throw new Error('ERROR: Learner not initialized. Please press Create Learner first.')
+    });
+
+    // $("minusButton", () => engine.less());
+    // $("plusButton", () => engine.more());
+    // $("createAnalyserButton", () => engine.createAnalyser(analyser++, data => console.log(data)) );
 
     $("mouseButton", () => {
       if(engine){
@@ -299,26 +338,6 @@
       else throw new Error('ERROR: Engine not initialized. Please press Start Engine first.')
     });
 
-    $("learnerButton", async () => {
-
-      learner = new Learner();
-      if(engine){
-        engine.addEventListener('onSharedBuffer', e => learner.createSharedBuffer(e) ); // Engine's SAB emissions subscribed by Learner
-        learner.addEventListener('onSharedBuffer', e => engine.pushSharedBuffer(e) );  // Learner's SAB emissions subscribed by Engine
-      }
-      await learner.init(document.location.origin); // when Learner initializes
-
-      // learner.eval('input = (id,x) => { console.log(id, x); };');
-    });
-
-    $("evalJsButton", async () => {
-      if(learner && editorJS){
-        const code = getBlock(editorJS);
-        console.log(code);
-        learner.eval(code);
-      }
-      else throw new Error('ERROR: Learner not initialized. Please press Create Learner first.')
-    });
 
   </script>
   <script>
