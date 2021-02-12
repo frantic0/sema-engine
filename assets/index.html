@@ -22,7 +22,7 @@
       height: 100%;
       display: grid;
       grid-gap: 3px;
-      grid-template-columns: 0.005fr 0.75fr 1fr 0.005fr;
+      grid-template-columns: 0.005fr 0.9fr 0.9fr 0.005fr;
       grid-template-rows: 40px 20px 0.1fr auto 40px 0.45fr;
       /* margin: 50px; */
     }
@@ -61,9 +61,10 @@
       grid-template-rows: auto 1fr;
       position:relative;
       width: auto;
-      min-width: 20em;
+      /* height: 100vh; */
+      /* min-width: 20em; */
       /* overflow:auto; */
-      resize: both;
+      /* resize: both; */
     }
 
     .editor-container-lc {
@@ -73,7 +74,7 @@
       position:absolute;
       overflow: hidden;
       /* CM will manage its own scrollbars. */
-      resize: horizontal;
+      /* resize: horizontal;  */
       /*  height: 10em; /* A fixed initial height is required in Chrome both for the resize handle to appear and to not fall into a shrinking loop due to the neg. offset in cm_resize()! */
     }
 
@@ -247,47 +248,55 @@
     $("createAnalyserButton", () => engine.createAnalyser(analyser++, data => console.log(data)) );
 
     $("evalButton", () => {
-      try{
-        const { errors, dspCode } = compile( editorGrammar.getValue(), editorLivecode.getValue() );
+      if(engine){
+        try{
+          const { errors, dspCode } = compile( editorGrammar.getValue(), editorLivecode.getValue() );
 
-        if(dspCode && engine)
-          engine.eval(dspCode);
+          if(dspCode)
+            engine.eval(dspCode);
 
-      } catch (err) {
-        console.error("ERROR: Failed to compile and eval: ", err);
+        } catch (err) {
+          console.error("ERROR: Failed to compile and eval: ", err);
+        }
       }
+      else throw new Error('ERROR: Engine not initialized. Please press Start Engine first.')
     });
 
     $("mouseButton", () => {
+      if(engine){
+        try{
+          const id = "mxy",
+                ttype = "mouseXY",
+                blockSize = 2;
 
-      const channelId = "mxy",
-            ttype = "mouseXY",
-            blockSize = 2;
+          let sab = engine.createSharedBuffer(id, ttype, blockSize);
+          // if(learner && sab)
+          //   learner.createSharedBuffer(sab, blockSize, channelId);
 
-      let sab = engine.createSharedBuffer(channelId, ttype, blockSize);
-      // if(learner && sab)
-      //   learner.createSharedBuffer(sab, blockSize, channelId);
+          const onMouseMove = e => {
+            const x = parseFloat(e.offsetX/window.innerWidth).toFixed(5);
+            const y = parseFloat(e.offsetY/window.innerHeight).toFixed(5);
+            document.getElementById('outputText').innerText = `${x} ${y}`;
+            engine.pushDataToSharedBuffer(id, [ x, y ]);
+          }
 
-      const onMouseMove = e => {
-        const x = parseFloat(e.offsetX/window.innerWidth).toFixed(5);
-        const y = parseFloat(e.offsetY/window.innerHeight).toFixed(5);
-        document.getElementById('outputText').innerText = `${x} ${y}`;
-        engine.pushDataToSharedBuffer(channelId, [ x, y ]);
+          // Subscribe `Alt`-key down event to subscribe mouse move
+          document.addEventListener("keydown", e => {
+            e.which === 18?
+              document.addEventListener( 'mousemove', onMouseMove, true )
+              : null;
+          });
+
+          // Subscribe `Alt`-key UP event to unsubscribe mouse move
+          document.addEventListener("keyup", e => {
+            document.getElementById('outputText').innerText = ``;
+            document.removeEventListener( 'mousemove', onMouseMove, true )
+          });
+        } catch (err) {
+          console.error("ERROR: Failed to create new channel for mouse data: ", err);
+        }
       }
-
-      // Subscribe `Alt`-key down event to subscribe mouse move
-      document.addEventListener("keydown", e => {
-        e.which === 18?
-          document.addEventListener( 'mousemove', onMouseMove, true )
-          : null;
-      });
-
-      // Subscribe `Alt`-key UP event to unsubscribe mouse move
-      document.addEventListener("keyup", e => {
-        document.getElementById('outputText').innerText = ``;
-        document.removeEventListener( 'mousemove', onMouseMove, true )
-      });
-
+      else throw new Error('ERROR: Engine not initialized. Please press Start Engine first.')
     });
 
     $("learnerButton", async () => {
@@ -303,9 +312,12 @@
     });
 
     $("evalJsButton", async () => {
-      const code = getBlock(editorJS);
-      // console.log(code);
-      learner.eval(code);
+      if(learner && editorJS){
+        const code = getBlock(editorJS);
+        console.log(code);
+        learner.eval(code);
+      }
+      else throw new Error('ERROR: Learner not initialized. Please press Create Learner first.')
     });
 
   </script>
@@ -319,9 +331,9 @@
         lineWrapping: true,
         lineNumbers: true
       });
-      let container = textArea.parentElement;
+      // let container = textArea.parentElement;
 
-      // editor.setSize(container.clientWidth + 2, container.clientHeight -10);
+      // editor.setSize(container.clientWidth-3, container.clientHeight -10);
 
 
       fetch( document.location.origin + contentFileRelativeURL )
