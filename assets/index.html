@@ -17,13 +17,18 @@
       list-style-type: decimal
     }
 
+    .CodeMirror {
+      height: 100%; /* need to call editor.refresh() after resize: */
+      overflow: auto !important;
+    }
+
     .main-container {
       width: 100%;
       height: 100%;
       display: grid;
       grid-gap: 3px;
-      grid-template-columns: 0.005fr 0.9fr 0.9fr 0.005fr;
-      grid-template-rows: 40px 20px 30px 20px 0.45fr 30px 20px 0.5fr;
+      grid-template-columns: 0.2rem 1fr 1fr 0.2rem;
+      grid-template-rows: 40px 20px 30px 20px 0.9fr 30px 20px 0.9fr;
     }
 
     h3 {
@@ -74,74 +79,68 @@
       width: auto;
     }
 
-
     .container-lc {
+      width: 100%;
+      height: 100%;
       grid-row: 5;
       grid-column: 2/2;
-      display: grid;
+      /* display: grid; */
       /* grid-template-rows: auto 1fr; */
       position:relative;
       /* width: auto; */
       border: 1px solid #ddd;
       /* max-height: calc(90vh - 40px); */
-      min-height: 200px;
+      min-height: 22em;
       max-height: 82vh;
-      /* height: 100vh; */
-      /* min-width: 20em; */
-      overflow:auto;
+      min-width: 25em;
+      overflow:hidden;
       resize: both;
-    }
-
-    .editor-container-lc {
-      grid-row: 3 / 2;
-      width: 100%;
-      height: 100%;
-      position:absolute;
-      overflow: hidden;
-
-      /* CM will manage its own scrollbars. */
-      /* resize: horizontal;  */
-      /*  height: 10em; /* A fixed initial height is required in Chrome both for the resize handle to appear and to not fall into a shrinking loop due to the neg. offset in cm_resize()! */
     }
 
     button {
       height: 25px;
     }
 
-    #evalButton {
+    #container-eval-lc{
       grid-row: 6 / 6;
       grid-column: 2/2;
-      width: 280px;
     }
 
-    .container-js {
+    #evalButton:hover + .hide {
+      width: 280px;
+      visibility: visible;
+    }
+
+    #container-js {
+      width: 100%;
+      height: 100%;
       grid-row: 5;
       grid-column: 3 / 3;
-      display: grid;
       border: 1px solid #ddd;
       position: relative;
+      /* position: absolute; */
       min-height: 200px;
       max-height: 82vh;
-      width: auto;
+      /* width: auto; */
+      /* overflow: hidden; */
       overflow: auto;
       resize: vertical;
     }
 
-    .editor-container-js {
-      grid-row: 2 /2;
-      width: 100%;
-      height: 100%;
-      position: absolute;
-      overflow: hidden;
-       /* CM will manage its own scrollbars. */
-      /* resize: both; */
-    }
 
-    #evalJsButton {
+    #container-eval-js{
       grid-row: 6 / 6;
       grid-column: 3/3;
+    }
+
+    #evalJsButton:hover + .hide {
       width: 280px;
-      /* margin-top: 5px; */
+      visibility: visible;
+    }
+
+    .hide {
+      visibility:hidden;
+      color:gray;
     }
 
     .container-ge {
@@ -162,30 +161,15 @@
       width: 100%;
       height: 100%;
       position:absolute;
-      overflow: hidden; /* CM will manage its own scrollbars. */
-      /* resize: both; */
-      /* height: 10em; A fixed initial height is required in Chrome both for the resize handle to appear and to not fall into a shrinking loop due to the neg. offset in cm_resize()! */
     }
 
     .commands-container-b {
       grid-row:5;
       width: auto;
-      /* height: 2em; */
       grid-column: 1 / -1;
       padding-top: 5px;
       padding-bottom: 5px;
     }
-
-    /* .CodeMirror {
-      border: 1px solid #ddd;
-    } */
-
-    .CodeMirror {
-      height: 100%;
-      /* resize: vertical; */
-      /* overflow: auto !important; */
-    }
-
 
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.1/codemirror.min.js" integrity="sha512-9fASXXoC6x4BKdqe6IcEYZnt4KPMiQx5YJIsiWevf2QpSXfPcXMj4MTzIbwQuKJRysBlRh1LGHIaQm/415WyEA==" crossorigin="anonymous"></script>
@@ -197,7 +181,9 @@
 <body>
   <div class="main-container">
     <div class='header'>
-      <h3>Sema engine – Default language</h3>
+      <h3>Sema engine – <i>default</i> language</h3>
+      <!-- <h3>Sema engine – <i>rubber-duckling</i> language</h3> -->
+      <!-- <h3>Sema engine – <i>nibble</i> language</h3> -->
     </div>
     <div class='instruction'>
       <span>You might need to clean the cache when testing your worklet processor code (cmd-shift-backspace/ctrl-shift-backspace)</span>
@@ -215,18 +201,22 @@
     </div>
     <span id="editor-header-lc" class="editor-header">Livecode Editor</span>
     <div class="container-lc">
-      <div class="editor-container-lc">
-        <textarea id="textArea-livecode"></textarea>
-      </div>
+      <textarea id="textArea-livecode"></textarea>
     </div>
-    <button id="evalButton">Eval Livecode ( Left [CMD/CTRL]+ENTER )</button>
+    <div id="container-eval-lc">
+      <button id="evalButton">Eval Livecode</button>
+      <span class="hide">( left [cmd/ctrl] + enter )</span>
+    </div>
     <span id="editor-header-js" class="editor-header">JS Editor</span>
-    <div class="container-js">
-      <div class="editor-container-js">
+    <div id="container-js">
+      <!-- <div class="editor-container-js"> -->
         <textarea id="textArea-js"></textarea>
-      </div>
+      <!-- </div> -->
     </div>
-    <button id="evalJsButton">Eval JS block ( Left [CMD/CTRL]+ENTER ) </button>
+    <div id="container-eval-js">
+      <button id="evalJsButton">Eval JS block</button>
+      <span class="hide">( right [cmd/ctrl] + enter )</span>
+    </div>
     <span id="editor-header-ge" class="editor-header">Grammar Editor</span>
     <div class="container-ge">
       <div class="editor-container-ge">
@@ -254,43 +244,29 @@
         learner
         ;
 
-    const $ = (elemId, callback) =>
-      document.getElementById(elemId).addEventListener("click", callback);
+    const $ = (elemId, event, callback) =>
+      document.getElementById(elemId).addEventListener(event, callback);
 
-    $("playButton", () => {
-      const audioWorkletURL = document.location.origin + "/maxi-processor.js";
+    const origin = document.location.origin;
+
+    $("playButton", "click", () => {
+      const audioWorkletURL = origin + "/maxi-processor.js";
       engine = new Engine();
       engine.init("maxi-processor", audioWorkletURL);
       engine.play();
     });
-    $("stopButton", () => engine.stop());
-    $("loadSamplesButton", () => {
-      engine.loadSample("909.wav", "./audio/909.wav");
-      engine.loadSample("909b.wav", "./audio/909b.wav");
-      engine.loadSample("909closed.wav", "./audio/909closed.wav");
-      engine.loadSample("909open.wav", "./audio/909closed.wav");
-      engine.loadSample("crebit2.ogg", "./audio/crebit2.ogg");
-      engine.loadSample("kick1.wav", "./audio/kick1.wav");
-      engine.loadSample("snare1.wav", "./audio/snare1.wav");
+    $("stopButton", "click", () => engine.stop());
+    $("loadSamplesButton", "click", () => {
+      engine.loadSample("909.wav",       origin + "/audio/909.wav");
+      engine.loadSample("909b.wav",      origin + "/audio/909b.wav");
+      engine.loadSample("909closed.wav", origin + "/audio/909closed.wav");
+      engine.loadSample("909open.wav",   origin + "/audio/909closed.wav");
+      engine.loadSample("crebit2.ogg",   origin + "/audio/crebit2.ogg");
+      engine.loadSample("kick1.wav",     origin + "/audio/kick1.wav");
+      engine.loadSample("snare1.wav",    origin + "/audio/snare1.wav");
     });
 
-
-    $("evalButton", () => {
-      if(engine){
-        try{
-          const { errors, dspCode } = compile( editorGrammar.getValue(), editorLivecode.getValue() );
-
-          if(dspCode)
-            engine.eval(dspCode);
-
-        } catch (err) {
-          console.error("ERROR: Failed to compile and eval: ", err);
-        }
-      }
-      else throw new Error('ERROR: Engine not initialized. Please press Start Engine first.')
-    });
-
-    $("learnerButton", async () => {
+    $("learnerButton", "click", async () => {
 
       learner = new Learner();
       if(engine){
@@ -302,20 +278,38 @@
       // learner.eval('input = (id,x) => { console.log(id, x); };');
     });
 
-    $("evalJsButton", async () => {
+    const evalLiveCode = () => {
+      if(engine){
+        try{
+          const { errors, dspCode } = compile( editorGrammar.getValue(), editorLivecode.getValue() );
+
+          if(dspCode){
+            console.info(editorLivecode.getValue());
+            engine.eval(dspCode);
+          }
+        } catch (err) {
+          console.error("ERROR: Failed to compile and eval: ", err);
+        }
+      }
+      else throw new Error('ERROR: Engine not initialized. Please press Start Engine first.')
+    }
+
+    const evalJs = async () => {
       if(learner && editorJS){
         const code = getBlock(editorJS);
-        console.log(code);
+        console.info(code);
         learner.eval(code);
       }
       else throw new Error('ERROR: Learner not initialized. Please press Create Learner first.')
-    });
+    }
 
-    // $("minusButton", () => engine.less());
-    // $("plusButton", () => engine.more());
-    // $("createAnalyserButton", () => engine.createAnalyser(analyser++, data => console.log(data)) );
+    $("evalButton", "click", () => evalLiveCode() );
 
-    $("mouseButton", () => {
+    $("evalJsButton", "click", async () => evalJs() );
+
+
+
+    $("mouseButton", "click", () => {
       if(engine){
         try{
           const id = "mxy",
@@ -323,28 +317,28 @@
                 blockSize = 2;
 
           let sab = engine.createSharedBuffer(id, ttype, blockSize);
-          // if(learner && sab)
-          //   learner.createSharedBuffer(sab, blockSize, channelId);
 
           const onMouseMove = e => {
-            const x = parseFloat(e.offsetX/window.innerWidth).toFixed(5);
-            const y = parseFloat(e.offsetY/window.innerHeight).toFixed(5);
-            document.getElementById('outputText').innerText = `${x} ${y}`;
+            const x = e.offsetX/window.innerWidth;
+            const y = e.offsetY/window.innerHeight;
+            document.getElementById('outputText').innerText = `${parseFloat(x).toFixed(5)} ${parseFloat(y).toFixed(5)}`;
             engine.pushDataToSharedBuffer(id, [ x, y ]);
           }
 
-          // Subscribe `Alt`-key down event to subscribe mouse move
+          // Subscribe Left `Alt`-key down event to subscribe mouse move
           document.addEventListener("keydown", e => {
-            e.which === 18?
+            if(e.keyCode === 18){
               document.addEventListener( 'mousemove', onMouseMove, true )
-              : null;
+            }
+          });
+          // Subscribe Left `Alt`-key UP event to unsubscribe mouse move
+          document.addEventListener("keyup", e => {
+            if(e.which === 18){
+              document.getElementById('outputText').innerText = ``;
+              document.removeEventListener( 'mousemove', onMouseMove, true );
+            }
           });
 
-          // Subscribe `Alt`-key UP event to unsubscribe mouse move
-          document.addEventListener("keyup", e => {
-            document.getElementById('outputText').innerText = ``;
-            document.removeEventListener( 'mousemove', onMouseMove, true )
-          });
         } catch (err) {
           console.error("ERROR: Failed to create new channel for mouse data: ", err);
         }
@@ -352,6 +346,21 @@
       else throw new Error('ERROR: Engine not initialized. Please press Start Engine first.')
     });
 
+    (() => {
+      // Subscribe Left `Alt`-key down event to subscribe mouse move
+      document.addEventListener("keydown", e => {
+        if ( e.keyCode == 13 && ( e.ctrlKey || e.metaKey ) ){
+          evalLiveCode();
+        }
+        else if ( e.keyCode == 13 && e.altKey ){
+          evalJs();
+        }
+      });
+    })();
+
+    // $("minusButton", "click", () => engine.less());
+    // $("plusButton", "click", () => engine.more());
+    // $("createAnalyserButton", "click", () => engine.createAnalyser(analyser++, data => console.log(data)) );
 
   </script>
   <script>
@@ -359,16 +368,18 @@
     const setupEditorWithContent = ( elementId, contentFileRelativeURL ) => {
 
       let textArea = document.getElementById(elementId);
+
+      // Transform textarea into Codemirror instance
       const editor = CodeMirror.fromTextArea(textArea, {
-        // lineWrapping: document.getElementById("linewrap").checked,
         lineWrapping: true,
         lineNumbers: true
       });
-      // let container = textArea.parentElement;
 
-      // editor.setSize(container.clientWidth-3, container.clientHeight -10);
+      // Refresh Codemirror on container resize
+      new ResizeObserver( e => editor.setSize("100%", "100%"))
+        .observe(textArea.parentElement);
 
-
+      // Populate Codemirror with content
       fetch( document.location.origin + contentFileRelativeURL )
         .then( response => response.text() )
         .then( data => editor.setValue(data) )
