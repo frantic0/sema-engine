@@ -23,7 +23,7 @@
       display: grid;
       grid-gap: 3px;
       grid-template-columns: 0.005fr 0.9fr 0.9fr 0.005fr;
-      grid-template-rows: 40px 20px 30px 20px 0.5fr 30px 0.45fr;
+      grid-template-rows: 40px 20px 30px 20px 0.45fr 30px 20px 0.5fr;
     }
 
     h3 {
@@ -67,6 +67,14 @@
       width: auto;
     }
 
+    #editor-header-ge {
+      grid-row:7;
+      grid-column:2/2;
+      font-weight: bold;
+      width: auto;
+    }
+
+
     .container-lc {
       grid-row: 5;
       grid-column: 2/2;
@@ -75,6 +83,9 @@
       position:relative;
       /* width: auto; */
       border: 1px solid #ddd;
+      /* max-height: calc(90vh - 40px); */
+      min-height: 200px;
+      max-height: 82vh;
       /* height: 100vh; */
       /* min-width: 20em; */
       overflow:auto;
@@ -87,6 +98,7 @@
       height: 100%;
       position:absolute;
       overflow: hidden;
+
       /* CM will manage its own scrollbars. */
       /* resize: horizontal;  */
       /*  height: 10em; /* A fixed initial height is required in Chrome both for the resize handle to appear and to not fall into a shrinking loop due to the neg. offset in cm_resize()! */
@@ -108,6 +120,8 @@
       display: grid;
       border: 1px solid #ddd;
       position: relative;
+      min-height: 200px;
+      max-height: 82vh;
       width: auto;
       overflow: auto;
       resize: vertical;
@@ -118,7 +132,7 @@
       width: 100%;
       height: 100%;
       position: absolute;
-      overflow: auto;
+      overflow: hidden;
        /* CM will manage its own scrollbars. */
       /* resize: both; */
     }
@@ -131,7 +145,7 @@
     }
 
     .container-ge {
-      grid-row:7;
+      grid-row:8;
       grid-column: 2/ 4;
       position:relative;
       height:100%;
@@ -148,7 +162,7 @@
       width: 100%;
       height: 100%;
       position:absolute;
-      overflow: auto; /* CM will manage its own scrollbars. */
+      overflow: hidden; /* CM will manage its own scrollbars. */
       /* resize: both; */
       /* height: 10em; A fixed initial height is required in Chrome both for the resize handle to appear and to not fall into a shrinking loop due to the neg. offset in cm_resize()! */
     }
@@ -213,8 +227,8 @@
       </div>
     </div>
     <button id="evalJsButton">Eval JS block ( Left [CMD/CTRL]+ENTER ) </button>
+    <span id="editor-header-ge" class="editor-header">Grammar Editor</span>
     <div class="container-ge">
-      <span id="editor-header-lc" class="editor-header">Grammar Editor</span>
       <div class="editor-container-ge">
         <textarea id="textArea-grammar"></textarea>
       </div>
