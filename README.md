@@ -45,11 +45,11 @@ You can use also use the *sema-engine* library modules in an a HTML file using i
       getBlock
     } from "./sema-engine.mjs";
 
-
-
-
 </script>
 ```
+Note the that the script tag for the main module `sema-engine.mjs` has `type = module`.
+
+When initialising *sema-engine*, you need to pass the `audioWorkletURL` URL which points to where package dependencies – e.g. maxi-processor.js and maximilian.wasmmodule.js (check the `dist/` folder) – should be served from.
 
 ```
   let engine,
@@ -93,6 +93,10 @@ You can use also use the *sema-engine* library modules in an a HTML file using i
 </script>
 ```
 
+To compile the livecode, you need to do it against its grammar language specification, with the `compile` function. Only then you can inject the resulting code in the engine and evaluate it.
+
+For the JS code, we provide `getBloc`, an utility function that pulls code from an editor's block. Blocks in Codemirror editor instance are delimited by `____`.
+
 ```
   const evalLiveCode = () => {
     if(engine){
@@ -118,13 +122,6 @@ You can use also use the *sema-engine* library modules in an a HTML file using i
     else throw new Error('ERROR: Learner not initialized. Please press Create Learner first.')
   }
 ```
-
-Note the following:
-
-* the script tag for the main module `sema-engine.mjs` has `type = module`
-* when initialising *sema-engine*, you need to pass the `audioWorkletURL` URL which points to where package dependencies – maxi-processor.js and maximilian.wasmmodule.js (check the `dist/` folder) – should be served.
-
-
 
 ## Build
 
