@@ -37,35 +37,40 @@ You can use also use the *sema-engine* library modules in an a HTML file using i
 
 ```
 <script type="module">
+ 
+    import {
+      Engine,
+      compile,
+      Learner,
+      getBlock
+    } from "./sema-engine.mjs";
 
-  import { Engine } from "./sema-engine.mjs";
 
+
+
+</script>
+```
+
+```
   let engine,
-      analyser = 0;
-
-  let patch = {
-        setup: `() => {
-          () => {
-            let q = this.newq();
-            q.b0u2 = new Maximilian.maxiOsc();
-            q.b0u2.phaseReset(0);
-            return q;
-          }
-        }`,
-        loop: `(q, inputs, mem) => {
-          this.dacOutAll(q.b0u2.sinewave(440));
-        }`
-  };
+      analyser = 0,
+      compiledParser = {},
+      grammarCompilationErrors = "",
+      livecodeParseErrors,
+      livecodeParseTree,
+      dspCode,
+      learner
+      ;
 
   const $ = (elemId, callback) =>
     document.getElementById(elemId).addEventListener("click", callback);
 
-  $("playButton", () => {
-    let audioWorkletURL = document.location.origin + "/maxi-processor.js";
+  $("playButton", "click", () => {
+    const audioWorkletURL = origin + "/maxi-processor.js";
     engine = new Engine();
-    engine.init(audioWorkletURL);
+    engine.init("maxi-processor", audioWorkletURL);
     engine.play();
-  });
+  })
 
   $("stopButton", () => engine.stop());
   $("plusButton", () => engine.more());
@@ -77,13 +82,41 @@ You can use also use the *sema-engine* library modules in an a HTML file using i
     engine.loadSample("snare1.wav", "./audio/snare1.wav");
   });
 
-  $("evalButton", () => { engine.eval(patch); });
-
-  $("createAnalyserButton", () => {
-    engine.createAnalyser(analyser++, d => console.log(d) );
+  $("learnerButton", "click", async () => {
+    learner = new Learner();
+    if(engine){
+      engine.addEventListener('onSharedBuffer', e => learner.createSharedBuffer(e) ); // Engine's SAB emissions subscribed by Learner
+      learner.addEventListener('onSharedBuffer', e => engine.pushSharedBuffer(e) );  // Learner's SAB emissions subscribed by Engine
+    }
+    await learner.init(document.location.origin); // when Learner initializes
   });
-
 </script>
+```
+
+```
+  const evalLiveCode = () => {
+    if(engine){
+      try{
+        const { errors, dspCode } = compile( editorGrammar.getValue(), editorLivecode.getValue() );
+        if(dspCode){
+          console.info(editorLivecode.getValue());
+          engine.eval(dspCode);
+        }
+      } catch (err) {
+        console.error("ERROR: Failed to compile and eval: ", err);
+      }
+    }
+    else throw new Error('ERROR: Engine not initialized. Please press Start Engine first.')
+  }
+
+  const evalJs = async () => {
+    if(learner && editorJS){
+      const code = getBlock(editorJS);
+      console.info(code);
+      learner.eval(code);
+    }
+    else throw new Error('ERROR: Learner not initialized. Please press Create Learner first.')
+  }
 ```
 
 Note the following:
@@ -130,7 +163,7 @@ git submodule update --remote --merge
 
 ## Tests and Examples
 
-The *sema-engine* library uses AVA, a modern and minimal test environment with good features over other testing libraries (e.g. parallel exec, community, support, used in many modern JS libraries, etc.).
+The *sema-engine* library uses Mocha for unit and integration tests. 
 
 The development build outputs the example above, which you can use to learn and test out how to work with the engine.
 
