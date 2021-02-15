@@ -95,7 +95,7 @@ When initialising *sema-engine*, you need to pass the `audioWorkletURL` URL whic
 
 To compile the livecode, you need to do it against its grammar language specification, with the `compile` function. Only then you can inject the resulting code in the engine and evaluate it.
 
-For the JS code, we provide `getBloc`, an utility function that pulls code from an editor's block. Blocks in Codemirror editor instance are delimited by `____`.
+For the JS code, we provide `getBlock`, an utility function that pulls code from an editor block. Blocks in a Codemirror editor instance are delimited by `____` (3 or more underscores).
 
 ```
   const evalLiveCode = () => {
