@@ -364,6 +364,8 @@
   </script>
   <script>
 
+    // need to replicate here as this is outside the module context
+    // origin already exists as global scope var
     var originURL = 'https://frantic0.github.io/sema-engine';
 
     const setupEditorWithContent = ( elementId, contentFileRelativeURL ) => {
