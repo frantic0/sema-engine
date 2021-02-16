@@ -64,7 +64,7 @@ export default [
 								},
 								{
 									// ringbuf is imported by both the Engine (AW node) and maxi-processor (AWP) so needs to be both bundled AND copied!
-									src: "src/engine/ringbuf.js",
+									src: "src/common/ringbuf.js",
 									dest: ["dist"],
 								},
 								{
@@ -119,11 +119,11 @@ export default [
 									dest: "dist",
 								},
 								{
-									src: "src/engine/sema-engine.wasmmodule.js",
+									src: "assets/sema-engine.wasmmodule.js",
 									dest: "dist",
 								},
 								{
-									src: "src/engine/open303.wasmmodule.js",
+									src: "assets/open303.wasmmodule.js",
 									dest: "dist",
 								},
 								{
@@ -134,6 +134,11 @@ export default [
 								{
 									// ringbuf is imported by both the Engine (AW node) and maxi-processor (AWP) so needs to be both bundled AND copied!
 									src: "src/common/ringbuf.js",
+									dest: ["dist"],
+								},
+								{
+									// ringbuf is imported by both the Engine (AW node) and maxi-processor (AWP) so needs to be both bundled AND copied!
+									src: "assets/mlworkerscripts.js",
 									dest: ["dist"],
 								},
 								{

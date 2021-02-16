@@ -29,12 +29,11 @@
     "pretest": "cpx 'assets/langs/*' './test/fixtures/lang/'",
     "test": "mocha --recursive --require esm",
     "coverage": "nyc npm run test",
+    "publish": "npm run publish ./dist",
     "clean": "rm -rf build dist",
     "clean-all": "rm -rf .cache dist node_modules package-lock.json"
   },
   "dependencies": {
-    "@tensorflow/tfjs": "^3.0.0",
-    "maximilian-wasm": "0.0.2",
     "nearley": "^2.20.1",
     "ringbuf.js": "^0.1.0"
   },

@@ -1,4 +1,3 @@
-// import Maximilian from './maximilian.wasmmodule.js';
 import Maximilian from './sema-engine.wasmmodule.js';
 import RingBuffer from "./ringbuf.js"; //thanks padenot
 import Open303 from './open303.wasmmodule.js';
@@ -13,7 +12,6 @@ import { SABInputTransducer, SABOutputTransducer } from './transducers.js';
 //     this.ifft.setup(1024, 256, 1024);
 //     this.mags = new Maximilian.VectorFloat();
 //     this.phases = new Maximilian.VectorFloat();
-//     this.mags.resize(512, 0);
 //     this.phases.resize(512, 0);
 //   }
 //
