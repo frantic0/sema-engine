@@ -247,23 +247,23 @@
     const $ = (elemId, event, callback) =>
       document.getElementById(elemId).addEventListener(event, callback);
 
-    const origin = 'https://frantic0.github.io/sema-engine';
+    var originURL = 'https://frantic0.github.io/sema-engine';
 
     $("playButton", "click", () => {
-      const audioWorkletURL = origin + "/maxi-processor.js";
+      const audioWorkletURL = originURL + "/maxi-processor.js";
       engine = new Engine();
       engine.init("maxi-processor", audioWorkletURL);
       engine.play();
     });
     $("stopButton", "click", () => engine.stop());
     $("loadSamplesButton", "click", () => {
-      engine.loadSample("909.wav",       origin + "/audio/909.wav");
-      engine.loadSample("909b.wav",      origin + "/audio/909b.wav");
-      engine.loadSample("909closed.wav", origin + "/audio/909closed.wav");
-      engine.loadSample("909open.wav",   origin + "/audio/909closed.wav");
-      engine.loadSample("crebit2.ogg",   origin + "/audio/crebit2.ogg");
-      engine.loadSample("kick1.wav",     origin + "/audio/kick1.wav");
-      engine.loadSample("snare1.wav",    origin + "/audio/snare1.wav");
+      engine.loadSample("909.wav",       originURL + "/audio/909.wav");
+      engine.loadSample("909b.wav",      originURL + "/audio/909b.wav");
+      engine.loadSample("909closed.wav", originURL + "/audio/909closed.wav");
+      engine.loadSample("909open.wav",   originURL + "/audio/909closed.wav");
+      engine.loadSample("crebit2.ogg",   originURL + "/audio/crebit2.ogg");
+      engine.loadSample("kick1.wav",     originURL + "/audio/kick1.wav");
+      engine.loadSample("snare1.wav",    originURL + "/audio/snare1.wav");
     });
 
     $("learnerButton", "click", async () => {
@@ -273,7 +273,7 @@
         engine.addEventListener('onSharedBuffer', e => learner.createSharedBuffer(e) ); // Engine's SAB emissions subscribed by Learner
         learner.addEventListener('onSharedBuffer', e => engine.pushSharedBuffer(e) );  // Learner's SAB emissions subscribed by Engine
       }
-      await learner.init(document.location.origin); // when Learner initializes
+      await learner.init(document.location.originURL); // when Learner initializes
 
     });
 
@@ -379,7 +379,7 @@
         .observe(textArea.parentElement);
 
       // Populate Codemirror with content
-      fetch( origin + contentFileRelativeURL )
+      fetch( originURL + contentFileRelativeURL )
         .then( response => response.text() )
         .then( data => editor.setValue(data) )
 
