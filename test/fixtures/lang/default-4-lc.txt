@@ -1,0 +1,2 @@
+:freq:{0}fromJS;
+> {:freq:}saw;
