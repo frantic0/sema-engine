@@ -379,7 +379,7 @@
         .observe(textArea.parentElement);
 
       // Populate Codemirror with content
-      fetch( document.location.origin + contentFileRelativeURL )
+      fetch( origin + contentFileRelativeURL )
         .then( response => response.text() )
         .then( data => editor.setValue(data) )
 
