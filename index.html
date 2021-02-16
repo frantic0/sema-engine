@@ -273,7 +273,7 @@
         engine.addEventListener('onSharedBuffer', e => learner.createSharedBuffer(e) ); // Engine's SAB emissions subscribed by Learner
         learner.addEventListener('onSharedBuffer', e => engine.pushSharedBuffer(e) );  // Learner's SAB emissions subscribed by Engine
       }
-      await learner.init(document.location.originURL); // when Learner initializes
+      await learner.init(originURL); // when Learner initializes
 
     });
 
