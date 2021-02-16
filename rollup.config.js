@@ -133,7 +133,7 @@ export default [
 								},
 								{
 									// ringbuf is imported by both the Engine (AW node) and maxi-processor (AWP) so needs to be both bundled AND copied!
-									src: "src/common/ringbuf.js",
+									src: "assets/ringbuf.js",
 									dest: ["dist"],
 								},
 								{
@@ -143,12 +143,12 @@ export default [
 								},
 								{
 									// lalolib is imported dynamically (importScripts) by the ml.worker, needs to be served in 'dist'
-									src: "src/learning/lalolib.js",
+									src: "assets/lalolib.js",
 									dest: "dist",
 								},
 								{
 									// svd is imported dynamically (importScripts) by the ml.worker, needs to be served in 'dist'
-									src: "src/learning/svd.js",
+									src: "assets/svd.js",
 									dest: ["dist"],
 								},
 							],
