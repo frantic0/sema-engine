@@ -1,7 +1,7 @@
 # sema-engine
 
 ![Node.js CI](https://github.com/frantic0/sema-engine/workflows/Node.js%20CI/badge.svg)
-![version](https://img.shields.io/badge/version-0.0.16-red)
+![version](https://img.shields.io/badge/version-0.0.17-red)
 [![stability-experimental](https://img.shields.io/badge/stability-experimental-orange.svg)](https://github.com/emersion/stability-badges#experimental)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-yellow.svg)](https://github.com/frantic0/sema-engine/blob/main)
 [![Website](https://img.shields.io/website?url=https%3A%2F%2Fsema.codes)](https://frantic0.github.io/sema-engine/)
@@ -37,7 +37,7 @@ You can use also use the *sema-engine* library modules in an a HTML file using i
 
 ```
 <script type="module">
- 
+
     import {
       Engine,
       compile,
@@ -160,7 +160,7 @@ git submodule update --remote --merge
 
 ## Tests and Examples
 
-The *sema-engine* library uses Mocha for unit and integration tests. 
+The *sema-engine* library uses Mocha for unit and integration tests.
 
 The development build outputs the example above, which you can use to learn and test out how to work with the engine.
 
