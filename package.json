@@ -34,7 +34,6 @@
   },
   "dependencies": {
     "@tensorflow/tfjs": "^3.0.0",
-    "comlink": "^4.3.0",
     "maximilian-wasm": "0.0.2",
     "nearley": "^2.20.1",
     "ringbuf.js": "^0.1.0"
