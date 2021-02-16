@@ -9,104 +9,390 @@
     html, body {
       width: 100%;
       height: 100%;
+      overflow: hidden;
+      margin: 0px;
     }
+
     .prettyprint ol.linenums>li {
       list-style-type: decimal
     }
 
-    .editor-container {
-      width: 640px;
-      height: 320px;
-      padding-top: 10px;
-      padding-bottom: 10px;
+    .CodeMirror {
+      height: 100%; /* need to call editor.refresh() after resize: */
+      overflow: auto !important;
     }
 
-    #textArea {
-      height: 100%;
+    .main-container {
       width: 100%;
+      height: 100%;
+      display: grid;
+      grid-gap: 3px;
+      grid-template-columns: 0.2rem 1fr 1fr 0.2rem;
+      grid-template-rows: 40px 20px 30px 20px 0.9fr 30px 20px 0.9fr;
     }
+
+    h3 {
+      margin-block-start: 0.5em;
+      margin-block-end: 0.5em;
+    }
+
+    .header {
+      grid-row: 1;
+      grid-column: 2 / -1;
+    }
+
+    .instruction {
+      grid-row: 2;
+      grid-column: 2 / -1;
+    }
+
+    .commands-container-a {
+      grid-row:3;
+      grid-column: 2 / -1;
+      /* padding-top: 10px;
+      padding-bottom: 10px; */
+    }
+
+    .editor-header {
+      font-weight: bold;
+      width: auto;
+    }
+
+    #editor-header-lc {
+      grid-row:4;
+      grid-column:2/2;
+      font-weight: bold;
+      width: auto;
+    }
+
+    #editor-header-js {
+      grid-row:4;
+      grid-column:3/3;
+      font-weight: bold;
+      width: auto;
+    }
+
+    #editor-header-ge {
+      grid-row:7;
+      grid-column:2/2;
+      font-weight: bold;
+      width: auto;
+    }
+
+    .container-lc {
+      width: 100%;
+      height: 100%;
+      grid-row: 5;
+      grid-column: 2/2;
+      /* display: grid; */
+      /* grid-template-rows: auto 1fr; */
+      position:relative;
+      /* width: auto; */
+      border: 1px solid #ddd;
+      /* max-height: calc(90vh - 40px); */
+      min-height: 22em;
+      max-height: 82vh;
+      min-width: 25em;
+      overflow:hidden;
+      resize: both;
+    }
+
+    button {
+      height: 25px;
+    }
+
+    #container-eval-lc{
+      grid-row: 6 / 6;
+      grid-column: 2/2;
+    }
+
+    #evalButton:hover + .hide {
+      width: 280px;
+      visibility: visible;
+    }
+
+    #container-js {
+      width: 100%;
+      height: 100%;
+      grid-row: 5;
+      grid-column: 3 / 3;
+      border: 1px solid #ddd;
+      position: relative;
+      /* position: absolute; */
+      min-height: 200px;
+      max-height: 82vh;
+      /* width: auto; */
+      /* overflow: hidden; */
+      overflow: auto;
+      resize: vertical;
+    }
+
+
+    #container-eval-js{
+      grid-row: 6 / 6;
+      grid-column: 3/3;
+    }
+
+    #evalJsButton:hover + .hide {
+      width: 280px;
+      visibility: visible;
+    }
+
+    .hide {
+      visibility:hidden;
+      color:gray;
+    }
+
+    .container-ge {
+      grid-row:8;
+      grid-column: 2/ 4;
+      position:relative;
+      height:100%;
+      width: 100%;
+      border: 1px solid #ddd;
+      min-width: 20em;
+      /* max-width: 0.5fr; */
+      /* overflow:hidden; */
+      /* resize: both; */
+      /* margin-top:-5em; */
+    }
+
+    .editor-container-ge {
+      width: 100%;
+      height: 100%;
+      position:absolute;
+    }
+
+    .commands-container-b {
+      grid-row:5;
+      width: auto;
+      grid-column: 1 / -1;
+      padding-top: 5px;
+      padding-bottom: 5px;
+    }
+
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.1/codemirror.min.js" integrity="sha512-9fASXXoC6x4BKdqe6IcEYZnt4KPMiQx5YJIsiWevf2QpSXfPcXMj4MTzIbwQuKJRysBlRh1LGHIaQm/415WyEA==" crossorigin="anonymous"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.1/codemirror.min.css" integrity="sha512-MWdvo/Qqcf4pY1ecQUB1uBn0qLp19U/qJ1Rpp2BDZeuBA7YsFEwkvqR/+aG4BroPiAYDunKJ6X8R/Pmdt3p7oA==" crossorigin="anonymous" />
+  <link   rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.1/codemirror.min.css" integrity="sha512-MWdvo/Qqcf4pY1ecQUB1uBn0qLp19U/qJ1Rpp2BDZeuBA7YsFEwkvqR/+aG4BroPiAYDunKJ6X8R/Pmdt3p7oA==" crossorigin="anonymous" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.1/keymap/vim.min.js" integrity="sha512-g2nzBS/fBHxdSRXaDcYGHVg2Rjk7+3gITKVMv1q/ylh2izUiw1AZ50urelrhy7I6EYLQi5RM8FFj3rdATH5wIg==" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.1/mode/javascript/javascript.min.js" integrity="sha512-ssJuYJm7WuzXiDvMgmhFfPcXAM3QLILVaH8VhLDkauwZRTSlw7uxxUh2TXDau3y2eK0PsJfzL/q0lYsjTEO8sQ==" crossorigin="anonymous"></script>
 </head>
 
 <body>
-  <h1>Sema engine – Default language</h1>
-  <p>You might need to clean the cache when testing your worklet processor code (Cmd-Shift-Backspace/Ctrl-Shift-Backspace)</p>
-
-  <div class="editor-container">
-    <textarea id="textArea"></textarea>
-  </div>
-
-  <div class="commands-container">
-    <button id="playButton">Play</button>
-    <button id="stopButton">Stop</button>
-    <button id="plusButton">Vol+</button>
-    <button id="minusButton">Vol–</button>
-    <button id="evalButton">Eval</button>
-    <button id="loadSamplesButton">Load Samples</button>
+  <div class="main-container">
+    <div class='header'>
+      <h3>Sema engine – <i>default</i> language</h3>
+      <!-- <h3>Sema engine – <i>rubber-duckling</i> language</h3> -->
+      <!-- <h3>Sema engine – <i>nibble</i> language</h3> -->
+    </div>
+    <div class='instruction'>
+      <span>You might need to clean the cache when testing your worklet processor code (cmd-shift-backspace/ctrl-shift-backspace)</span>
+    </div>
+    <div class="commands-container-a">
+      <button id="playButton">Start Engine</button>
+      <button id="stopButton">Stop Engine</button>
+      <button id="loadSamplesButton">Load Samples</button>
+      <button id="learnerButton">Create Learner</button>
+      <!-- <button id="plusButton">Vol+</button>
+      <button id="minusButton">Vol–</button>
+      <button id="createAnalyserButton">Create Analyser</button> -->
+      <button id="mouseButton">Mouse input</button>
+      <span id="outputText"></span>
+    </div>
+    <span id="editor-header-lc" class="editor-header">Livecode Editor</span>
+    <div class="container-lc">
+      <textarea id="textArea-livecode"></textarea>
+    </div>
+    <div id="container-eval-lc">
+      <button id="evalButton">Eval Livecode</button>
+      <span class="hide">( left [cmd/ctrl] + enter )</span>
+    </div>
+    <span id="editor-header-js" class="editor-header">JS Editor</span>
+    <div id="container-js">
+      <!-- <div class="editor-container-js"> -->
+        <textarea id="textArea-js"></textarea>
+      <!-- </div> -->
+    </div>
+    <div id="container-eval-js">
+      <button id="evalJsButton">Eval JS block</button>
+      <span class="hide">( right [cmd/ctrl] + enter )</span>
+    </div>
+    <span id="editor-header-ge" class="editor-header">Grammar Editor</span>
+    <div class="container-ge">
+      <div class="editor-container-ge">
+        <textarea id="textArea-grammar"></textarea>
+      </div>
+    </div>
   </div>
 
   <script type="module">
 
-    import { AudioEngine } from "./index.mjs";
+    import {
+      Engine,
+      compile,
+      Learner,
+      getBlock
+    } from "./sema-engine.mjs";
 
-    let audioEngine;
+    let engine,
+        analyser = 0,
+        compiledParser = {},
+        grammarCompilationErrors = "",
+        livecodeParseErrors,
+        livecodeParseTree,
+        dspCode,
+        learner
+        ;
 
-    const $ = (elemId, callback) =>
-      document.getElementById(elemId).addEventListener("click", callback);
+    const $ = (elemId, event, callback) =>
+      document.getElementById(elemId).addEventListener(event, callback);
 
-    $("playButton", () => {
-      let audioWorkletURL = document.location.origin + "/sema-engine/maxi-processor.js";
-      audioEngine = new AudioEngine();
-      audioEngine.init(audioWorkletURL);
-      audioEngine.play();
+    const origin = document.location.origin;
+
+    $("playButton", "click", () => {
+      const audioWorkletURL = origin + "/maxi-processor.js";
+      engine = new Engine();
+      engine.init("maxi-processor", audioWorkletURL);
+      engine.play();
+    });
+    $("stopButton", "click", () => engine.stop());
+    $("loadSamplesButton", "click", () => {
+      engine.loadSample("909.wav",       origin + "/audio/909.wav");
+      engine.loadSample("909b.wav",      origin + "/audio/909b.wav");
+      engine.loadSample("909closed.wav", origin + "/audio/909closed.wav");
+      engine.loadSample("909open.wav",   origin + "/audio/909closed.wav");
+      engine.loadSample("crebit2.ogg",   origin + "/audio/crebit2.ogg");
+      engine.loadSample("kick1.wav",     origin + "/audio/kick1.wav");
+      engine.loadSample("snare1.wav",    origin + "/audio/snare1.wav");
     });
 
-    $("stopButton", () => audioEngine.stop());
-    $("plusButton", () => audioEngine.more());
-    $("minusButton", () => audioEngine.less());
-    $("evalButton", () => {
-      let editorValue = editor.getValue();
-      console.log(editorValue);
-      audioEngine.eval({
-        setup: `() => {
-          let q = this.newq();;
-          q.b0l5 = new Float64Array(2);
-          q.b0l5[0] = 3;
-          q.b0l5[1] = 2;
-          q.b0u3 = new Maximilian.maxiRatioSeq();;
-          q.b0u2 = new Maximilian.maxiSample();
-          q.b0u2.setSample(this.getSampleBuffer('crebit2'));;
-          q.b0u1 = new Maximilian.maxiNonlinearity();;
-          q.b0l9 = new Float64Array(2);
-          q.b0l9[0] = 1;
-          q.b0l9[1] = 0;
-          q.b0u7 = new Maximilian.maxiRatioSeq();;
-          q.b0u6 = new Maximilian.maxiSample();
-          q.b0u6.setSample(this.getSampleBuffer('snare1'));;;;;
-          return q; }`,
-        loop: `(q, inputs, mem) => {
-          (mem[0] = q.b0u1.asymclip((q.b0u2.isReady() ? q.b0u2.playOnZX(q.b0u3.playTrig(this.clockPhase(4, 0), (() => { return q.b0l5 })())) : 0.0), 2, 0.1));
-          (mem[1] = (q.b0u6.isReady() ? q.b0u6.playOnZX(q.b0u7.playTrig(this.clockPhase(8, 0), (() => { return q.b0l9 })())) : 0.0));
-          this.dacOutAll(((mem[0] != undefined ? mem[0] : 0) + (mem[1] != undefined ? mem[1] : 0)));}`,
+    $("learnerButton", "click", async () => {
+
+      learner = new Learner();
+      if(engine){
+        engine.addEventListener('onSharedBuffer', e => learner.createSharedBuffer(e) ); // Engine's SAB emissions subscribed by Learner
+        learner.addEventListener('onSharedBuffer', e => engine.pushSharedBuffer(e) );  // Learner's SAB emissions subscribed by Engine
+      }
+      await learner.init(document.location.origin); // when Learner initializes
+
+    });
+
+    const evalLiveCode = () => {
+      if(engine){
+        try{
+          const { errors, dspCode } = compile( editorGrammar.getValue(), editorLivecode.getValue() );
+
+          if(dspCode){
+            console.info(editorLivecode.getValue());
+            engine.eval(dspCode);
+          }
+        } catch (err) {
+          console.error("ERROR: Failed to compile and eval: ", err);
+        }
+      }
+      else throw new Error('ERROR: Engine not initialized. Please press Start Engine first.')
+    }
+
+    const evalJs = async () => {
+      if(learner && editorJS){
+        const code = getBlock(editorJS);
+        console.info(code);
+        learner.eval(code);
+      }
+      else throw new Error('ERROR: Learner not initialized. Please press Create Learner first.')
+    }
+
+    $("evalButton", "click", () => evalLiveCode() );
+
+    $("evalJsButton", "click", async () => evalJs() );
+
+
+
+    $("mouseButton", "click", () => {
+      if(engine){
+        try{
+          const id = "mxy",
+                ttype = "mouseXY",
+                blockSize = 2;
+
+          let sab = engine.createSharedBuffer(id, ttype, blockSize);
+
+          const onMouseMove = e => {
+            const x = e.offsetX/window.innerWidth;
+            const y = e.offsetY/window.innerHeight;
+            document.getElementById('outputText').innerText = `${parseFloat(x).toFixed(5)} ${parseFloat(y).toFixed(5)}`;
+            engine.pushDataToSharedBuffer(id, [ x, y ]);
+          }
+
+          // Subscribe Left `Alt`-key down event to subscribe mouse move
+          document.addEventListener("keydown", e => {
+            if(e.keyCode === 18){
+              document.addEventListener( 'mousemove', onMouseMove, true )
+            }
+          });
+          // Subscribe Left `Alt`-key UP event to unsubscribe mouse move
+          document.addEventListener("keyup", e => {
+            if(e.which === 18){
+              document.getElementById('outputText').innerText = ``;
+              document.removeEventListener( 'mousemove', onMouseMove, true );
+            }
+          });
+
+        } catch (err) {
+          console.error("ERROR: Failed to create new channel for mouse data: ", err);
+        }
+      }
+      else throw new Error('ERROR: Engine not initialized. Please press Start Engine first.')
+    });
+
+    (() => {
+      // Subscribe Left `Alt`-key down event to subscribe mouse move
+      document.addEventListener("keydown", e => {
+        if ( e.keyCode == 13 && ( e.ctrlKey || e.metaKey ) ){
+          evalLiveCode();
+        }
+        else if ( e.keyCode == 13 && e.altKey ){
+          evalJs();
+        }
       });
-    });
+    })();
 
-    $("loadSamplesButton", () => {
-      audioEngine.loadSample("crebit2.ogg", "./audio/crebit2.ogg");
-      audioEngine.loadSample("kick1.wav", "./audio/kick1.wav");
-      audioEngine.loadSample("snare1.wav", "./audio/snare1.wav");
-    });
+    // $("minusButton", "click", () => engine.less());
+    // $("plusButton", "click", () => engine.more());
+    // $("createAnalyserButton", "click", () => engine.createAnalyser(analyser++, data => console.log(data)) );
+
   </script>
   <script>
-    let textArea = document.getElementById("textArea");
-    let editor = CodeMirror.fromTextArea(textArea, {
-      lineNumbers: true,
-      mode: "javascript"
-    });
+
+    const setupEditorWithContent = ( elementId, contentFileRelativeURL ) => {
+
+      let textArea = document.getElementById(elementId);
+
+      // Transform textarea into Codemirror instance
+      const editor = CodeMirror.fromTextArea(textArea, {
+        lineWrapping: true,
+        lineNumbers: true
+      });
+
+      // Refresh Codemirror on container resize
+      new ResizeObserver( e => editor.setSize("100%", "100%"))
+        .observe(textArea.parentElement);
+
+      // Populate Codemirror with content
+      fetch( document.location.origin + contentFileRelativeURL )
+        .then( response => response.text() )
+        .then( data => editor.setValue(data) )
+
+      return editor;
+    }
+
+    const editorLivecode = setupEditorWithContent("textArea-livecode", '/langs/default-4-lc.txt');
+    const editorGrammar =  setupEditorWithContent("textArea-grammar",  '/langs/default-grammar.txt');
+    const editorJS =       setupEditorWithContent("textArea-js",       '/js/default-1-js.txt');
+    // const editorLivecode = setupEditorWithContent("textArea-livecode", '/langs/rubber-duckling-lc-1.txt');
+    // const editorGrammar =  setupEditorWithContent("textArea-grammar",  '/langs/rubber-duckling-grammar.txt');
+
   </script>
 </body>
 </html>
+

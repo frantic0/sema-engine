@@ -1,0 +1,4 @@
+{
+  "setup": "() => { let q = this.newq();; q.b0l7 = new Float64Array(2); q.b0l7[0] = 3; q.b0l7[1] = 2; q.b0u5 = new Maximilian.maxiRatioSeq();; q.b0u4 = new Maximilian.maxiSample(); q.b0u4.setSample(this.getSampleBuffer('909b'));; q.b0u3 = new Maximilian.maxiNonlinearity();; q.b0l11 = new Float64Array(2); q.b0l11[0] = 1; q.b0l11[1] = 0; q.b0u9 = new Maximilian.maxiRatioSeq();; q.b0u8 = new Maximilian.maxiSample(); q.b0u8.setSample(this.getSampleBuffer('909closed'));;;;; return q;}",
+  "loop": "(q, inputs, mem) => { (mem[0] = q.b0u3.asymclip((q.b0u4.isReady() ? q.b0u4.playOnZX(q.b0u5.playTrig(this.clockPhase(4, 0), (() => { return q.b0l7 })())) : 0.0), 2, 0.1));(mem[1] = (q.b0u8.isReady() ? q.b0u8.playOnZX(q.b0u9.playTrig(this.clockPhase(8, 0), (() => { return q.b0l11 })())) : 0.0)); this.dacOutAll(((mem[0] != undefined ? mem[0] : 0) + (mem[1] != undefined ? mem[1] : 0))); }"
+}

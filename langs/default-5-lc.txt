@@ -1,0 +1,7 @@
+//8-bit style synthesis
+:baseFreq:{{2}clt,[1],[50,100,200,150]}rsq;
+{{20}clt, 0, :baseFreq:}toJS;
+
+:arpFreq:{{80}clt, [1], [50,4000,300,500]}rsq;
+:freq:{{0}fromJS,:arpFreq:}add;
+>{:freq:}sqr;

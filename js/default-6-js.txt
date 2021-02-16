@@ -1,0 +1,211 @@
+// STEP 1:  RUN THIS SCRIPT
+// STEP 2:  START LIVECODING
+
+var structure = [32,16,8];
+var replayMemory = 64;
+var replaySize = 32;
+var beatCount=8;
+var agentShortTermMemory = 0; //set this as a percentage of the beatcount
+
+
+
+
+
+
+
+var agentSTMSize = Math.floor(beatCount * agentShortTermMemory);
+importScripts('https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.15/lodash.js');
+tf.setBackend('cpu');
+
+var createMemory = (maxMem) => {
+	let mem = {}
+	mem.samples=[];
+	mem.maxMemory= maxMem;
+	mem.test= () => console.log(mem);
+	mem.addSample = (sample) => {
+			mem.samples.push(sample);
+			if (mem.samples.length > mem.maxMemory) {mem.samples.shift()}
+		};
+	mem.sample = (n) => {
+			return _.sampleSize(mem.samples, n);
+		};
+	return mem;
+}
+
+var createModel = () => {
+	let model = {};
+	model.init = (hiddenLayerSizes, numStates, numActions, batchSize, memSize) => {
+		model.net = tf.sequential();
+		model.numStates = numStates;
+		model.numActions = numActions;
+		model.net.add(tf.layers.dense({
+			units:numStates,
+			activation: 'tanh',
+			inputShape: [numStates]
+		}));
+		model.net.add(tf.layers.dropout({rate: 0.2}))
+		hiddenLayerSizes.forEach((layerSize,i) => {
+			model.net.add(tf.layers.dense({
+				units:layerSize,
+				activation: 'tanh',
+				inputShape: undefined
+			}));
+		});
+		model.net.add(tf.layers.dense({units:numActions}));
+		model.net.summary();
+		model.net.compile({optimizer:'adam', loss:'meanSquaredError'});
+		model.memory = createMemory(memSize);
+	};
+	model.predict = (state) => {
+		return tf.tidy(()=>{return model.net.predict(state)});
+	};
+	model.nextAction = (state,eps) => {
+		let action=0;
+		if (Math.random() < eps) {
+			action = Math.floor(Math.random() * model.numActions);
+		}else{
+			action = tf.tidy(()=>{
+				return model.net.predict(state).argMax(1).dataSync()[0];
+			});
+		}
+		return action;
+	};
+	model.train = () => {
+
+	};
+	return model;
+};
+
+/////////////////////////////////////////////////MODEL INIT
+var model = createModel();
+
+model.init(structure, beatCount + beatCount + agentSTMSize, 2, 4, replayMemory);
+
+
+var createEnvironment = (beatCount, agentSTMSize) => {
+	let env = [];
+	env.timeEncodingSize = beatCount;
+	env.beatCount = beatCount;
+	env.agentSTMSize = agentSTMSize;
+	env.stateSize = env.timeEncodingSize + env.beatCount + env.agentSTMSize;
+	env.createInitState = () => {
+		//state = memory of the environment ++ memory of past actions
+		let newState = new Array(env.stateSize).fill(-1);
+		return newState;
+	}
+	env.update = (currState, beatTime, input, action) =>{
+		let newState = [];
+		//time encoding
+		for(let i=0; i < env.beatCount; i++) {
+			newState.push(i==beatTime ? 1 : -1);
+		}
+		//input history
+		//shift agent memory
+		for(let i=env.beatCount+1; i < env.beatCount*2; i++) {
+			newState[i] = currState[i-1];
+		}
+		newState[env.beatCount] = input;
+
+		//agent STM
+		if (env.agentSTMSize > 0) {
+			for(let i=(env.beatCount*2)+1; i < env.stateSize; i++) {
+				newState[i] = currState[i-1];
+			}
+			newState[env.beatCount*2] = action ? 1 : -1;
+		}
+		return newState;
+	}
+	return env;
+}
+
+
+var env = createEnvironment(beatCount, agentSTMSize);
+
+var state = env.createInitState();
+
+var lastAction=0;
+
+var step = async (currState, beatNum, input, expectedoutput, sampleSize, eps, learning) => {
+
+	let action, reward, newState;
+	if (learning) {
+		action =model.nextAction(tf.tensor2d(currState,[1,currState.length]),eps);
+		//console.log("exp: ", expectedoutput, ", action: ", action);
+		reward = expectedoutput == action ? 1 : -1;
+	}else{
+		action=lastAction;
+	}
+
+	newState = env.update(currState, beatNum, input, action);
+	//console.log("Curr: ", currState, "New", newState, "Action: ", action, "Reward: ", reward);
+
+	if(!learning) {
+		action =model.nextAction(tf.tensor2d(newState,[1,newState.length]),eps);
+	}
+
+	lastAction=action;
+
+	if (learning) {
+		model.memory.addSample([currState, reward, action, newState]);
+
+		//calc rewards
+		let x=[];
+		let targets=[];
+		let memSamples = model.memory.sample(sampleSize);
+		let debug=[];
+		if (memSamples.length >0) {
+			memSamples.forEach(
+				([sampleState, sampleReward, sampleAction, sampleNextState],i) => {
+					tf.tidy(()=>{
+						let val = model.predict(tf.tensor2d(sampleState, [1,sampleState.length])).dataSync();
+						let maxValNextState = model.predict(tf.tensor2d(sampleNextState, [1,sampleNextState.length])).max().dataSync()[0];
+						val[sampleAction] = sampleReward;
+
+						x.push(sampleState);
+						targets.push(val);
+//						debug.push([sampleState[0], sampleState[1], sampleAction, sampleReward, val[0], val[1]]);
+					});
+				}
+			);
+//			console.table(debug);
+			//learn
+			let xtf = tf.tensor2d(x, [x.length, model.numStates]);
+			let ytf = tf.tensor2d(targets, [targets.length, model.numActions]);
+			function onBatchEnd (x, logs){
+			};
+			await model.net.fit(xtf,ytf, {batchSize:32, epochs: 1, callbacks: {onBatchEnd} }).then(info => {console.log('loss', info.history.loss);});
+		}
+	}
+	return [newState, action, reward];
+}
+
+var trigOut = createOutputChannel(0, 1);
+var nextAction = 0;
+var runningReward = 0;
+
+input = async (id,x) => {
+	//console.log(id,x);
+	let targetInput=x[1];
+	let inputVal = x[0] ? 1 : -1;
+	let beatNum = Math.floor(x[2]*beatCount);
+	let memSampleSize=replaySize;
+	if (targetInput ==-1) {
+		//we're in prediction mode
+		[state, nextAction] = await step(state, beatNum, inputVal, 0, memSampleSize, 0.0, 0);
+
+		trigOut.send(nextAction);
+		console.log('sent prediction',nextAction);
+	}else{
+		//we're learning
+		let expectedAction = x[1];
+		[state, nextAction, r] = await step(state, beatNum, inputVal, expectedAction, memSampleSize, 0.0, 1);
+		runningReward = (0.9 * runningReward) + (0.1 * r);
+		//console.log("R", runningReward);
+	}
+}
+
+//references...
+//https://medium.com/@pierrerouhard/reinforcement-learning-in-the-browser-an-introduction-to-tensorflow-js-9a02b143c099
+//https://www.freecodecamp.org/news/an-introduction-to-deep-q-learning-lets-play-doom-54d02d8017d8/
+
+
