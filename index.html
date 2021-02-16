@@ -247,7 +247,7 @@
     const $ = (elemId, event, callback) =>
       document.getElementById(elemId).addEventListener(event, callback);
 
-    const origin = document.location.origin;
+    const origin = 'https://frantic0.github.io/sema-engine';
 
     $("playButton", "click", () => {
       const audioWorkletURL = origin + "/maxi-processor.js";
