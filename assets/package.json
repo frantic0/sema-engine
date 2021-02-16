@@ -1,0 +1,36 @@
+{
+  "name": "sema-engine",
+  "version": "0.0.18",
+  "description": "A Signal Engine for a Live Coding Language Ecosystem",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/frantic0/sema-engine.git"
+  },
+  "author": "Francisco Bernardo <f.bernardo@sussex.ac.uk> (https://fbernardo.com/)",
+  "contributors": [
+    "Chris Kiefer <c.kiefer@sussex.ac.uk> (http://luuma.net)",
+    "Thor Magnusson <t.magnusson@sussex.ac.uk> (http://www.ixi-audio.net)"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "Web Audio",
+    "Web Audio API",
+    "Synthesis",
+    "Playback",
+    "DSP",
+    "Machine Learning",
+    "Grammar Specification",
+    "Signal Processing",
+    "Interactive Music"
+  ],
+  "engines": {
+    "node": ">=0.10.3 <15"
+  },
+  "module": "dist/sema-engine.mjs",
+  "main": "dist/sema-engine.js",
+  "dependencies": {
+    "nearley": "^2.20.1",
+    "ringbuf.js": "^0.1.0"
+  }
+
+}

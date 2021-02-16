@@ -1,6 +1,6 @@
 {
   "name": "sema-engine",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "description": "Module containing Sema's signal engine and compiler for a live coding language ecosystem",
   "repository": {
     "type": "git",
@@ -29,7 +29,6 @@
     "pretest": "cpx 'assets/langs/*' './test/fixtures/lang/'",
     "test": "mocha --recursive --require esm",
     "coverage": "nyc npm run test",
-    "publish": "npm run publish ./dist",
     "clean": "rm -rf build dist",
     "clean-all": "rm -rf .cache dist node_modules package-lock.json"
   },

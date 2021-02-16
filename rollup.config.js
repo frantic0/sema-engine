@@ -115,6 +115,10 @@ export default [
 						copy({
 							targets: [
 								{
+									src: "package.json",
+									dest: "dist",
+								},
+								{
 									src: "src/engine/maxi-processor.js",
 									dest: "dist",
 								},
