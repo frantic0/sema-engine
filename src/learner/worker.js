@@ -165,27 +165,45 @@ var sema = {
 	}
 
   function initWithURL(url){
-    if(new URL(url))
+    if(new URL(url)){
+
       try {
         importScripts(url + "/lalolib.js");
+      } catch (err) {
+        console.error("ERROR: importScripts – lalolib.js ", err);
+      }
+
+      try{
         importScripts(url + "/svd.js");
+      } catch (err) {
+        console.error("ERROR: importScripts – svd.js ", err);
+      }
+
+      try{
         importScripts(url + "/mlworkerscripts.js");
+      } catch (err) {
+        console.error("ERROR: importScripts – mlworkerscripts.js", err);
+      }
+
+      try{
         importScripts(
           "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs/dist/tf.min.js"
         );
+      } catch (err) {
+        console.error("ERROR: importScripts – tfjs", err);
+      }
+
+      try{
         gevalAll();
         sabChecker();
-
-        postMessage({ init: true });
-        // console.log(
-        //   "DEBUG:worker: importScripts, gevalAll and sabChecker succeeded"
-        // );
       } catch (err) {
         console.error("ERROR: on importScripts, gevalAll and sabChecker", err);
       }
+
+      postMessage({ init: true });
+    }
     else
       console.error("ERROR:worker:initWithURL: Invalid URL");
-
   }
 
 onmessage = m => {
