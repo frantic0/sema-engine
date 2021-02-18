@@ -1,6 +1,6 @@
 {
   "name": "sema-engine",
-  "version": "0.0.19",
+  "version": "0.0.25",
   "description": "A Signal Engine for a Live Coding Language Ecosystem",
   "repository": {
     "type": "git",
@@ -25,12 +25,5 @@
   ],
   "engines": {
     "node": ">=12.18.0 <15"
-  },
-  "module": "dist/sema-engine.mjs",
-  "main": "dist/sema-engine.js",
-  "dependencies": {
-    "nearley": "^2.20.1",
-    "ringbuf.js": "^0.1.0"
   }
-
 }

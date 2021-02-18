@@ -115,7 +115,11 @@ export default [
 						copy({
 							targets: [
 								{
-									src: "package.json",
+									src: "assets/package.json",
+									dest: "dist",
+								},
+								{
+									src: "README.md",
 									dest: "dist",
 								},
 								{

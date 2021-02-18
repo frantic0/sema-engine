@@ -181,7 +181,7 @@ var sema = {
         //   "DEBUG:worker: importScripts, gevalAll and sabChecker succeeded"
         // );
       } catch (err) {
-        console.error("ERROR: on importScripts, gevalAll and sabChecker");
+        console.error("ERROR: on importScripts, gevalAll and sabChecker", err);
       }
     else
       console.error("ERROR:worker:initWithURL: Invalid URL");
