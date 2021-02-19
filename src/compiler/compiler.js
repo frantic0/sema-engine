@@ -16,13 +16,6 @@ import mooo from "../../node_modules/moo/moo.js";
 import("../../node_modules/moo/moo.js");
 import semaa from "./sema.js";
 
-/**
- * Loads the modules dependencies in the compiled parser source code (moo, sema)
- * before dynamically loading it with eval
- * @param {*} source
- * * sema.num('3') is a hack to force the module to load before eval,
- * TODO need to check how the module is built differently from moo
- */
 
 export function getModuleExports(source) {
 	let moo = mooo; //  `let` local scope, works with eval – does NOT work with Geval
@@ -35,14 +28,6 @@ export function getModuleExports(source) {
 	return module.exports;
 }
 
-export function getParserModuleExports(source) {
-	let moo = mooo; //  `let` local scope, works with eval – does NOT work with Geval
-	let sema = semaa; // does NOT work with Geval, works with eval
-	sema.num("3"); // hack to force the module to load before eval
-	let module = { exports: "" };
-	// eval(source); // works but gets flagged by Rollup!
-	return module.exports;
-}
 
 export function evalToGlobalScope(source) {
 	// let moo = mooo; //  `let` local scope, works with eval – does NOT work with Geval
@@ -56,6 +41,23 @@ export function evalToGlobalScope(source) {
 	geval(source); // does NOT work with geval – ReferenceError: moo is not defined
   // inject parser in window.grammar
 }
+
+/**
+ * Loads the modules dependencies in the compiled parser source code (moo, sema)
+ * before dynamically loading it with eval
+ * @param {*} source
+ * * sema.num('3') is a hack to force the module to load before eval,
+ * TODO need to check how the module is built differently from moo
+ */
+export function getParserModuleExports(source) {
+	let moo = mooo; //  `let` local scope, works with eval – does NOT work with Geval
+	let sema = semaa; // does NOT work with Geval, works with eval
+	sema.num("3"); // hack to force the module to load before eval
+	let module = { exports: "" };
+	eval(source); // works but gets flagged by Rollup!
+	return module.exports;
+}
+
 
 /**
  * Given a livecode's grammar source code, compile a livecode's source
