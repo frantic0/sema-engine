@@ -18,7 +18,8 @@ export default [
 			{
 				file: pkg.module,
 				format: "es",
-				sourcemap: isDevelopment ? true : "inline", // generate sourcemap files if true
+				sourcemap: true
+				// sourcemap: isDevelopment ? true : "inline", // generate sourcemap files if true
 			},
 			{
 				file: pkg.main,

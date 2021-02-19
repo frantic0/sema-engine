@@ -13,7 +13,6 @@ import lint from "../../node_modules/nearley/lib/lint.js";
 
 import ASTreeToJavascript from "./IR.js";
 import mooo from "../../node_modules/moo/moo.js";
-import("../../node_modules/moo/moo.js");
 import semaa from "./sema.js";
 
 

@@ -7,6 +7,7 @@ import semaa from './sema.js';
 function getParserModuleExports(source) {
   let mooo = moo;
   let sema = semaa;
+  sema.num("3");
 	let module = { exports: '' };
 	eval(source);
 	return module.exports;
