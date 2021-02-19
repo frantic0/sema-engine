@@ -13,45 +13,8 @@ import lint from "../../node_modules/nearley/lib/lint.js";
 
 import ASTreeToJavascript from "./IR.js";
 import mooo from "../../node_modules/moo/moo.js";
+import("../../node_modules/moo/moo.js");
 import semaa from "./sema.js";
-
-// let parseLiveCodeAsync = async (compiledParser, livecodeSource) => {
-// 	if (window.Worker) {
-// 		const parserWorker = new ParserWorker();
-// 		let parserWorkerAsync = new Promise((res, rej) => {
-// 			parserWorker.postMessage({
-// 				// Post code to worker for parsing
-// 				liveCodeSource: livecodeSource,
-// 				parserSource: compiledParser,
-// 				type: "parse",
-// 			});
-
-// 			parserWorker.onmessage = (m) => {
-// 				// Receive code from worker, pass it to then
-// 				if (m.data !== undefined) {
-// 					res(m.data);
-// 				}
-// 			};
-// 		})
-// 			.then((outputs) => {
-// 				const { parserOutputs, parserResults } = outputs;
-// 				if (parserOutputs && parserResults) {
-// 					// dspCode = ASTreeToJavascript.treeToCode(parserResults, 0);
-// 				} else {
-// 					// $liveCodeParseErrors = outputs;
-// 					// $liveCodeAbstractSyntaxTree = $liveCodeParseResults = '';
-// 				}
-// 			})
-// 			.catch((e) => {
-// 				// console.log('DEBUG:parserEditor:parseLiveCode:catch')
-// 				// console.log(e);
-// 				$liveCodeParseErrors = e;
-// 			});
-
-// 		parserWorker.terminate();
-// 		parserWorker = null; // cannot delete in strict mod
-// 	}
-// };
 
 /**
  * Loads the modules dependencies in the compiled parser source code (moo, sema)
@@ -60,14 +23,38 @@ import semaa from "./sema.js";
  * * sema.num('3') is a hack to force the module to load before eval,
  * TODO need to check how the module is built differently from moo
  */
-export function getParserModuleExports(source) {
-	let moo = mooo; //  local scope, works with eval – does NOT work with geval
-	let sema = semaa; // does NOT work with eval, works with geval?
+
+export function getModuleExports(source) {
+	let moo = mooo; //  `let` local scope, works with eval – does NOT work with Geval
+	let sema = semaa; // does NOT work with Geval, works with eval
 	sema.num("3"); // hack to force the module to load before eval
 	let module = { exports: "" };
-	// var geval = eval; // eval in the global scope, avoiding rollup warning - https://rollupjs.org/guide/en/#avoiding-eval
-	eval(source);
+	const encodedJs = encodeURIComponent(source);
+	const dataUri = "data:text/javascript;charset=utf-8," + encodedJs;
+	import(dataUri);
 	return module.exports;
+}
+
+export function getParserModuleExports(source) {
+	let moo = mooo; //  `let` local scope, works with eval – does NOT work with Geval
+	let sema = semaa; // does NOT work with Geval, works with eval
+	sema.num("3"); // hack to force the module to load before eval
+	let module = { exports: "" };
+	// eval(source); // works but gets flagged by Rollup!
+	return module.exports;
+}
+
+export function evalToGlobalScope(source) {
+	// let moo = mooo; //  `let` local scope, works with eval – does NOT work with Geval
+	window.moo = mooo; //  global scope, works with Geval
+	// let sema = semaa; // does NOT work with Geval, works with eval
+	window.sema = semaa; // global scope, works with Geval
+	sema.num("3"); // hack to force the module to load before eval
+	let module = { exports: "" };
+	// eval(source);
+	var geval = eval; // eval in the global scope, avoiding rollup warning - https://rollupjs.org/guide/en/#avoiding-eval
+	geval(source); // does NOT work with geval – ReferenceError: moo is not defined
+  // inject parser in window.grammar
 }
 
 /**
@@ -75,13 +62,18 @@ export function getParserModuleExports(source) {
  * @param {*} grammarSource
  * @param {*} livecodeSource
  */
-export  function compile(grammarSource, livecodeSource) {
+export function compile(grammarSource, livecodeSource) {
 	let dspCode;
 	let sema = semaa;
 
 	const { errors, output } = compileGrammar(grammarSource);
-	const grammar = getParserModuleExports(output);
-	const compiledParser = new nearley.Parser(grammar);
+
+	// const grammar = getModuleExports(output);
+	// const grammar = getParserModuleExports(output);
+	// const compiledParser = new nearley.Parser(grammar);
+
+	evalToGlobalScope(output);
+	const compiledParser = new nearley.Parser(window.grammar);
 
 	if (!errors && compiledParser) {
 		const livecodeParseTree = compiledParser.feed(livecodeSource);
