@@ -69,11 +69,12 @@ export function compile(grammarSource, livecodeSource) {
 	const { errors, output } = compileGrammar(grammarSource);
 
 	// const grammar = getModuleExports(output);
-	// const grammar = getParserModuleExports(output);
-	// const compiledParser = new nearley.Parser(grammar);
 
-	evalToGlobalScope(output);
-	const compiledParser = new nearley.Parser(window.grammar);
+	// evalToGlobalScope(output); // FAILS in unit testing, `ReferenceError: window is not defined`
+	// const compiledParser = new nearley.Parser(window.grammar);
+
+	const grammar = getParserModuleExports(output);
+	const compiledParser = new nearley.Parser(grammar);
 
 	if (!errors && compiledParser) {
 		const livecodeParseTree = compiledParser.feed(livecodeSource);
