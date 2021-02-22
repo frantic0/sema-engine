@@ -7,5 +7,3 @@ input = (id,x) => {
     //change this line to manipulate the frequency
     channel0.send(x[0] + 40);
 };
-
-____
