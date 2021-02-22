@@ -53,7 +53,7 @@ self.createOutputChannel = ( id, blocksize ) => {
 
 self.input = ( value, channel ) => {}
 
-self.output = ( value, channel) => { postMessage( { func:'data', val:value, ch:channel }); }
+self.output = ( value, channel ) => { postMessage( { func:'data', val:value, ch:channel }); }
 
   function gevalAll() {
     if (!geval) {
