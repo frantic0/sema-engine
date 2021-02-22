@@ -1,4 +1,4 @@
-import RingBuffer from '../common/ringbuf.js'; //thanks padenot
+import { RingBuffer } from '../common/ringbuf.js'; //thanks padenot
 import {
   loadSampleToArray
 } from './maximilian.util.js';

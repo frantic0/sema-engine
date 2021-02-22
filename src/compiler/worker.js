@@ -16,7 +16,6 @@ function getParserModuleExports(source) {
 const clone = (a) => JSON.parse(JSON.stringify(a))
 
 
-
 onmessage = function(message) {
   if (
 		message.data !== undefined &&
@@ -33,9 +32,8 @@ onmessage = function(message) {
       parser.feed(liveCodeSource);
 			parserOutputs = JSON.parse(JSON.stringify(parser.results));
 
-    	postMessage({
-				parserOutputs: clone(parser.results),
-				parserResults: clone(parser.results)
+      postMessage({
+        output: parser.results,
 			});
 
     } catch (e) {
