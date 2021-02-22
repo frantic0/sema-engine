@@ -18,7 +18,7 @@ export default [
 			{
 				file: pkg.module,
 				format: "es",
-				sourcemap: true
+				sourcemap: true,
 				// sourcemap: isDevelopment ? true : "inline", // generate sourcemap files if true
 			},
 			{
@@ -169,6 +169,14 @@ export default [
 		],
 	},
 
+	// {
+	// 	input: "src/engine/maxi-processor.js",
+		// external: ["nearley"],
+	// 	output: [
+	// 		{ file: "dist/sema-engine.processor.js", format: "es", sourcemap: true },
+	// 	],
+	// },
+
 	// CommonJS (for Node) and ES module (for bundlers) build.
 	// (We could have three entries in the configuration array
 	// instead of two, but it's quicker to generate multiple
@@ -177,7 +185,7 @@ export default [
 	// `file` and `format` for each target)
 	// {
 	// 	input: "src/index.js",
-	// 	external: ["nearley"],
+	// 	// external: ["nearley"],
 	// 	output: [
 	// 		{ file: pkg.main, format: "cjs" },
 	// 		{ file: pkg.module, format: "es" },
