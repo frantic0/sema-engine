@@ -1,6 +1,6 @@
 "use strict";
 
-import { RingBuffer } from "../common/ringbuf.js";
+import { RingBuffer } from "ringbuf.js";
 self.RingBuffer = RingBuffer;
 
 var outputSABs = {};
@@ -17,7 +17,13 @@ class MLSABOutputTransducer {
       //create a new SAB and notify the receiver
       this.sab = RingBuffer.getStorageForCapacity(32 * blocksize, Float64Array);
       this.ringbuf = new RingBuffer(this.sab, Float64Array);
-      outputSABs[channel] = {rb:this.ringbuf, sab:this.sab, created:Date.now(), blocksize:blocksize};
+
+      outputSABs[channel] = {
+        rb:this.ringbuf,
+        sab:this.sab,
+        created:Date.now(),
+        blocksize:blocksize };
+
       postMessage({
         func: 'sab',
         value: this.sab,
@@ -60,56 +66,6 @@ self.output = ( value, channel ) => { postMessage( { func:'data', val:value, ch:
       var geval = eval; // puts eval into global scope https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/eval
     }
     try {
-/*      geval("var input = (value, channel) => {}");
-      geval(
-        "var output = (value,channel) => { postMessage({func:'data', val:value, ch:channel});}"
-      );
-      geval(`
-        var outputSABs = {};
-        class MLSABOutputTransducer {
-          constructor(bufferType, channel, blocksize) {
-            this.channel = channel;
-            this.blocksize = blocksize;
-            //check for existing channels
-            if (channel in outputSABs && outputSABs[channel].blocksize == blocksize) {
-              //reuse existing
-              this.ringbuf = outputSABs[channel].rb;
-            }else{
-              //create a new SAB and notify the receiver
-              this.sab = RingBuffer.getStorageForCapacity(32 * blocksize, Float64Array);
-              this.ringbuf = new RingBuffer(this.sab, Float64Array);
-              outputSABs[channel] = {rb:this.ringbuf, sab:this.sab, created:Date.now(), blocksize:blocksize};
-              postMessage({
-                func: 'sab',
-                value: this.sab,
-                ttype: bufferType,
-                channelID: channel,
-                blocksize:blocksize
-              });
-            }
-          }
-          send(value) {
-            if (this.ringbuf.available_write() > 1) {
-              if (typeof(value) == "number") {
-                this.ringbuf.push(new Float64Array([value]));
-              }else{
-                if (value.length == this.blocksize) {
-                  this.ringbuf.push(value);
-                }else if (value.length < this.blocksize) {
-                  let newVal = new Float64Array(this.blocksize);
-                  for(let i in value) newVal[i] = value[i];
-                  this.ringbuf.push(newVal);
-                }else{
-                  this.ringbuf.push(value.slice(0,this.blocksize));
-                }
-              }
-            }
-          }
-        }
-        var createOutputChannel = (id, blocksize) => {
-          return new MLSABOutputTransducer('ML', id, blocksize);
-        };
-      `); */
       geval(`
           var loadResponders = {};
           var inputSABs={};
