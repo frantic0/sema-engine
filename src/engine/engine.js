@@ -1,4 +1,7 @@
-import { RingBuffer } from '../common/ringbuf.js'; //thanks padenot
+// NOTE: this imports RingBuffer directly from node_modules
+// which is different from maxi-processor that
+// dynamically loads from the adjacent ringBuf.js file
+import { RingBuffer } from 'ringbuf.js'; //thanks padenot
 import {
   loadSampleToArray
 } from './maximilian.util.js';

@@ -1,5 +1,8 @@
 import Maximilian from './sema-engine.wasmmodule.js';
+
+// NOTE: dynamically loads from the adjacent ringBuf.js file
 import RingBuffer from "./ringbuf.js"; //thanks padenot
+
 import Open303 from './open303.wasmmodule.js';
 import { SABInputTransducer, SABOutputTransducer } from './transducers.js';
 

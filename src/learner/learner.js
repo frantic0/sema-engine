@@ -2,7 +2,6 @@
 import Dispatcher from "../common/dispatcher.js";
 
 // here we use the default pattern but any RegEx can be configured
-// import mlworker from 'web-worker:./mlworker.js';
 import mlworker from 'web-worker:./worker.js';
 
 /**
