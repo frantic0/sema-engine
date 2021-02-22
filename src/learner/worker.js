@@ -1,6 +1,7 @@
 "use strict";
 
-  // import { RingBuffer } from "../common/ringbuf.js";
+  import { RingBuffer } from "../common/ringbuf.js";
+  self.RingBuffer = RingBuffer;
 
   function gevalAll() {
     if (!geval) {
@@ -171,11 +172,11 @@
         console.error("ERROR: importScripts – svd.js ", err);
       }
 
-      // try{
-      //   importScripts(url + "/mlworkerscripts.js");
-      // } catch (err) {
-      //   console.error("ERROR: importScripts – mlworkerscripts.js", err);
-      // }
+      try{
+        // importScripts(url + "/mlworkerscripts.js");
+      } catch (err) {
+        console.error("ERROR: importScripts – mlworkerscripts.js", err);
+      }
 
       try{
         importScripts(
