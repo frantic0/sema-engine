@@ -4,6 +4,7 @@ import { RingBuffer } from "ringbuf.js";
 self.RingBuffer = RingBuffer;
 
 var outputSABs = {};
+
 class MLSABOutputTransducer {
 
   constructor(bufferType, channel, blocksize) {
@@ -61,150 +62,144 @@ self.input = ( value, channel ) => {}
 
 self.output = ( value, channel ) => { postMessage( { func:'data', val:value, ch:channel }); }
 
-  function gevalAll() {
-    if (!geval) {
-      var geval = eval; // puts eval into global scope https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/eval
-    }
-    try {
-      geval(`
-          var loadResponders = {};
-          var inputSABs={};
-          var sema = {
-            saveF32Array: (name, val) => {
+function gevalAll() {
+  if (!geval) {
+    var geval = eval; // puts eval into global scope https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/eval
+  }
+  try {
+    geval(`
+        var loadResponders = {};
+        var inputSABs={};
+        var sema = {
+          saveF32Array: (name, val) => {
+            postMessage({
+              "func": "save",
+              "name": name,
+              "val": val
+            });
+            return 0;
+          },
+          loadF32Array: (name, onload) => {
+            postMessage({
+              "func": "load",
+              "name": name,
+            });
+            loadResponders[name] = onload;
+            return 0;
+          },
+          download: (name) => {
+            postMessage({
+              "func": "download",
+              "name": name,
+            });
+          },
+          sendCode: (code) => {
+            postMessage({
+              "func": "sendcode",
+              "code": code,
+            });
+          },
+          pbcopy: (msg) => {
+            postMessage({
+              "func": "pbcopy",
+              "msg": msg,
+            });
+          },
+          sendBuffer: (bufferName,data) => {
               postMessage({
-                "func": "save",
-                "name": name,
-                "val": val
+                  "func": "sendbuf",
+                  "name": bufferName,
+                  "data": data
               });
-              return 0;
-            },
-            loadF32Array: (name, onload) => {
+          },
+          env: {
+            saveLocal: (name) => {
               postMessage({
-                "func": "load",
-                "name": name,
-              });
-              loadResponders[name] = onload;
-              return 0;
-            },
-            download: (name) => {
-              postMessage({
-                "func": "download",
-                "name": name,
-              });
-            },
-            sendCode: (code) => {
-              postMessage({
-                "func": "sendcode",
-                "code": code,
-              });
-            },
-            pbcopy: (msg) => {
-              postMessage({
-                "func": "pbcopy",
-                "msg": msg,
-              });
-            },
-            sendBuffer: (bufferName,data) => {
-                postMessage({
-                    "func": "sendbuf",
-                    "name": bufferName,
-                    "data": data
-                });
-            },
-            env: {
-              saveLocal: (name) => {
-                postMessage({
-                      "func": "envsave",
-                      "name": name,
-                      "storage":"local"
-                  }
-                )
-              },
-              loadLocal: (name) => {
-                postMessage({
-                      "func": "envload",
-                      "name": name,
-                      "storage":"local"
-                  }
-                )
-              },
-              saveToPB: () => {
-                postMessage({
-                      "func": "envsave",
-                      "storage":"pastebuffer"
-                  }
-                )
-              },
-              loadGist: (gistid) => {
-                postMessage({
-                      "func": "envload",
-                      "name": gistid,
-                      "storage":"gist"
-                  }
-                )
-              },
-
-            },
-            //run in the DOM
-            domeval: (code) => {
-              postMessage({
-                    "func": "domeval",
-                    "code": code,
+                    "func": "envsave",
+                    "name": name,
+                    "storage":"local"
                 }
               )
             },
-            peerinfo: () => {
-              postMessage ({
-                "func": "peerinfo"
-              });
-              console.log("Your peer ID has been copied to the paste buffer")
-            }
-          };
-      `);
+            loadLocal: (name) => {
+              postMessage({
+                    "func": "envload",
+                    "name": name,
+                    "storage":"local"
+                }
+              )
+            },
+            saveToPB: () => {
+              postMessage({
+                    "func": "envsave",
+                    "storage":"pastebuffer"
+                }
+              )
+            },
+            loadGist: (gistid) => {
+              postMessage({
+                    "func": "envload",
+                    "name": gistid,
+                    "storage":"gist"
+                }
+              )
+            },
+          },
+          //run in the DOM
+          domeval: (code) => {
+            postMessage({
+                  "func": "domeval",
+                  "code": code,
+              }
+            )
+          },
+          peerinfo: () => {
+            postMessage ({
+              "func": "peerinfo"
+            });
+            console.log("Your peer ID has been copied to the paste buffer")
+          }
+        };
+    `);
+  } catch (err) {
+    console.error("ERROR:eval:", err);
+  }
+}
+
+function initWithURL(url){
+  if( new URL(url) ){
+    try {
+      importScripts(url + "/lalolib.js");
     } catch (err) {
-      console.error("ERROR:eval:", err);
+      console.error("ERROR: importScripts – lalolib.js ", err);
     }
-  }
-
-  function initWithURL(url){
-    if( new URL(url) ){
-      try {
-        importScripts(url + "/lalolib.js");
-      } catch (err) {
-        console.error("ERROR: importScripts – lalolib.js ", err);
-      }
-
-      try{
-        importScripts(url + "/svd.js");
-      } catch (err) {
-        console.error("ERROR: importScripts – svd.js ", err);
-      }
-
-      try{
-        importScripts(
-          "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs/dist/tf.min.js"
-        );
-      } catch (err) {
-        console.error("ERROR: importScripts – tfjs", err);
-      }
-
-      try{
-        gevalAll();
-      } catch (err) {
-        console.error("ERROR: gevalAll", err);
-      }
-
-      try{
-        sabChecker();
-      } catch (err) {
-        console.error("ERROR: sabChecker", err);
-      }
-
-      postMessage({ init: true });
+    try{
+      importScripts(url + "/svd.js");
+    } catch (err) {
+      console.error("ERROR: importScripts – svd.js ", err);
     }
-    else
-      console.error("ERROR: initWithURL – Invalid URL");
+    try{
+      importScripts(
+        "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs/dist/tf.min.js"
+      );
+    } catch (err) {
+      console.error("ERROR: importScripts – tfjs", err);
+    }
+    try{
+      gevalAll();
+    } catch (err) {
+      console.error("ERROR: gevalAll", err);
+    }
+    try{
+      sabChecker();
+    } catch (err) {
+      console.error("ERROR: sabChecker", err);
+    }
+    postMessage({ init: true });
   }
+  else
+    console.error("ERROR: initWithURL – Invalid URL");
+}
 
 onmessage = m => {
   // console.log("DEBUG:worker:onmessage");
