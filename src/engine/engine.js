@@ -125,22 +125,29 @@ export class Engine {
 	 * @param {*} e
 	 */
 	pushSharedBuffer(e) {
-		// let sab = RingBuffer.getStorageForCapacity(32 * blocksize, Float64Array);
-		let ringbuf = new RingBuffer(e.value, Float64Array);
+    if( e && e.value && e.value instanceof SharedArrayBuffer ){
+      try {
 
-		this.audioWorkletNode.port.postMessage({
-			func: "sab",
-			value: e.value,
-			ttype: e.ttype,
-			channelID: e.channelID,
-			blocksize: e.blocksize,
-		});
+        let ringbuf = new RingBuffer(e.value, Float64Array);
+        this.audioWorkletNode.port.postMessage({
+          func: "sab",
+          value: e.value,
+          ttype: e.ttype,
+          channelID: e.channelID,
+          blocksize: e.blocksize,
+        });
 
-		this.sharedArrayBuffers[e.channelID] = {
-			sab: e.value, // TODO: this is redundant, you can access the sab from the rb,
-			// also change hashmap name it is confusing and induces error
-			rb: ringbuf,
-		};
+        this.sharedArrayBuffers[e.channelID] = {
+          sab: e.value, // TODO: this is redundant, you can access the sab from the rb,
+          // also change hashmap name it is confusing and induces error
+          rb: ringbuf,
+        };
+      }
+      catch(err) {
+        console.error('Error pushing SharedBuffer to engine');
+      }
+    }
+    else throw new Error("Error with onSharedBuffer event");
 	}
 
 	/**

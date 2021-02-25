@@ -31,7 +31,7 @@ export default [
 				file: "dist/sema-engine.min.js",
 				format: "iife",
 				name: "version",
-				sourcemap: isDevelopment ? true : false, // do not generate sourcemap files if true
+				sourcemap: isDevelopment ? true : "inline", // do not generate sourcemap files if true
 				plugins: [terser()],
 			},
 		],
@@ -42,8 +42,8 @@ export default [
 						commonjs(), // so Rollup can convert `nearley` to an ES module
 						workerLoader(),
 						// {
+						//// debug the Rollup bundling process by injecting a hook in the plugin chain!
 						// 	transform(code, id) {
-						// 		// debug the Rollup bundling process by injecting a hook in the plugin chain!
 						// 		console.log(id);
 						// 		console.log(code);
 						// 	}, // not returning anything, so doesn't affect bundle
@@ -109,7 +109,7 @@ export default [
 						}),
 				  ]
 				: [
-						resolve(), // so Rollup can find `nearley`
+						resolve(), // so Rollup can find `nearley` f e.g.
 						commonjs(), // so Rollup can convert `nearley` to an ES module
 						workerLoader(/* configuration */),
 						terser(),
@@ -171,7 +171,7 @@ export default [
 
 	// {
 	// 	input: "src/engine/maxi-processor.js",
-		// external: ["nearley"],
+	// external: ["nearley"],
 	// 	output: [
 	// 		{ file: "dist/sema-engine.processor.js", format: "es", sourcemap: true },
 	// 	],
