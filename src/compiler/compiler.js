@@ -15,6 +15,7 @@ import ASTreeToJavascript from "./IR.js";
 import mooo from "../../node_modules/moo/moo.js";
 import semaa from "./sema.js";
 
+import compilerWorker from "web-worker:./worker.js";
 
 export function getModuleExports(source) {
 	let moo = mooo; //  `let` local scope, works with eval – does NOT work with Geval
@@ -76,6 +77,10 @@ export function compile(grammarSource, livecodeSource) {
 
 	const grammar = getParserModuleExports(output);
 	const compiledParser = new nearley.Parser(grammar);
+
+  // let worker = new compilerWorker();
+	// worker.postMessage({ livecodeSource, grammarSource });
+
 
 	if (!errors && compiledParser) {
 		const livecodeParseTree = compiledParser.feed(livecodeSource);
