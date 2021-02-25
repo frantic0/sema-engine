@@ -90,15 +90,13 @@ export class Learner {
 	 * @param {*} channelID
 	 */
 	pushSharedBuffer(e) {
-		if (this.worker && e.sab) {
+		if (this.worker && e && e.sab && e.sab instanceof SharedArrayBuffer) {
 			this.worker.postMessage({
 				sab: e.sab,
 				blocksize: e.blocksize,
-				channelID: e.channelID
+				channelID: e.channelID,
 			});
-		}
-    else
-      throw new Error("Error creating shared buffer in Learner")
+		} else throw new Error("Error pushing SharedBuffer in Learner");
 	}
 
 	evalBlock(block) {
