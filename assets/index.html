@@ -271,7 +271,7 @@
 
       learner = new Learner();
       if(engine){
-        engine.addEventListener('onSharedBuffer', e => learner.createSharedBuffer(e) ); // Engine's SAB emissions subscribed by Learner
+        engine.addEventListener('onSharedBuffer', e => learner.pushSharedBuffer(e) ); // Engine's SAB emissions subscribed by Learner
         learner.addEventListener('onSharedBuffer', e => engine.pushSharedBuffer(e) );  // Learner's SAB emissions subscribed by Engine
       }
       await learner.init(originURL); // when Learner initializes
