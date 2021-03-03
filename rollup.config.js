@@ -6,33 +6,45 @@ import copy from "rollup-plugin-copy";
 import serve from "rollup-plugin-serve";
 import livereload from "rollup-plugin-livereload";
 import workerLoader from "rollup-plugin-web-worker-loader";
+import sourcemaps from "rollup-plugin-sourcemaps";
 // import eslint from "@rollup/plugin-eslint";
 
 const isDevelopment = !process.env.BUILD;
 
+// Silence warning
+const onwarn = (warning, warn) =>  {
+	// suppress eval warnings
+	if (warning.code === 'EVAL') return
+	warn(warning)
+}
+
+
 export default [
-	// browser-friendly UMD build
+
 	{
 		input: "src/index.js",
+    onwarn,
 		output: [
 			{
 				file: pkg.module,
 				format: "es",
-				sourcemap: true,
+				sourcemap: true
 				// sourcemap: isDevelopment ? true : "inline", // generate sourcemap files if true
 			},
 			{
 				file: pkg.main,
 				format: "umd",
 				name: "sema-engine",
-				sourcemap: isDevelopment ? true : "inline",
+				sourcemap: true
+				// sourcemap: isDevelopment ? true : "inline",
 			},
 			{
 				file: "dist/sema-engine.min.js",
 				format: "iife",
 				name: "version",
-				sourcemap: isDevelopment ? true : "inline", // do not generate sourcemap files if true
-				plugins: [terser()],
+				sourcemap: true
+				// sourcemap: isDevelopment ? true : "inline", // do not generate sourcemap files if true
+				// plugins: [terser()],
 			},
 		],
 		plugins: [
@@ -162,6 +174,7 @@ export default [
 								},
 							],
 						}),
+						sourcemaps(),
 				  ]),
 			// eslint({
 			// 	/* your options */

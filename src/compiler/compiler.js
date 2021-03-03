@@ -15,7 +15,7 @@ import ASTreeToJavascript from "./IR.js";
 import mooo from "../../node_modules/moo/moo.js";
 import semaa from "./sema.js";
 
-import compilerWorker from "web-worker:./worker.js";
+// import compilerWorker from "web-worker:./worker.js";
 
 export function getModuleExports(source) {
 	let moo = mooo; //  `let` local scope, works with eval – does NOT work with Geval
