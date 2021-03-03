@@ -65,30 +65,33 @@ export function getParserModuleExports(source) {
  * @param {*} livecodeSource
  */
 export function compile(grammarSource, livecodeSource) {
-	let dspCode;
-	let sema = semaa;
+  try {
+		let dspCode;
+		let sema = semaa;
 
-	const { errors, output } = compileGrammar(grammarSource);
+		const { errors, output } = compileGrammar(grammarSource);
 
-	// const grammar = getModuleExports(output);
+		// const grammar = getModuleExports(output);
 
-	// evalToGlobalScope(output); // FAILS in unit testing, `ReferenceError: window is not defined`
-	// const compiledParser = new nearley.Parser(window.grammar);
+		// evalToGlobalScope(output); // FAILS in unit testing, `ReferenceError: window is not defined`
+		// const compiledParser = new nearley.Parser(window.grammar);
 
-	const grammar = getParserModuleExports(output);
-	const compiledParser = new nearley.Parser(grammar);
+		const grammar = getParserModuleExports(output);
+		const compiledParser = new nearley.Parser(grammar);
 
-  // let worker = new compilerWorker();
-	// worker.postMessage({ livecodeSource, grammarSource });
+		// let worker = new compilerWorker();
+		// worker.postMessage({ livecodeSource, grammarSource });
 
-
-	if (!errors && compiledParser) {
-		const livecodeParseTree = compiledParser.feed(livecodeSource);
-		if (livecodeParseTree) {
-			dspCode = ASTreeToJavascript.treeToCode(livecodeParseTree.results, 0);
+		if (!errors && compiledParser) {
+			const livecodeParseTree = compiledParser.feed(livecodeSource);
+			if (livecodeParseTree) {
+				dspCode = ASTreeToJavascript.treeToCode(livecodeParseTree.results, 0);
+			}
 		}
-	}
-	return { errors, dspCode };
+		return { dspCode };
+	} catch (error) {
+ 		return { errors: error };
+  }
 }
 
 
