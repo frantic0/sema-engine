@@ -81,7 +81,7 @@ export class Engine {
 				learner.addEventListener("onSharedBuffer", (e) => addSharedBuffer(e)); // Learner's SAB emissions subscribed by Engine
 				this.learners[id] = learners;
 			} catch (error) {
-				console.error("Error adding Learner to Engine");
+				console.error("Error adding Learner to Engine: ", error);
 			}
 		} else throw new Error("Error adding Learner instance to Engine");
 	}
