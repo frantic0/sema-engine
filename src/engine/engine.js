@@ -73,13 +73,13 @@ export class Engine {
 	/**
 	 * Add learner instance
 	 */
-	async addLearner(learner) {
+	async addLearner(learnerID, learner) {
 		if (learner) {
 			try {
 				await learner.init(this.origin);
-				addEventListener("onSharedBuffer", (e) => learner.addSharedBuffer(e)); // Engine's SAB emissions subscribed by Learner
-				learner.addEventListener("onSharedBuffer", (e) => addSharedBuffer(e)); // Learner's SAB emissions subscribed by Engine
-				this.learners[id] = learners;
+				this.addEventListener("onSharedBuffer", (e) => learner.addSharedBuffer(e)); // Engine's SAB emissions subscribed by Learner
+				learner.addEventListener("onSharedBuffer", (e) => this.addSharedBuffer(e)); // Learner's SAB emissions subscribed by Engine
+				this.learners[learnerID] = learner;
 			} catch (error) {
 				console.error("Error adding Learner to Engine: ", error);
 			}
@@ -474,8 +474,7 @@ export class Engine {
 				return true;
 			} catch (err) {
 				console.error(
-					"ERROR:Engine:loadWorkletProcessorCode: Error on custom AudioWorklet node creation: ",
-					err.message
+					"Error loading worklet processor code: ", err
 				);
 				return false;
 			}
@@ -517,8 +516,7 @@ export class Engine {
 					this.onProcessorMessageHandler(e);
 			} catch (err) {
 				console.error(
-					"ERROR:Engine: Error connecting WorkletNode: ",
-					err.message
+					"Error connecting WorkletNode: ", err
 				);
 			}
 		}

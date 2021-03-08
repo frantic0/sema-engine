@@ -251,26 +251,41 @@
     var origin = document.location.origin;
 
     $("playButton", "click", () => {
-      engine = new Engine();
-      engine.init(origin);
+      if(!engine){
+        try{
+          engine = new Engine();
+          engine.init(origin);
+        } catch (error) {
+          console.error("Error creating and initialising Engine: ", error);
+        }
+      }
       engine.play();
     });
+
     $("stopButton", "click", () => engine.stop());
+
     $("loadSamplesButton", "click", () => {
-      engine.loadSample("909.wav",       "/audio/909.wav");
-      engine.loadSample("909b.wav",      "/audio/909b.wav");
-      engine.loadSample("909closed.wav", "/audio/909closed.wav");
-      engine.loadSample("909open.wav",   "/audio/909closed.wav");
-      engine.loadSample("crebit2.ogg",   "/audio/crebit2.ogg");
-      engine.loadSample("kick1.wav",     "/audio/kick1.wav");
-      engine.loadSample("snare1.wav",    "/audio/snare1.wav");
+      if(engine){
+        try{
+          engine.loadSample("909.wav",       "/audio/909.wav");
+          engine.loadSample("909b.wav",      "/audio/909b.wav");
+          engine.loadSample("909closed.wav", "/audio/909closed.wav");
+          engine.loadSample("909open.wav",   "/audio/909closed.wav");
+          engine.loadSample("crebit2.ogg",   "/audio/crebit2.ogg");
+          engine.loadSample("kick1.wav",     "/audio/kick1.wav");
+          engine.loadSample("snare1.wav",    "/audio/snare1.wav");
+        } catch (error) {
+          console.error("ERROR: Failed to compile and eval: ", error);
+        }
+      }
+      else throw new Error('ERROR: Engine not initialized. Please press Start Engine first.')
     });
 
     $("learnerButton", "click", async () => {
       if(engine){
         try{
           learner = new Learner();
-          await engine.addLearner(learner);
+          await engine.addLearner('l1', learner);
         }catch(error){
           console.error("ERROR: Error creating or initialising learner: ", err);
         }

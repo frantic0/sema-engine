@@ -63,8 +63,8 @@ export class Learner {
 
 	onMessageHandler = (e) => {
 		this.dispatcher.dispatch("onSharedBuffer", e.data);
-		console.log("onSharedBuffer");
-		console.log(e);
+		// console.info("sending shared buffer");
+		// console.log(e);
 	};
 
 	onErrorHandler = (e) => {
