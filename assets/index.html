@@ -323,12 +323,12 @@
     $("mouseButton", "click", () => {
       if(engine){
         try{
-          // const id = "mxy",
-          //       ttype = "mouseXY",
-          //       blockSize = 2;
+          const id = "mxy",
+                ttype = "mouseXY",
+                blockSize = 2;
 
-          // let sab = engine.createSharedBuffer(id, ttype, blockSize);
-          let sab = engine.createSharedBuffer(id = 'mxy', ttype = 'mouseXY', blockSize = 2);
+          let sab = engine.createSharedBuffer(id, ttype, blockSize);
+          // let sab = engine.createSharedBuffer(id = 'mxy', ttype = 'mouseXY', blockSize = 2);
 
           const onMouseMove = e => {
             const x = e.offsetX/window.innerWidth;
