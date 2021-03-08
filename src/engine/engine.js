@@ -52,7 +52,7 @@ export class Engine {
 		}
 		Engine.instance = this;
 
-    this.origin = '';
+		this.origin = "";
 
 		this.learners = {};
 
@@ -70,20 +70,20 @@ export class Engine {
 		this.samplesLoaded = false;
 	}
 
-  /**
-   * Add learner instance
-   */
-  addLearner(learner){
-    if(learner){
-      try{
-        addEventListener('onSharedBuffer', e => learner.addSharedBuffer(e) ); // Engine's SAB emissions subscribed by Learner
-        learner.addEventListener('onSharedBuffer', e => addSharedBuffer(e) );  // Learner's SAB emissions subscribed by Engine
-        this.learners[id] = learners;
-      }catch(error){
-        console.error("Error adding Learner to Engine");
-      }
-    }
-    else throw new Error("Error adding Learner instance to Engine");
+	/**
+	 * Add learner instance
+	 */
+	async addLearner(learner) {
+		if (learner) {
+			try {
+				await learner.init(this.origin);
+				addEventListener("onSharedBuffer", (e) => learner.addSharedBuffer(e)); // Engine's SAB emissions subscribed by Learner
+				learner.addEventListener("onSharedBuffer", (e) => addSharedBuffer(e)); // Learner's SAB emissions subscribed by Engine
+				this.learners[id] = learners;
+			} catch (error) {
+				console.error("Error adding Learner to Engine");
+			}
+		} else throw new Error("Error adding Learner instance to Engine");
 	}
 
 	/**
@@ -277,16 +277,17 @@ export class Engine {
 	 * Initialises audio context and sets worklet processor code
 	 * @play
 	 */
-	async init(audioWorkletURL) {
-		if (audioWorkletURL && new URL(audioWorkletURL)) {
+	async init(origin) {
+		if ( origin && new URL(origin) ) {
 			// AudioContext needs lazy loading to workaround the Chrome warning
 			// Audio Engine first play() call, triggered by user, prevents the warning
 			// by setting this.audioContext = new AudioContext();
 			this.audioContext;
-			this.audioWorkletName = audioWorkletURL.split();
-			this.audioWorkletUrl = audioWorkletURL;
+			this.origin = origin;
+			this.audioWorkletName = "maxi-processor";
+			this.audioWorkletUrl = origin + "/" + this.audioWorkletName + ".js";
 
-			if (this.audioContext === undefined) {
+			if ( this.audioContext === undefined ) {
 				this.audioContext = new AudioContext({
 					// create audio context with latency optimally configured for playback
 					latencyHint: "playback",
@@ -573,13 +574,28 @@ export class Engine {
 	}
 
 	loadSample(objectName, url) {
-		if (this.audioContext !== undefined) {
-			loadSampleToArray(
-				this.audioContext,
-				objectName,
-				this.origin + url,
-				this.audioWorkletNode
-			);
-		} else throw "Audio Context is not initialised!";
+		if (
+			this.audioContext &&
+      this.audioWorkletNode
+    	){
+        if (
+					url &&
+					url.length !== 0 &&
+					this.origin &&
+					this.origin.length !== 0 &&
+					new URL(this.origin + url)
+				) {
+          try{
+					loadSampleToArray(
+						this.audioContext,
+						objectName,
+						this.origin + url,
+						this.audioWorkletNode
+					);
+          }catch(error){
+            console.error(`Error loading sample ${objectName} from ${url}: `, error);
+          }
+				} else throw "Problem with sample relative URL";
+		} else throw "Engine is not initialised!";
 	}
 }

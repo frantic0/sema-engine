@@ -270,8 +270,7 @@
       if(engine){
         try{
           learner = new Learner();
-          await learner.init(origin);
-          engine.addLearner(learner);
+          await engine.addLearner(learner);
         }catch(error){
           console.error("ERROR: Error creating or initialising learner: ", err);
         }
@@ -309,11 +308,12 @@
     $("mouseButton", "click", () => {
       if(engine){
         try{
-          const id = "mxy",
-                ttype = "mouseXY",
-                blockSize = 2;
+          // const id = "mxy",
+          //       ttype = "mouseXY",
+          //       blockSize = 2;
 
-          let sab = engine.createSharedBuffer(id, ttype, blockSize);
+          // let sab = engine.createSharedBuffer(id, ttype, blockSize);
+          let sab = engine.createSharedBuffer(id = 'mxy', ttype = 'mouseXY', blockSize = 2);
 
           const onMouseMove = e => {
             const x = e.offsetX/window.innerWidth;
