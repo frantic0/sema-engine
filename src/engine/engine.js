@@ -52,6 +52,10 @@ export class Engine {
 		}
 		Engine.instance = this;
 
+    this.origin = '';
+
+		this.learners = {};
+
 		// Hash of on-demand analysers (e.g. spectrogram, oscilloscope)
 		// NOTE: analysers serialized to localStorage are de-serialized
 		// and loaded from localStorage before user-triggered audioContext init
@@ -66,9 +70,25 @@ export class Engine {
 		this.samplesLoaded = false;
 	}
 
+  /**
+   * Add learner instance
+   */
+  addLearner(learner){
+    if(learner){
+      try{
+        addEventListener('onSharedBuffer', e => learner.addSharedBuffer(e) ); // Engine's SAB emissions subscribed by Learner
+        learner.addEventListener('onSharedBuffer', e => addSharedBuffer(e) );  // Learner's SAB emissions subscribed by Engine
+        this.learners[id] = learners;
+      }catch(error){
+        console.error("Error adding Learner to Engine");
+      }
+    }
+    else throw new Error("Error adding Learner instance to Engine");
+	}
+
 	/**
 	 * Engine's event subscription
-   * @addEventListener
+	 * @addEventListener
 	 * @param {*} event
 	 * @param {*} callback
 	 */
@@ -78,20 +98,7 @@ export class Engine {
 		else throw new Error("Error adding event listener to Engine");
 	}
 
-	/**
-	 * Handler of the Pub/Sub message events
-	 * whose topics are subscribed to in the audio engine constructor
-	 * @asyncPostToProcessor
-	 * @param {*} event
-	 */
-	asyncPostToProcessor(event) {
-		if (event && this.audioWorkletNode && this.audioWorkletNode.port) {
-			// Receive notification from 'model-output-data' topic
-			console.log("DEBUG:AudioEngine:onMessagingEventHandler:");
-			console.log(event);
-			this.audioWorkletNode.port.postMessage(event);
-		} else throw new Error("Error async posting to processor");
-	}
+	/* #region SharedBuffers */
 
 	/**
 	 * Create a shared array buffer for communicating with the audio engine
@@ -113,7 +120,7 @@ export class Engine {
 
 		this.sharedArrayBuffers[channelId] = {
 			sab: sab, // TODO: this is redundant, you can access the sab from the rb,
-			// also change hashmap name it is confusing and induces error
+			// TODO change hashmap name it is confusing and induces error
 			rb: ringbuf,
 		};
 
@@ -124,30 +131,27 @@ export class Engine {
 	 * Push data to shared array buffer for communicating with the audio engine and ML worker
 	 * @param {*} e
 	 */
-	pushSharedBuffer(e) {
-    if( e && e.value && e.value instanceof SharedArrayBuffer ){
-      try {
+	addSharedBuffer(e) {
+		if (e && e.value && e.value instanceof SharedArrayBuffer) {
+			try {
+				let ringbuf = new RingBuffer(e.value, Float64Array);
+				this.audioWorkletNode.port.postMessage({
+					func: "sab",
+					value: e.value,
+					ttype: e.ttype,
+					channelID: e.channelID,
+					blocksize: e.blocksize,
+				});
 
-        let ringbuf = new RingBuffer(e.value, Float64Array);
-        this.audioWorkletNode.port.postMessage({
-          func: "sab",
-          value: e.value,
-          ttype: e.ttype,
-          channelID: e.channelID,
-          blocksize: e.blocksize,
-        });
-
-        this.sharedArrayBuffers[e.channelID] = {
-          sab: e.value, // TODO: this is redundant, you can access the sab from the rb,
-          // also change hashmap name it is confusing and induces error
-          rb: ringbuf,
-        };
-      }
-      catch(err) {
-        console.error('Error pushing SharedBuffer to engine');
-      }
-    }
-    else throw new Error("Error with onSharedBuffer event");
+				this.sharedArrayBuffers[e.channelID] = {
+					sab: e.value, // TODO this is redundant, you can access the sab from the rb,
+					// TODO also change hashmap name it is confusing and induces error
+					rb: ringbuf,
+				};
+			} catch (err) {
+				console.error("Error pushing SharedBuffer to engine");
+			}
+		} else throw new Error("Error with onSharedBuffer event");
 	}
 
 	/**
@@ -156,13 +160,14 @@ export class Engine {
 	 * @param {*} channelId
 	 */
 	pushDataToSharedBuffer(channelId, data) {
-    if(channelId && data && typeof Array.isArray(data) ){
-      if (this.sharedArrayBuffers && this.sharedArrayBuffers[channelId]) {
-        this.sharedArrayBuffers[channelId].rb.push(data);
-      }
-    }
-    else throw new Error("Error in function parameters");
+		if (channelId && data && typeof Array.isArray(data)) {
+			if (this.sharedArrayBuffers && this.sharedArrayBuffers[channelId]) {
+				this.sharedArrayBuffers[channelId].rb.push(data);
+			}
+		} else throw new Error("Error in function parameters");
 	}
+
+	/* #region Analysers */
 
 	/**
 	 * Polls data from connected WAAPI analyser return structured object with data and time data in arrays
@@ -266,17 +271,19 @@ export class Engine {
 		}
 	}
 
+	/* #endregion */
+
 	/**
 	 * Initialises audio context and sets worklet processor code
 	 * @play
 	 */
-	async init(audioWorkletName, audioWorkletURL /*numClockPeers*/) {
-		if (audioWorkletName && audioWorkletURL && new URL(audioWorkletURL)) {
+	async init(audioWorkletURL) {
+		if (audioWorkletURL && new URL(audioWorkletURL)) {
 			// AudioContext needs lazy loading to workaround the Chrome warning
 			// Audio Engine first play() call, triggered by user, prevents the warning
 			// by setting this.audioContext = new AudioContext();
 			this.audioContext;
-			this.audioWorkletName = audioWorkletName;
+			this.audioWorkletName = audioWorkletURL.split();
 			this.audioWorkletUrl = audioWorkletURL;
 
 			if (this.audioContext === undefined) {
@@ -370,8 +377,7 @@ export class Engine {
 	}
 
 	eval(dspFunction) {
-
-		if ( this.audioWorkletNode && this.audioWorkletNode.port ) {
+		if (this.audioWorkletNode && this.audioWorkletNode.port) {
 			if (this.audioContext.state === "suspended") {
 				this.audioContext.resume();
 			}
@@ -381,9 +387,22 @@ export class Engine {
 				loop: dspFunction.loop,
 			});
 			return true;
-
 		} else return false;
+	}
 
+	/**
+	 * Handler of the Pub/Sub message events
+	 * whose topics are subscribed to in the audio engine constructor
+	 * @asyncPostToProcessor
+	 * @param {*} event
+	 */
+	asyncPostToProcessor(event) {
+		if (event && this.audioWorkletNode && this.audioWorkletNode.port) {
+			// Receive notification from 'model-output-data' topic
+			console.log("DEBUG:AudioEngine:onMessagingEventHandler:");
+			console.log(event);
+			this.audioWorkletNode.port.postMessage(event);
+		} else throw new Error("Error async posting to processor");
 	}
 
 	sendClockPhase(phase, idx) {
@@ -533,7 +552,7 @@ export class Engine {
 						// this.messaging.publish("model-input-buffer", {
 						// type: "model-input-buffer",
 						this.dispatcher.dispatch("onSharedBuffer", {
-              sab: event.data.value,
+							sab: event.data.value,
 							channelID: event.data.channelID, //channel ID
 							blocksize: event.data.blocksize,
 						});
@@ -558,7 +577,7 @@ export class Engine {
 			loadSampleToArray(
 				this.audioContext,
 				objectName,
-				url,
+				this.origin + url,
 				this.audioWorkletNode
 			);
 		} else throw "Audio Context is not initialised!";

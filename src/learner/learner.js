@@ -89,7 +89,7 @@ export class Learner {
 	 * @param {*} blocksize
 	 * @param {*} channelID
 	 */
-	pushSharedBuffer(e) {
+	addSharedBuffer(e) {
 		if (this.worker && e && e.sab && e.sab instanceof SharedArrayBuffer) {
 			this.worker.postMessage({
 				sab: e.sab,

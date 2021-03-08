@@ -247,42 +247,41 @@
     const $ = (elemId, event, callback) =>
       document.getElementById(elemId).addEventListener(event, callback);
 
-    // var originURL = 'https://frantic0.github.io/sema-engine';
-    var originURL = document.location.origin;
+    // var origin = 'https://frantic0.github.io/sema-engine';
+    var origin = document.location.origin;
 
     $("playButton", "click", () => {
-      const audioWorkletURL = originURL + "/maxi-processor.js";
       engine = new Engine();
-      engine.init("maxi-processor", audioWorkletURL);
+      engine.init(origin);
       engine.play();
     });
     $("stopButton", "click", () => engine.stop());
     $("loadSamplesButton", "click", () => {
-      engine.loadSample("909.wav",       originURL + "/audio/909.wav");
-      engine.loadSample("909b.wav",      originURL + "/audio/909b.wav");
-      engine.loadSample("909closed.wav", originURL + "/audio/909closed.wav");
-      engine.loadSample("909open.wav",   originURL + "/audio/909closed.wav");
-      engine.loadSample("crebit2.ogg",   originURL + "/audio/crebit2.ogg");
-      engine.loadSample("kick1.wav",     originURL + "/audio/kick1.wav");
-      engine.loadSample("snare1.wav",    originURL + "/audio/snare1.wav");
+      engine.loadSample("909.wav",       "/audio/909.wav");
+      engine.loadSample("909b.wav",      "/audio/909b.wav");
+      engine.loadSample("909closed.wav", "/audio/909closed.wav");
+      engine.loadSample("909open.wav",   "/audio/909closed.wav");
+      engine.loadSample("crebit2.ogg",   "/audio/crebit2.ogg");
+      engine.loadSample("kick1.wav",     "/audio/kick1.wav");
+      engine.loadSample("snare1.wav",    "/audio/snare1.wav");
     });
 
     $("learnerButton", "click", async () => {
-
-      learner = new Learner();
       if(engine){
-        engine.addEventListener('onSharedBuffer', e => learner.pushSharedBuffer(e) ); // Engine's SAB emissions subscribed by Learner
-        learner.addEventListener('onSharedBuffer', e => engine.pushSharedBuffer(e) );  // Learner's SAB emissions subscribed by Engine
+        try{
+          learner = new Learner();
+          await learner.init(origin);
+          engine.addLearner(learner);
+        }catch(error){
+          console.error("ERROR: Error creating or initialising learner: ", err);
+        }
       }
-      await learner.init(originURL); // when Learner initializes
-
     });
 
     const evalLiveCode = () => {
       if(engine){
         try{
           const { errors, dspCode } = compile( editorGrammar.getValue(), editorLivecode.getValue() );
-
           if(dspCode){
             console.info(editorLivecode.getValue());
             engine.eval(dspCode);
@@ -306,8 +305,6 @@
     $("evalButton", "click", () => evalLiveCode() );
 
     $("evalJsButton", "click", async () => evalJs() );
-
-
 
     $("mouseButton", "click", () => {
       if(engine){
@@ -367,8 +364,8 @@
 
     // need to replicate here as this is outside the module context
     // origin already exists as global scope var
-    // var originURL = 'https://frantic0.github.io/sema-engine';
-    var originURL = document.location.origin;
+    // var origin = 'https://frantic0.github.io/sema-engine';
+    var origin = document.location.origin;
 
 
     const setupEditorWithContent = ( elementId, contentFileRelativeURL ) => {
@@ -386,7 +383,7 @@
         .observe(textArea.parentElement);
 
       // Populate Codemirror with content
-      fetch( originURL + contentFileRelativeURL )
+      fetch( origin + contentFileRelativeURL )
         .then( response => response.text() )
         .then( data => editor.setValue(data) )
 
