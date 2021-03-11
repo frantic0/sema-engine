@@ -124,6 +124,7 @@ export default [
 						resolve(), // so Rollup can find `nearley` f e.g.
 						commonjs(), // so Rollup can convert `nearley` to an ES module
 						workerLoader(/* configuration */),
+						sourcemaps(),
 						terser(),
 						copy({
 							targets: [
@@ -174,7 +175,6 @@ export default [
 								},
 							],
 						}),
-						sourcemaps(),
 				  ]),
 			// eslint({
 			// 	/* your options */

@@ -403,7 +403,8 @@ class MaxiProcessor extends AudioWorkletProcessor {
   		this.addSampleBuffer(event.data.name, event.data.data);
 
   	} else if ("func" in event.data && "sab" == event.data.func) {
-			console.log("buf received", event.data);
+			console.info("buffer received");
+			// console.log("buffer received", event.data);
 
 			let sab = event.data.value;
 			let rb = new RingBuffer(sab, Float64Array);
