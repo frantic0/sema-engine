@@ -60,7 +60,7 @@ export default [
 						// 		console.log(code);
 						// 	}, // not returning anything, so doesn't affect bundle
 						// },
-						terser(),
+						// terser(),
 						copy({
 							targets: [
 								{
