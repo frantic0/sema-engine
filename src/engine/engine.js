@@ -77,8 +77,12 @@ export class Engine {
 		if (learner) {
 			try {
 				await learner.init(this.origin);
-				this.addEventListener("onSharedBuffer", (e) => learner.addSharedBuffer(e)); // Engine's SAB emissions subscribed by Learner
-				learner.addEventListener("onSharedBuffer", (e) => this.addSharedBuffer(e)); // Learner's SAB emissions subscribed by Engine
+				this.addEventListener("onSharedBuffer", (e) =>
+					learner.addSharedBuffer(e)
+				); // Engine's SAB emissions subscribed by Learner
+				learner.addEventListener("onSharedBuffer", (e) =>
+					this.addSharedBuffer(e)
+				); // Learner's SAB emissions subscribed by Engine
 				this.learners[learnerID] = learner;
 			} catch (error) {
 				console.error("Error adding Learner to Engine: ", error);
@@ -278,7 +282,7 @@ export class Engine {
 	 * @play
 	 */
 	async init(origin) {
-		if ( origin && new URL(origin) ) {
+		if (origin && new URL(origin)) {
 			// AudioContext needs lazy loading to workaround the Chrome warning
 			// Audio Engine first play() call, triggered by user, prevents the warning
 			// by setting this.audioContext = new AudioContext();
@@ -287,7 +291,7 @@ export class Engine {
 			this.audioWorkletName = "maxi-processor";
 			this.audioWorkletUrl = origin + "/" + this.audioWorkletName + ".js";
 
-			if ( this.audioContext === undefined ) {
+			if (this.audioContext === undefined) {
 				this.audioContext = new AudioContext({
 					// create audio context with latency optimally configured for playback
 					latencyHint: "playback",
@@ -473,9 +477,7 @@ export class Engine {
 
 				return true;
 			} catch (err) {
-				console.error(
-					"Error loading worklet processor code: ", err
-				);
+				console.error("Error loading worklet processor code: ", err);
 				return false;
 			}
 		} else {
@@ -483,6 +485,9 @@ export class Engine {
 		}
 	}
 
+	/**
+	 * connects all error event handlers and default processor message callback
+	 */
 	connectWorkletNode() {
 		if (this.audioWorkletNode !== undefined) {
 			try {
@@ -500,30 +505,30 @@ export class Engine {
 						`ERROR:Engine: maxi-processor 'onprocess' error detected`
 					);
 
-				// State changes in the audio worklet processor
+				// Subscribe state changes in the audio worklet processor
 				this.audioWorkletNode.onprocessorstatechange = (e) =>
 					console.log(
 						`maxi-processor state change detected: ` +
 							audioWorkletNode.processorState
 					);
 
+				// Subscribe errors from the processor port
 				this.audioWorkletNode.port.onmessageerror = (e) =>
-					//  error from the processor port
 					console.error(`ERROR:Engine: Error message from port: ` + e.data);
 
-				// Worklet Processor message handler
+				// Default worklet processor message handler
+				// gets replaced by user callback with 'subscribeAsyncMessage'
 				this.audioWorkletNode.port.onmessage = (e) =>
 					this.onProcessorMessageHandler(e);
 			} catch (err) {
-				console.error(
-					"Error connecting WorkletNode: ", err
-				);
+				console.error("Error connecting WorkletNode: ", err);
 			}
 		}
 	}
 
 	/**
-	 *
+	 * Default worklet processor message handler
+	 * gets replaced by user-supplied callback through 'subscribeAsyncMessage'
 	 * @param {*} event
 	 */
 	onProcessorMessageHandler(event) {
@@ -548,8 +553,6 @@ export class Engine {
 			} else if (event.data.rq && event.data.rq === "buf") {
 				switch (event.data.ttype) {
 					case "ML":
-						// this.messaging.publish("model-input-buffer", {
-						// type: "model-input-buffer",
 						this.dispatcher.dispatch("onSharedBuffer", {
 							sab: event.data.value,
 							channelID: event.data.channelID, //channel ID
@@ -565,35 +568,41 @@ export class Engine {
 	 * Public method for subscribing async messaging from the Audio Worklet Processor scope
 	 * @param callback
 	 */
-	subscribeAsyncMessage(callback) {
-		if (callback !== undefined && this.audioWorkletNode !== undefined)
-			// Worklet Processor message handler
+	subscribeOnProcessorMessage(callback) {
+		if (callback && this.audioWorkletNode)
 			this.audioWorkletNode.port.onmessage = callback;
+		else throw new Error("Error subscribing processor message");
 	}
 
+  /**
+   * Load individual audio sample, assuming an origin URL with which the engine
+   * is initialised
+   * @param {*} objectName name of the sample
+   * @param {*} url relative URL to the origin URL, startgin with `/`
+   */
 	loadSample(objectName, url) {
-		if (
-			this.audioContext &&
-      this.audioWorkletNode
-    	){
-        if (
-					url &&
-					url.length !== 0 &&
-					this.origin &&
-					this.origin.length !== 0 &&
-					new URL(this.origin + url)
-				) {
-          try{
+		if (this.audioContext && this.audioWorkletNode) {
+			if (
+				url &&
+				url.length !== 0 &&
+				this.origin &&
+				this.origin.length !== 0 &&
+				new URL(this.origin + url)
+			) {
+				try {
 					loadSampleToArray(
 						this.audioContext,
 						objectName,
 						this.origin + url,
 						this.audioWorkletNode
 					);
-          }catch(error){
-            console.error(`Error loading sample ${objectName} from ${url}: `, error);
-          }
-				} else throw "Problem with sample relative URL";
+				} catch (error) {
+					console.error(
+						`Error loading sample ${objectName} from ${url}: `,
+						error
+					);
+				}
+			} else throw "Problem with sample relative URL";
 		} else throw "Engine is not initialised!";
 	}
 }
