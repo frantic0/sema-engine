@@ -502,19 +502,19 @@ export class Engine {
 				this.audioWorkletNode.onprocessorerror = (e) =>
 					// Errors from the processor
 					console.error(
-						`ERROR:Engine: maxi-processor 'onprocess' error detected`
+						`Engine processor error detected`, e
 					);
 
 				// Subscribe state changes in the audio worklet processor
 				this.audioWorkletNode.onprocessorstatechange = (e) =>
-					console.log(
-						`maxi-processor state change detected: ` +
+					console.info(
+						`Engine processor state change: ` +
 							audioWorkletNode.processorState
 					);
 
 				// Subscribe errors from the processor port
 				this.audioWorkletNode.port.onmessageerror = (e) =>
-					console.error(`ERROR:Engine: Error message from port: ` + e.data);
+					console.error(`Engine processor port error: ` + e);
 
 				// Default worklet processor message handler
 				// gets replaced by user callback with 'subscribeAsyncMessage'
@@ -528,7 +528,7 @@ export class Engine {
 
 	/**
 	 * Default worklet processor message handler
-	 * gets replaced by user-supplied callback through 'subscribeAsyncMessage'
+	 * gets replaced by user-supplied callback through 'subscribeProcessorMessage'
 	 * @param {*} event
 	 */
 	onProcessorMessageHandler(event) {
@@ -568,18 +568,18 @@ export class Engine {
 	 * Public method for subscribing async messaging from the Audio Worklet Processor scope
 	 * @param callback
 	 */
-	subscribeOnProcessorMessage(callback) {
+	subscribeProcessorMessage(callback) {
 		if (callback && this.audioWorkletNode)
 			this.audioWorkletNode.port.onmessage = callback;
 		else throw new Error("Error subscribing processor message");
 	}
 
-  /**
-   * Load individual audio sample, assuming an origin URL with which the engine
-   * is initialised
-   * @param {*} objectName name of the sample
-   * @param {*} url relative URL to the origin URL, startgin with `/`
-   */
+	/**
+	 * Load individual audio sample, assuming an origin URL with which the engine
+	 * is initialised
+	 * @param {*} objectName name of the sample
+	 * @param {*} url relative URL to the origin URL, startgin with `/`
+	 */
 	loadSample(objectName, url) {
 		if (this.audioContext && this.audioWorkletNode) {
 			if (
