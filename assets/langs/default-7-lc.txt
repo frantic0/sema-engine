@@ -1,0 +1,31 @@
+//this is a two-operator FM synthesis model
+
+//send the mouse to the ML window
+{{25}imp, 0, [{}mouseX, {}mouseY],2}toJS;
+
+
+//feedback connection
+:feedback:{:opB:, {{{6}fromJS}abs,3}pow}mul;
+
+//operator 1
+//base frequency, modulated by feedback
+:freqA:{{{0}fromJS, :feedback:}add,20,10000}uexp;
+//modulation frequency
+:freqA2:{{1}fromJS,1000}mul;
+//modulation index
+:modIdxA:{{2}fromJS, 200}mul;
+//modulator
+:modA:{{:freqA2:}sin,:modIdxA:}mul;
+//carrier
+:opA:{{:freqA:,:modA:}add}sin;
+
+//operator 2
+//base frequency, modulated by operator 1
+:freqB:{{{3}fromJS,:opA:}add,20,12000}uexp;
+:freqB2:{{4}fromJS,1000}mul;
+:modIdxB:{{5}fromJS, 200}mul;
+:modB:{{:freqB2:}sin,:modIdxB:}mul;
+:opB:{{:freqB:,:modB:}add}sin;
+
+//a bit of distortion on the output
+>{:opB:, 0.5, 0.8}asymclip;

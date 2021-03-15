@@ -1,9 +1,158 @@
-var channel0 = createOutputChannel(0, 1);
+//:::1::: RUN THIS BLOCK OF CODE FIRST, THEN SCROLL DOWN TO STEP 2
+
+//these are the parameters that will be sent to the FM synth
+var state = [0.01, 0.2, 0.0, 0.1, 0.1, 0.3, 0.1];
+
+//track the mouse
+var mouseX=0;
+var mouseY=0;
+
+//modes for machine learning
+var MLMODES = {NONE:0,TRAIN:1,PREDICT:2};
+var mode = MLMODES.NONE;
+
+//setup channels to send data to LC
+var outChannels = [];
+for(let i=0; i < 7; i++) {
+	outChannels[i]= createOutputChannel(i, 1);
+}
+
+//a function to set data to the LC window
+function sendState(st) {
+	for(i in outChannels) {
+		outChannels[i].send(st[i]);
+	}
+}
+
+
+//record mouse positions for training data
+var mousePositions = [];
+
+//record states as targets for the model
+var states = [];
+var inputMap = {
+	0:(x)=>{
+		//record the mouse values
+		mouseX = x[0]; mouseY = x[1];
+		if (mode == MLMODES.TRAIN) {
+			//collect training data
+			mousePositions.push([mouseX, mouseY]);
+			states.push(state);
+			console.log(mousePositions.length, "samples collected");
+		}else if (mode == MLMODES.PREDICT) {
+			//make a prediction from the model
+			let modelInput = tf.tensor2d([mouseX, mouseY],[1,2]);
+			let prediction = model.predict(modelInput).dataSync();
+			sendState(prediction);
+		}
+	},
+};
+
+//receive data from the LC window
+input = (id,x) => {
+	if (inputMap[id]) {
+		inputMap[id](x);
+	}
+};
+
+//this function generates a random list of numbers.We'll use it to explore the parameter space
+function randomList(n) {
+	let x = [];
+	for(let i=0; i < n; i++) x.push(Math.random());
+	return x;
+}
+
+_____
+
+//:::2::: MANUAL CONTROL OF THE FM SYNTH
+
+// try changing the state by changing the numbers below
+// they need to be between 0 and 1
+state = [0.2, 0.9, 0.9, 0.0, 0.3, 0.2, 0.0];
+sendState(state);
+state
+_____
+
+//:::3::: RANDOM EXPLORATION OF THE SYNTH
+
+//run this code block to randomise the parameters - repeat until you find a sound that you'd like to train as a target for the network
+state = randomList(7);
+sendState(state);
+state
+
+___
+
+//:::4::: TRAINING DATA COLLECTION
+//To train the synth we're going to match up mouse coordinates to parameter settings. During training, you'll need to control the cursor position in this editor with the keyboard.
+
+
+//:::4a::: move the mouse to the top left corner of the screen
+
+
+____
+//:::4b::: run this block to collect data, move the mouse around the top left corner for around 100-200 steps. You will see in the console window that data is being collected
+mode = MLMODES.TRAIN;
+___
+//:::4c::: run this block to stop collecting data
+mode = MLMODES.NONE;
+//:::4d:::repeat from step 3, with the mouse in the bottom right area of the screen
+___
+
+
+_____
+//:::5::: MODEL CREATION
+
+//create a neural network model.
+var model = tf.sequential();
+//two inputs: mouse x and y
+//7 outputs - the parameters to send to our synth
+//one layer in between - we don't need more because this - it is a simple linear mapping
+model.add(tf.layers.dense({
+  inputShape: [2],
+  units: 30,
+  activation: 'relu',
+  kernelInitialiser: 'leCunNormal' }));
+model.add(tf.layers.dense({ units: 30 }));
+model.add(tf.layers.dense({ units: outChannels.length }));
+model.compile({ loss: 'meanSquaredError', optimizer: tf.train.adam() });
+
 
 ____
 
-input = (id,x) => {
-    console.log(id, x);
-    //change this line to manipulate the frequency
-    channel0.send(x[0] + 40);
-};
+//:::6::: DATA CONVERSION
+
+//Convert the data we've collected into the right format for tensorflow
+var trainIn = tf.tensor2d(mousePositions, [mousePositions.length, 2]);
+var trainOut = tf.tensor2d(states, [states.length, state.length]);
+
+____
+
+//:::7::: TRAINING
+//train the model.  You can repeat this step as desired until the loss is low enough - 50 epochs is probably enough
+
+function onBatchEnd (x, logs){console.log(x, logs)};
+
+model.fit(trainIn, trainOut, { epochs: 50, callbacks: {onBatchEnd} }).then(info => {console.log(info);});
+
+_____
+
+//try a manual prediction
+model.predict(tf.tensor2d([mouseX, mouseY],[1,2])).dataSync()
+
+
+____
+//:::8::: PREDICTION
+//use the model to predict synthesis parameters based on the mouse movements
+//run this block then move the mouse around
+//you should find something similar to your original two sounds in the top-left and bottom-right corners.  All other areas in between are interpolations from the model - you might find some interesting new sounds
+mode = MLMODES.PREDICT;
+
+___
+//turn off prediction if needed
+mode = MLMODES.NONE;
+
+
+
+
+
+
