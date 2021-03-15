@@ -310,7 +310,6 @@
     const evalJs = async () => {
       if(learner && editorJS){
         const code = getBlock(editorJS);
-        console.info(code);
         learner.eval(code);
       }
       else throw new Error('ERROR: Learner not initialized. Please press Create Learner first.')
@@ -404,9 +403,9 @@
       return editor;
     }
 
-    const editorLivecode = setupEditorWithContent("textArea-livecode", '/langs/default-5-lc.txt');
+    const editorLivecode = setupEditorWithContent("textArea-livecode", '/langs/default-6-lc.txt');
     const editorGrammar =  setupEditorWithContent("textArea-grammar",  '/langs/default-grammar.txt');
-    const editorJS =       setupEditorWithContent("textArea-js",       '/js/default-3-js.txt');
+    const editorJS =       setupEditorWithContent("textArea-js",       '/js/default-4-js.txt');
     // const editorLivecode = setupEditorWithContent("textArea-livecode", '/langs/rubber-duckling-lc-1.txt');
     // const editorGrammar =  setupEditorWithContent("textArea-grammar",  '/langs/rubber-duckling-grammar.txt');
 

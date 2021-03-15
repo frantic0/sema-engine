@@ -36,7 +36,7 @@ export class Learner {
 		if (this.dispatcher && event && callback)
 			this.dispatcher.removeEventListener(event, callback);
 		else throw new Error("Error removing event listener to Learner");
-  }
+	}
 
 	/**
 	 * Initialises worker with origin URL
@@ -61,11 +61,78 @@ export class Learner {
 		});
 	}
 
-	onMessageHandler = (e) => {
-		this.dispatcher.dispatch("onSharedBuffer", e.data);
-		// console.info("sending shared buffer");
-		// console.log(e);
+	onMessageHandler = (m) => {
+
+		if (m && m.data && m.data.func) {
+			let responders = {
+				sab: (data) => {
+					// Publish data to audio engine
+					this.dispatcher.dispatch("onSharedBuffer", data);
+				},
+				sendbuf: (data) => {
+					// Publish data to audio engine
+					this.dispatcher.dispatch("onSharedBuffer", data);
+				},
+				save: (data) => {
+					// console.log("save");
+					window.localStorage.setItem(data.name, data.val);
+				},
+				load: (data) => {
+					// console.log("load");
+					let msg = {
+						name: data.name,
+						val: window.localStorage.getItem(data.name),
+					};
+					modelWorker.postMessage(msg);
+				},
+				download: (data) => {
+					// console.log("download");
+					let downloadData = window.localStorage.getItem(data.name);
+					let blob = new Blob([downloadData], {
+						type: "text/plain;charset=utf-8",
+					});
+					saveData(blob, `${data.name}.data`);
+				},
+				sendcode: (data) => {
+					// console.log(data);
+				},
+				pbcopy: (data) => {
+					copyToPasteBuffer(data.msg);
+					// let copyField=document.getElementById("hiddenCopyField");
+					// copyField.value = data.msg;
+					// copyField.select();
+					// document.execCommand("Copy");
+				},
+				sendbuf: (data) => {
+					this.dispatcher.dispatch("onSharedBuffer", e.data);
+				},
+				envsave: (data) => {
+					messaging.publish("env-save", data);
+				},
+				envload: (data) => {
+					messaging.publish("env-load", data);
+				},
+				domeval: (data) => {
+					evalDOMCode(data.code);
+				},
+				peerinfo: (data) => {
+					messaging.publish("peerinfo-request", {});
+				},
+			};
+
+			responders[m.data.func](m.data);
+
+    } else if (m.data !== undefined && m.data.length != 0) {
+			res(m.data);
+		}
+		// clearTimeout(timeout);
 	};
+
+	// onMessageHandler = (e) => {
+	// 	this.dispatcher.dispatch("onSharedBuffer", e.data);
+	// 	// console.info("sending shared buffer");
+	// 	// console.log(e);
+	// };
 
 	onErrorHandler = (e) => {
 		console.log("onError");
