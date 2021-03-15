@@ -394,11 +394,11 @@ class MaxiProcessor extends AudioWorkletProcessor {
 	 */
 	addSharedArrayBuffer = data => {
 		console.info("buffer received");
-		let sab = buf;
+		let sab = data.value;
 		let rb = new RingBuffer(sab, Float64Array);
 		inputSABs[data.channelID] = {
-			sab: sab,
-			rb: rb,
+			sab,
+			rb,
 			blocksize: data.blocksize,
 			value:
 				data.blocksize > 1
