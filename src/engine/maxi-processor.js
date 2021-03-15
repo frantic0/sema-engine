@@ -2,7 +2,6 @@ import Maximilian from './sema-engine.wasmmodule.js';
 
 // NOTE: dynamically loads from the adjacent ringBuf.js file
 import RingBuffer from "./ringbuf.js"; //thanks padenot
-// import { RingBuffer } from "ringbuf.js"; //thanks padenot
 
 import Open303 from './open303.wasmmodule.js';
 import { SABInputTransducer, SABOutputTransducer } from './transducers.js';
@@ -384,7 +383,30 @@ class MaxiProcessor extends AudioWorkletProcessor {
 	 * @param {*} buf
 	 */
 	addSampleBuffer = (name, buf) => {
+		console.log(`loading sample '${name}'`);
 		this.sampleVectorBuffers[name] = this.translateFloat32ArrayToBuffer(buf);
+	};
+
+	/**
+	 *
+	 * @param {*} name
+	 * @param {*} buf
+	 */
+	addSharedArrayBuffer = (name, buf) => {
+				console.info("buffer received");
+
+				let sab = event.data.value;
+				let rb = new RingBuffer(sab, Float64Array);
+
+				inputSABs[event.data.channelID] = {
+					sab: sab,
+					rb: rb,
+					blocksize: event.data.blocksize,
+					value:
+						event.data.blocksize > 1
+							? new Float64Array(event.data.blocksize)
+							: 0,
+				};
 	};
 
 	/**
@@ -393,39 +415,22 @@ class MaxiProcessor extends AudioWorkletProcessor {
 	 * @param {*} event
 	 */
 	onMessageHandler = (event) => {
-		if ("address" in event.data) {
-			//this must be an OSC message
-			this.OSCMessages[event.data.address] = event.data.args;
-			//console.log(this.OSCMessages);
-		} else if ("func" in event.data && "sendbuf" == event.data.func) {
-			console.log("aesendbuf", event.data);
 
-  		this.addSampleBuffer(event.data.name, event.data.data);
+    if (event.data.address) {
 
-  	} else if ("func" in event.data && "sab" == event.data.func) {
-			console.info("buffer received");
-			// console.log("buffer received", event.data);
+      this.OSCMessages[event.data.address] = event.data.args;
 
-			let sab = event.data.value;
-			let rb = new RingBuffer(sab, Float64Array);
+    } else if (event.data.func){
 
-			inputSABs[event.data.channelID] = {
-				sab: sab,
-				rb: rb,
-				blocksize: event.data.blocksize,
-				value:
-					event.data.blocksize > 1 ? new Float64Array(event.data.blocksize) : 0,
-			};
+      if(event.data.func === "sendbuf" ) {
 
-			//TEMP DEPR.ECATED
-			// } else if ('peermsg' in event.data) {
-			//   console.log('peer', event);
-			//   //this is from peer streaming, map it on to any listening transducers
-			//   let targetTransducers = this.matchTransducers('NET', [event.data.src, event.data.ch]);
-			//   // console.log(targetTransducers.length);
-			//   for (let idx in targetTransducers) {
-			//     targetTransducers[idx].setValue(event.data.val);
-			//   }
+        this.addSampleBuffer(event.data.name, event.data.data);
+
+      } else if (event.data.func === "sab" ) {
+
+        this.addSharedArrayBuffer(event.data.name, event.data.sab);
+      }
+
 		} else if (event.data.sample) {
 			let sampleKey = event.data.sample.substr(0, event.data.sample.length - 4);
 			this.addSampleBuffer(sampleKey, event.data.buffer);

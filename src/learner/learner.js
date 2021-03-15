@@ -103,9 +103,6 @@ export class Learner {
 					// copyField.select();
 					// document.execCommand("Copy");
 				},
-				sendbuf: (data) => {
-					this.dispatcher.dispatch("onSharedBuffer", e.data);
-				},
 				envsave: (data) => {
 					messaging.publish("env-save", data);
 				},

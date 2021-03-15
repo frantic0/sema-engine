@@ -136,26 +136,36 @@ export class Engine {
 	 * @param {*} e
 	 */
 	addSharedBuffer(e) {
-		if (e && e.value && e.value instanceof SharedArrayBuffer) {
-			try {
-				let ringbuf = new RingBuffer(e.value, Float64Array);
-				this.audioWorkletNode.port.postMessage({
-					func: "sab",
-					value: e.value,
-					ttype: e.ttype,
-					channelID: e.channelID,
-					blocksize: e.blocksize,
-				});
+    if (e){
+      if( e.value && e.value instanceof SharedArrayBuffer ) {
+        try {
+          let ringbuf = new RingBuffer(e.value, Float64Array);
+          this.audioWorkletNode.port.postMessage({
+            func: "sab",
+            value: e.value,
+            ttype: e.ttype,
+            channelID: e.channelID,
+            blocksize: e.blocksize,
+          });
 
-				this.sharedArrayBuffers[e.channelID] = {
-					sab: e.value, // TODO this is redundant, you can access the sab from the rb,
-					// TODO also change hashmap name it is confusing and induces error
-					rb: ringbuf,
-				};
-			} catch (err) {
-				console.error("Error pushing SharedBuffer to engine");
-			}
-		} else throw new Error("Error with onSharedBuffer event");
+          this.sharedArrayBuffers[e.channelID] = {
+            sab: e.value, // TODO this is redundant, you can access the sab from the rb,
+            // TODO also change hashmap name it is confusing and induces error
+            rb: ringbuf,
+          };
+        } catch (err) {
+          console.error("Error pushing SharedBuffer to engine");
+        }
+      }
+      else if ( e.name && e.data ) {
+        this.audioWorkletNode.port.postMessage({
+					func: "sendbuf",
+					name: e.name,
+					data: e.data,
+				});
+      }
+    }
+    else throw new Error("Error with onSharedBuffer event");
 	}
 
 	/**
