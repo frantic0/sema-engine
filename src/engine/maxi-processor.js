@@ -383,7 +383,7 @@ class MaxiProcessor extends AudioWorkletProcessor {
 	 * @param {*} buf
 	 */
 	addSampleBuffer = (name, buf) => {
-		console.log(`loading sample '${name}'`);
+		// console.log(`loading sample '${name}'`);
 		this.sampleVectorBuffers[name] = this.translateFloat32ArrayToBuffer(buf);
 	};
 
@@ -392,23 +392,71 @@ class MaxiProcessor extends AudioWorkletProcessor {
 	 * @param {*} name
 	 * @param {*} buf
 	 */
-	addSharedArrayBuffer = (name, buf) => {
-				console.info("buffer received");
+	addSharedArrayBuffer = data => {
+		console.info("buffer received");
+		let sab = buf;
+		let rb = new RingBuffer(sab, Float64Array);
+		inputSABs[data.channelID] = {
+			sab: sab,
+			rb: rb,
+			blocksize: data.blocksize,
+			value:
+				data.blocksize > 1
+					? new Float64Array(data.blocksize)
+					: 0,
+		}
+  }
 
-				let sab = event.data.value;
-				let rb = new RingBuffer(sab, Float64Array);
+  eval = data => {
+		// check if new code is being sent for evaluation?
+		let setupFunction;
+		let loopFunction;
+		try {
+			setupFunction = eval(data["setup"]);
+			loopFunction = eval(data["loop"]);
 
-				inputSABs[event.data.channelID] = {
-					sab: sab,
-					rb: rb,
-					blocksize: event.data.blocksize,
-					value:
-						event.data.blocksize > 1
-							? new Float64Array(event.data.blocksize)
-							: 0,
-				};
-	};
-
+			this.nextSignalFunction = 1 - this.currentSignalFunction;
+			// setup function with the  types
+			this._q[this.nextSignalFunction] = setupFunction();
+			//allow feedback between evals
+			this._mems[this.nextSignalFunction] = this._mems[
+				this.currentSignalFunction
+			];
+			// output[SPECTROGAMCHANNEL][i] = specgramValue;
+			// then use channelsplitter
+			this.signals[this.nextSignalFunction] = loopFunction;
+			this._cleanup[this.nextSignalFunction] = 0;
+			let xfadeBegin = Maximilian.maxiMap.linlin(
+				1.0 - this.nextSignalFunction,
+				0,
+				1,
+				-1,
+				1
+			);
+			let xfadeEnd = Maximilian.maxiMap.linlin(
+				this.nextSignalFunction,
+				0,
+				1,
+				-1,
+				1
+			);
+			this.xfadeControl.prepare(xfadeBegin, xfadeEnd, 2, true); // short xfade across signals
+			this.xfadeControl.triggerEnable(true); //enable the trigger straight away
+			this.codeSwapState = this.codeSwapStates.QUEUD;
+		} catch (err) {
+			if (err instanceof TypeError) {
+				console.log(
+					"TypeError in worklet evaluation: " + err.name + " – " + err.message
+				);
+			} else {
+				console.log(
+					"Error in worklet evaluation: " + err.name + " – " + err.message
+				);
+				console.log(setupFunction);
+				console.log(loopFunction);
+			}
+		}
+	}
 	/**
 	 * @onMessageHandler
 	 * * message port async handler
@@ -428,71 +476,23 @@ class MaxiProcessor extends AudioWorkletProcessor {
 
       } else if (event.data.func === "sab" ) {
 
-        this.addSharedArrayBuffer(event.data.name, event.data.sab);
+        this.addSharedArrayBuffer(event.data);
       }
 
 		} else if (event.data.sample) {
+
 			let sampleKey = event.data.sample.substr(0, event.data.sample.length - 4);
+
 			this.addSampleBuffer(sampleKey, event.data.buffer);
-		} else if ("phase" in event.data) {
-			// console.log(this.kuraPhaseIdx);
-			// console.log(event);
+
+    } else if ("phase" in event.data) {
+
 			this.netClock.setPhase(event.data.phase, event.data.i);
 			// this.kuraPhase = event.data.phase;
 			// this.kuraPhaseIdx = event.data.i;
-		} else if ("eval" in event.data) {
-			// check if new code is being sent for evaluation?
+		} else if (event.data.eval) {
 
-			let setupFunction;
-			let loopFunction;
-			try {
-				setupFunction = eval(event.data["setup"]);
-				loopFunction = eval(event.data["loop"]);
-
-				this.nextSignalFunction = 1 - this.currentSignalFunction;
-
-				// setup function with the  types
-				this._q[this.nextSignalFunction] = setupFunction();
-				//allow feedback between evals
-				this._mems[this.nextSignalFunction] = this._mems[
-					this.currentSignalFunction
-				];
-				// output[SPECTROGAMCHANNEL][i] = specgramValue;
-				// then use channelsplitter
-				this.signals[this.nextSignalFunction] = loopFunction;
-				this._cleanup[this.nextSignalFunction] = 0;
-
-				let xfadeBegin = Maximilian.maxiMap.linlin(
-					1.0 - this.nextSignalFunction,
-					0,
-					1,
-					-1,
-					1
-				);
-				let xfadeEnd = Maximilian.maxiMap.linlin(
-					this.nextSignalFunction,
-					0,
-					1,
-					-1,
-					1
-				);
-				this.xfadeControl.prepare(xfadeBegin, xfadeEnd, 2, true); // short xfade across signals
-				this.xfadeControl.triggerEnable(true); //enable the trigger straight away
-
-				this.codeSwapState = this.codeSwapStates.QUEUD;
-			} catch (err) {
-				if (err instanceof TypeError) {
-					console.log(
-						"TypeError in worklet evaluation: " + err.name + " – " + err.message
-					);
-				} else {
-					console.log(
-						"Error in worklet evaluation: " + err.name + " – " + err.message
-					);
-					console.log(setupFunction);
-					console.log(loopFunction);
-				}
-			}
+      this.eval(event.data);
 		}
 	};
 
