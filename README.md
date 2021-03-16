@@ -188,5 +188,5 @@ Bernardo, F., Kiefer, C., Magnusson, T. (2020). A Signal Engine for a Live Code 
 
 ## Funding
 
-This project has received funding from the UKRI/AHRC research grant Ref: AH/R002657/1 MIMIC
+This project has received funding from the UKRI/AHRC research grant [MIMIC: Musically Intelligent Machines Interacting Creatively Ref: AH/R002657/1](https://gtr.ukri.org/projects?ref=AH%2FR002657%2F1)
 
