@@ -54,21 +54,18 @@ When initialising *sema-engine*, you need to pass the `audioWorkletURL` URL whic
 ```
   let engine,
       analyser = 0,
-      compiledParser = {},
-      grammarCompilationErrors = "",
-      livecodeParseErrors,
-      livecodeParseTree,
       dspCode,
       learner
       ;
+
+  let origin = document.location.origin;
 
   const $ = (elemId, callback) =>
     document.getElementById(elemId).addEventListener("click", callback);
 
   $("playButton", "click", () => {
-    const audioWorkletURL = origin + "/maxi-processor.js";
     engine = new Engine();
-    engine.init("maxi-processor", audioWorkletURL);
+    engine.init(origin);
     engine.play();
   })
 
@@ -76,19 +73,29 @@ When initialising *sema-engine*, you need to pass the `audioWorkletURL` URL whic
   $("plusButton", () => engine.more());
   $("minusButton", () => engine.less());
 
-  $("loadSamplesButton", () => {
-    engine.loadSample("crebit2.ogg", "./audio/crebit2.ogg");
-    engine.loadSample("kick1.wav", "./audio/kick1.wav");
-    engine.loadSample("snare1.wav", "./audio/snare1.wav");
-  });
+  $("loadSamplesButton", "click", () => {
+    if(engine){
+      try{
+        engine.loadSample("909.wav",       "/audio/909.wav");
+        engine.loadSample("909b.wav",      "/audio/909b.wav");
+        engine.loadSample("909closed.wav", "/audio/909closed.wav");
+        engine.loadSample("909open.wav",   "/audio/909closed.wav");
+      } catch (error) {
+        console.error("ERROR: Failed to compile and eval: ", error);
+      }
+    }
+    else throw new Error('ERROR: Engine not initialized. Press Start engine first.')
+  })
 
   $("learnerButton", "click", async () => {
-    learner = new Learner();
     if(engine){
-      engine.addEventListener('onSharedBuffer', e => learner.createSharedBuffer(e) ); // Engine's SAB emissions subscribed by Learner
-      learner.addEventListener('onSharedBuffer', e => engine.pushSharedBuffer(e) );  // Learner's SAB emissions subscribed by Engine
+      try{
+        learner = new Learner();
+        await engine.addLearner('l1', learner);
+      }catch(error){
+        console.error("ERROR: Error creating or initialising learner: ", r);
+      }
     }
-    await learner.init(document.location.origin); // when Learner initializes
   });
 </script>
 ```
@@ -116,7 +123,6 @@ For the JS code, we provide `getBlock`, an utility function that pulls code from
   const evalJs = async () => {
     if(learner && editorJS){
       const code = getBlock(editorJS);
-      console.info(code);
       learner.eval(code);
     }
     else throw new Error('ERROR: Learner not initialized. Please press Create Learner first.')

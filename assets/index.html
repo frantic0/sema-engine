@@ -248,7 +248,7 @@
       document.getElementById(elemId).addEventListener(event, callback);
 
     // var origin = 'https://frantic0.github.io/sema-engine';
-    var origin = document.location.origin;
+    let origin = document.location.origin;
 
     $("playButton", "click", () => {
       if(!engine){
@@ -278,7 +278,7 @@
           console.error("ERROR: Failed to compile and eval: ", error);
         }
       }
-      else throw new Error('ERROR: Engine not initialized. Please press Start Engine first.')
+      else throw new Error('ERROR: Engine not initialized. Press Start Engine first.')
     });
 
     $("learnerButton", "click", async () => {
