@@ -49,7 +49,7 @@ You can use also use the *sema-engine* library modules in an a HTML file using i
 ```
 Note the that the script tag for the main module `sema-engine.mjs` has `type = module`.
 
-When initialising *sema-engine*, you need to pass the `audioWorkletURL` URL which points to where package dependencies – e.g. maxi-processor.js and maximilian.wasmmodule.js (check the `dist/` folder) – should be served from.
+When initialising *sema-engine*, you need to pass the `origin` URL which points to where package dependencies – e.g. maxi-processor.js and maximilian.wasmmodule.js (check the `dist/` folder) – should be served from.
 
 ```
   let engine,
@@ -68,11 +68,11 @@ When initialising *sema-engine*, you need to pass the `audioWorkletURL` URL whic
     engine.init(origin);
     engine.play();
   })
+```
 
-  $("stopButton", () => engine.stop());
-  $("plusButton", () => engine.more());
-  $("minusButton", () => engine.less());
+Note that the engine will make its operations depend on the `origin` URL for instance for loading audio samples, which should be pointed to using a relative path to the origin like so:
 
+```
   $("loadSamplesButton", "click", () => {
     if(engine){
       try{
@@ -128,6 +128,7 @@ For the JS code, we provide `getBlock`, an utility function that pulls code from
     else throw new Error('ERROR: Learner not initialized. Please press Create Learner first.')
   }
 ```
+
 
 ## Build
 
