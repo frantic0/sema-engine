@@ -64,7 +64,9 @@ export class Learner {
 	onMessageHandler = (m) => {
 
 		if (m && m.data && m.data.func) {
+
 			let responders = {
+
 				sab: (data) => {
 					// Publish data to audio engine
 					this.dispatcher.dispatch("onSharedBuffer", data);
@@ -96,6 +98,7 @@ export class Learner {
 				sendcode: (data) => {
 					// console.log(data);
 				},
+
 				pbcopy: (data) => {
 					copyToPasteBuffer(data.msg);
 					// let copyField=document.getElementById("hiddenCopyField");
