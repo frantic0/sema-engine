@@ -123,6 +123,10 @@ For the JS code, we provide `getBlock`, an utility function that pulls code from
   }
 ```
 
+## Prerequisites
+
+The emscripten SDK is required, https://emscripten.org/docs/getting_started/downloads.html
+
 ## Build
 
 If you are cloning this library for the first time:
