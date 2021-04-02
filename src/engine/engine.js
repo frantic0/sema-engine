@@ -90,6 +90,13 @@ export class Engine {
 		} else throw new Error("Error adding Learner instance to Engine");
 	}
 
+  removeLearner(id){
+    if(id && this.learners && this.learners[id]){
+      delete this.learners[id];
+    }
+    else throw new Error("Error removing Learner from Engine: ");
+  }
+
 	/**
 	 * Engine's event subscription
 	 * @addEventListener

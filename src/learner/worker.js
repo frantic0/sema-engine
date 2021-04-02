@@ -52,6 +52,7 @@ class MLSABOutputTransducer {
       }
     }
   }
+
 }
 
 self.createOutputChannel = ( id, blocksize ) => {
@@ -108,6 +109,7 @@ self.sema = {
 			data: data,
 		});
 	},
+
 	env: {
 		saveLocal: (name) => {
 			postMessage({
@@ -116,6 +118,7 @@ self.sema = {
 				storage: "local",
 			});
 		},
+
 		loadLocal: (name) => {
 			postMessage({
 				func: "envload",
@@ -123,12 +126,14 @@ self.sema = {
 				storage: "local",
 			});
 		},
+
 		saveToPB: () => {
 			postMessage({
 				func: "envsave",
 				storage: "pastebuffer",
 			});
 		},
+
 		loadGist: (gistid) => {
 			postMessage({
 				func: "envload",
@@ -137,6 +142,7 @@ self.sema = {
 			});
 		},
 	},
+
 	//run in the DOM
 	domeval: (code) => {
 		postMessage({
@@ -144,12 +150,14 @@ self.sema = {
 			code: code,
 		});
 	},
+
 	peerinfo: () => {
 		postMessage({
 			func: "peerinfo",
 		});
 		console.log("Your peer ID has been copied to the paste buffer");
 	},
+
 };
 
 function initWithURL(url){

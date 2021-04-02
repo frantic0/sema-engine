@@ -1,13 +1,13 @@
 # sema-engine
 
 ![Node.js CI](https://github.com/frantic0/sema-engine/workflows/Node.js%20CI/badge.svg)
-![version](https://img.shields.io/badge/version-0.0.35-red)
+![version](https://img.shields.io/badge/version-0.0.36-red)
 [![stability-experimental](https://img.shields.io/badge/stability-experimental-orange.svg)](https://github.com/emersion/stability-badges#experimental)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-yellow.svg)](https://github.com/frantic0/sema-engine/blob/main)
 [![Website](https://img.shields.io/website?url=https%3A%2F%2Fsema.codes)](https://frantic0.github.io/sema-engine/)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/frantic0/sema-engine/blob/main/LICENSE)
 
-*sema-engine* is a Javascript library that provides a high-performance audio engine for modern Web applications, with an easy-to-use API. It was extracted from [sema](https://github.com/mimic-sussex/sema), an app developed with @[chriskiefer](https://github.com/chriskiefer) and @[thormagnusson](https://github.com/thormagnusson), and refactored for project MIMIC.
+*sema-engine* is a Javascript library that provides a high-performance audio engine for modern Web applications, with an easy-to-use API. It was extracted from [sema](https://github.com/mimic-sussex/sema), an app developed with @[chriskiefer](https://github.com/chriskiefer) and @[thormagnusson](https://github.com/thormagnusson), and refactored for the [MIMICproject.com](https://mimicproject.com/about).
 
 *sema-engine* builds upon the following components:
 
@@ -49,46 +49,53 @@ You can use also use the *sema-engine* library modules in an a HTML file using i
 ```
 Note the that the script tag for the main module `sema-engine.mjs` has `type = module`.
 
-When initialising *sema-engine*, you need to pass the `audioWorkletURL` URL which points to where package dependencies – e.g. maxi-processor.js and maximilian.wasmmodule.js (check the `dist/` folder) – should be served from.
+When initialising *sema-engine*, you need to pass the `origin` URL which points to where package dependencies – e.g. maxi-processor.js and maximilian.wasmmodule.js (check the `dist/` folder) – should be served from.
 
 ```
   let engine,
       analyser = 0,
-      compiledParser = {},
-      grammarCompilationErrors = "",
-      livecodeParseErrors,
-      livecodeParseTree,
       dspCode,
       learner
       ;
+
+  let origin = document.location.origin;
 
   const $ = (elemId, callback) =>
     document.getElementById(elemId).addEventListener("click", callback);
 
   $("playButton", "click", () => {
-    const audioWorkletURL = origin + "/maxi-processor.js";
     engine = new Engine();
-    engine.init("maxi-processor", audioWorkletURL);
+    engine.init(origin);
     engine.play();
   })
+```
 
-  $("stopButton", () => engine.stop());
-  $("plusButton", () => engine.more());
-  $("minusButton", () => engine.less());
+Note that the engine will make its operations depend on the `origin` URL for instance for loading audio samples, which should be pointed to using a relative path to the origin like so:
 
-  $("loadSamplesButton", () => {
-    engine.loadSample("crebit2.ogg", "./audio/crebit2.ogg");
-    engine.loadSample("kick1.wav", "./audio/kick1.wav");
-    engine.loadSample("snare1.wav", "./audio/snare1.wav");
-  });
+```
+  $("loadSamplesButton", "click", () => {
+    if(engine){
+      try{
+        engine.loadSample("909.wav",       "/audio/909.wav");
+        engine.loadSample("909b.wav",      "/audio/909b.wav");
+        engine.loadSample("909closed.wav", "/audio/909closed.wav");
+        engine.loadSample("909open.wav",   "/audio/909closed.wav");
+      } catch (error) {
+        console.error("ERROR: Failed to compile and eval: ", error);
+      }
+    }
+    else throw new Error('ERROR: Engine not initialized. Press Start engine first.')
+  })
 
   $("learnerButton", "click", async () => {
-    learner = new Learner();
     if(engine){
-      engine.addEventListener('onSharedBuffer', e => learner.createSharedBuffer(e) ); // Engine's SAB emissions subscribed by Learner
-      learner.addEventListener('onSharedBuffer', e => engine.pushSharedBuffer(e) );  // Learner's SAB emissions subscribed by Engine
+      try{
+        learner = new Learner();
+        await engine.addLearner('l1', learner);
+      }catch(error){
+        console.error("ERROR: Error creating or initialising learner: ", r);
+      }
     }
-    await learner.init(document.location.origin); // when Learner initializes
   });
 </script>
 ```
@@ -116,7 +123,6 @@ For the JS code, we provide `getBlock`, an utility function that pulls code from
   const evalJs = async () => {
     if(learner && editorJS){
       const code = getBlock(editorJS);
-      console.info(code);
       learner.eval(code);
     }
     else throw new Error('ERROR: Learner not initialized. Please press Create Learner first.')
@@ -126,6 +132,7 @@ For the JS code, we provide `getBlock`, an utility function that pulls code from
 ## Prerequisites
 
 The emscripten SDK is required, https://emscripten.org/docs/getting_started/downloads.html
+
 
 ## Build
 
@@ -182,3 +189,8 @@ Pull requests are wellcome but please observe the [Contributing](https://github.
 ## Related Publications
 
 Bernardo, F., Kiefer, C., Magnusson, T. (2020). A Signal Engine for a Live Code Language Ecosystem. Journal of Audio Engineering Society, Vol. 68, No. 1, October, DOI: [https://doi.org/10.17743/jaes.2020.0016](https://doi.org/10.17743/jaes.2020.0016)
+
+## Funding
+
+This project has received funding from the UKRI/AHRC research grant [MIMIC: Musically Intelligent Machines Interacting Creatively (Ref: AH/R002657/1)](https://gtr.ukri.org/projects?ref=AH%2FR002657%2F1)
+
