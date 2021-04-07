@@ -193,9 +193,9 @@
       <button id="stopButton">Stop Engine</button>
       <button id="loadSamplesButton">Load Samples</button>
       <button id="learnerButton">Create Learner</button>
-      <!-- <button id="plusButton">Vol+</button>
-      <button id="minusButton">Vol–</button>
-      <button id="createAnalyserButton">Create Analyser</button> -->
+      <!-- <button id="plusButton">Vol+</button> -->
+      <!-- <button id="minusButton">Vol–</button> -->
+      <button id="createAnalyserButton">Create Analyser</button>
       <button id="mouseButton">Mouse input</button>
       <span id="outputText"></span>
     </div>
@@ -364,9 +364,31 @@
       });
     })();
 
+    function sabPrinter() {
+      try {
+        for (let v in engine.sharedArrayBuffers) {
+          let avail = engine.sharedArrayBuffers[v].rb.available_read();
+          if ( avail > 0 && avail != engine.sharedArrayBuffers[v].rb.capacity ) {
+            for (let i = 0; i < avail; i += engine.sharedArrayBuffers[v].blocksize) {
+              if(engine.sharedArrayBuffers[v].ttype === 'scope'){
+                let val = new Float64Array(engine.sharedArrayBuffers[v].blocksize);
+                engine.sharedArrayBuffers[v].rb.pop(val);
+                console.log(v, val);
+              }
+            }
+          console(`v:${v}`);
+          }
+        }
+        setTimeout(sabPrinter, 20);
+      } catch (error) {
+        // console.log(error);
+        setTimeout(sabPrinter, 100);
+      }
+    }
+
     // $("minusButton", "click", () => engine.less());
     // $("plusButton", "click", () => engine.more());
-    // $("createAnalyserButton", "click", () => engine.createAnalyser(analyser++, data => console.log(data)) );
+    $("createAnalyserButton", "click", () => sabPrinter() );
 
   </script>
   <script>
@@ -399,7 +421,7 @@
       return editor;
     }
 
-    const editorLivecode = setupEditorWithContent("textArea-livecode", '/langs/default-5-lc.txt');
+    const editorLivecode = setupEditorWithContent("textArea-livecode", '/langs/default-8-lc.txt');
     const editorGrammar =  setupEditorWithContent("textArea-grammar",  '/langs/default-grammar.txt');
     const editorJS =       setupEditorWithContent("textArea-js",       '/js/default-3-js.txt');
     // const editorLivecode = setupEditorWithContent("textArea-livecode", '/langs/rubber-duckling-lc-1.txt');

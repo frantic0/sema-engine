@@ -576,6 +576,24 @@ export class Engine {
 							blocksize: event.data.blocksize,
 						});
 						break;
+					case "scope":
+						// this.dispatcher.dispatch("onSharedBuffer", {
+						// 	sab: event.data.value,
+						// 	channelID: event.data.channelID, //channel ID
+						// 	blocksize: event.data.blocksize,
+						// });
+
+						let ringbuf = new RingBuffer(event.data.value, Float64Array);
+
+            this.sharedArrayBuffers[event.data.channelID] = {
+							sab: event.data.value, // TODO: this is redundant, you can access the sab from the rb,
+							// TODO change hashmap name it is confusing and induces error
+							rb: ringbuf,
+							ttype: event.data.ttype,
+							channelID: event.data.channelID, //channel ID
+							blocksize: event.data.blocksize,
+						};
+						break;
 				}
 			}
 		}
