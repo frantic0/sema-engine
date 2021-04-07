@@ -6,53 +6,52 @@ self.RingBuffer = RingBuffer;
 var outputSABs = {};
 
 class MLSABOutputTransducer {
+	constructor(ttype, channel, blocksize) {
+		this.channel = channel;
+		this.blocksize = blocksize;
+		//check for existing channels
+		if (channel in outputSABs && outputSABs[channel].blocksize == blocksize) {
+			//reuse existing
+			this.ringbuf = outputSABs[channel].rb;
+		} else {
+			//create a new SAB and notify the receiver
+			this.sab = RingBuffer.getStorageForCapacity(32 * blocksize, Float64Array);
+			this.ringbuf = new RingBuffer(this.sab, Float64Array);
 
-  constructor(bufferType, channel, blocksize) {
-    this.channel = channel;
-    this.blocksize = blocksize;
-      //check for existing channels
-    if (channel in outputSABs && outputSABs[channel].blocksize == blocksize) {
-      //reuse existing
-      this.ringbuf = outputSABs[channel].rb;
-    }else{
-      //create a new SAB and notify the receiver
-      this.sab = RingBuffer.getStorageForCapacity(32 * blocksize, Float64Array);
-      this.ringbuf = new RingBuffer(this.sab, Float64Array);
+			outputSABs[channel] = {
+				rb: this.ringbuf,
+				sab: this.sab,
+				created: Date.now(),
+				blocksize: blocksize,
+			};
 
-      outputSABs[channel] = {
-        rb:this.ringbuf,
-        sab:this.sab,
-        created:Date.now(),
-        blocksize:blocksize };
+			postMessage({
+				func: "sab",
+				value: this.sab,
+				ttype: ttype,
+				channelID: channel,
+				blocksize: blocksize,
+			});
+		}
+	}
 
-      postMessage({
-        func: 'sab',
-        value: this.sab,
-        ttype: bufferType,
-        channelID: channel,
-        blocksize:blocksize
-      });
-    }
-  }
-
-  send(value) {
-    if (this.ringbuf.available_write() > 1) {
-      if (typeof(value) == "number") {
-        this.ringbuf.push(new Float64Array([value]));
-      }else{
-        if (value.length == this.blocksize) {
-          this.ringbuf.push(value);
-        }else if (value.length < this.blocksize) {
-          let newVal = new Float64Array(this.blocksize);
-          for(let i in value) newVal[i] = value[i];
-          this.ringbuf.push(newVal);
-        }else{
-          this.ringbuf.push(value.slice(0,this.blocksize));
-        }
-      }
-    }
-  }
-
+	send(value) {
+		if (this.ringbuf.available_write() > 1) {
+			if (typeof value == "number") {
+				this.ringbuf.push(new Float64Array([value]));
+			} else {
+				if (value.length == this.blocksize) {
+					this.ringbuf.push(value);
+				} else if (value.length < this.blocksize) {
+					let newVal = new Float64Array(this.blocksize);
+					for (let i in value) newVal[i] = value[i];
+					this.ringbuf.push(newVal);
+				} else {
+					this.ringbuf.push(value.slice(0, this.blocksize));
+				}
+			}
+		}
+	}
 }
 
 self.createOutputChannel = ( id, blocksize ) => {
