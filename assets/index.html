@@ -258,7 +258,10 @@
       engine.play();
     });
 
-    $("stopButton", "click", () => engine.stop());
+    $("stopButton", "click", () => {
+      engine.hush();
+      engine.stop()
+    });
 
     $("loadSamplesButton", "click", () => {
       if(engine){
