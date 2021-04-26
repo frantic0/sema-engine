@@ -141,7 +141,6 @@ class MaxiProcessor extends AudioWorkletProcessor {
 		//indicate audio settings in WASM and JS domains
 		Maximilian.maxiSettings.setup(sampleRate, 1, 512);
 		Maximilian.maxiJSSettings.setup(sampleRate, 1, 512);
-
 		//we don't know the number of channels at this stage, so reserve lots for the DAC
 		this.DAC = [];
 		this.DACInitialised = false;
@@ -446,14 +445,17 @@ class MaxiProcessor extends AudioWorkletProcessor {
 			// output[SPECTROGAMCHANNEL][i] = specgramValue;
 			// then use channelsplitter
 			this.signals[this.nextSignalFunction] = loopFunction;
+
 			this._cleanup[this.nextSignalFunction] = 0;
-			let xfadeBegin = Maximilian.maxiMap.linlin(
+
+      let xfadeBegin = Maximilian.maxiMap.linlin(
 				1.0 - this.nextSignalFunction,
 				0,
 				1,
 				-1,
 				1
 			);
+
 			let xfadeEnd = Maximilian.maxiMap.linlin(
 				this.nextSignalFunction,
 				0,
@@ -461,10 +463,12 @@ class MaxiProcessor extends AudioWorkletProcessor {
 				-1,
 				1
 			);
+
 			this.xfadeControl.prepare(xfadeBegin, xfadeEnd, 2, true); // short xfade across signals
 			this.xfadeControl.triggerEnable(true); //enable the trigger straight away
 			this.codeSwapState = this.codeSwapStates.QUEUD;
-		} catch (err) {
+
+    } catch (err) {
 			if (err instanceof TypeError) {
 				console.log(
 					"TypeError in worklet evaluation: " + err.name + " – " + err.message

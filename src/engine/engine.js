@@ -345,12 +345,13 @@ export class Engine {
 	 */
 	play() {
 		if (this.audioContext !== undefined) {
-			if (this.audioContext.state !== "suspended") {
-				this.stop();
-				return false;
-			} else {
+			if (this.audioContext.state === "suspended") {
 				this.audioContext.resume();
 				return true;
+			} else {
+				this.hush();
+				// this.stop();
+				return false;
 			}
 		}
 	}

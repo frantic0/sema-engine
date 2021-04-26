@@ -195,6 +195,7 @@
       <button id="learnerButton">Create Learner</button>
       <button id="plusButton">Vol+</button>
       <button id="minusButton">Vol–</button>
+      <button id="hushButton">Hush–</button>
       <button id="createAnalyserButton">Create Analyser</button>
       <button id="mouseButton">Mouse input</button>
       <span id="outputText"></span>
@@ -390,6 +391,7 @@
 
     $("minusButton", "click", () => engine.less());
     $("plusButton", "click", () => engine.more());
+    $("hushButton", "click", () => engine.hush());
     $("createAnalyserButton", "click", () => sabPrinter() );
 
   </script>
