@@ -379,7 +379,7 @@ export class Engine {
 
 	more(gain) {
 		if (this.audioWorkletNode !== undefined) {
-			const gainParam = this.audioWorkletNode.parameters.get(gain);
+			const gainParam = this.audioWorkletNode.parameters.get('gain');
 			gainParam.value += 0.5;
 			console.log(gain + ": " + gainParam.value); // DEBUG
 			return true;
@@ -388,7 +388,7 @@ export class Engine {
 
 	less(gain) {
 		if (this.audioWorkletNode !== undefined) {
-			const gainParam = this.audioWorkletNode.parameters.get(gain);
+			const gainParam = this.audioWorkletNode.parameters.get('gain');
 			gainParam.value -= 0.5;
 			console.log(gain + ": " + gainParam.value); // DEBUG
 			return true;

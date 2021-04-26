@@ -193,8 +193,8 @@
       <button id="stopButton">Stop Engine</button>
       <button id="loadSamplesButton">Load Samples</button>
       <button id="learnerButton">Create Learner</button>
-      <!-- <button id="plusButton">Vol+</button> -->
-      <!-- <button id="minusButton">Vol–</button> -->
+      <button id="plusButton">Vol+</button>
+      <button id="minusButton">Vol–</button>
       <button id="createAnalyserButton">Create Analyser</button>
       <button id="mouseButton">Mouse input</button>
       <span id="outputText"></span>
@@ -388,8 +388,8 @@
       }
     }
 
-    // $("minusButton", "click", () => engine.less());
-    // $("plusButton", "click", () => engine.more());
+    $("minusButton", "click", () => engine.less());
+    $("plusButton", "click", () => engine.more());
     $("createAnalyserButton", "click", () => sabPrinter() );
 
   </script>

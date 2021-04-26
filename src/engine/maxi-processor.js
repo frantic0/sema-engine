@@ -117,11 +117,26 @@ var outputSABs = {};
  * @extends AudioWorkletProcessor
  */
 class MaxiProcessor extends AudioWorkletProcessor {
+
+	/**
+	 * @getter
+	 */
+	static get parameterDescriptors() {
+		// TODO: parameters are static? can we not change this map with a setter?
+		return [
+			{
+				name: "gain",
+				defaultValue: 2.5,
+			}
+		];
+	}
+
 	/**
 	 * @constructor
 	 */
 	constructor() {
-		super();
+
+    super();
 
 		//indicate audio settings in WASM and JS domains
 		Maximilian.maxiSettings.setup(sampleRate, 1, 512);
@@ -292,6 +307,15 @@ class MaxiProcessor extends AudioWorkletProcessor {
 	};
 
 	/**
+	 * @CLP phasor over one bar length
+	 * @param {*} gain
+	 */
+	logGain(gain) {
+		// return 0.095 * Math.exp(this.gain * 0.465);
+		return 0.0375 * Math.exp(gain * 0.465);
+	}
+
+	/**
 	 * @CLT phasor over one bar length
 	 * * upon EVAL, this is dynamically invoqued from the LOOP function
 	 * @param {*} multiples
@@ -329,7 +353,7 @@ class MaxiProcessor extends AudioWorkletProcessor {
 		} else if (ch < 0) {
 			ch = 0;
 		}
-		this.DAC[ch] = x;
+		this.DAC[ch] = this.logGain(x);
 		return x;
 	};
 
@@ -341,7 +365,7 @@ class MaxiProcessor extends AudioWorkletProcessor {
 	 */
 	dacOutAll = (x) => {
 		for (let i = 0; i < this.DAC.length; i++) {
-			this.DAC[i] = x;
+			this.DAC[i] = this.logGain(x);
 		}
 		return x;
 	};
@@ -392,7 +416,7 @@ class MaxiProcessor extends AudioWorkletProcessor {
 	 * @param {*} name
 	 * @param {*} buf
 	 */
-	addSharedArrayBuffer = data => {
+	addSharedArrayBuffer = (data) => {
 		console.info("buffer received");
 		let sab = data.value;
 		let rb = new RingBuffer(sab, Float64Array);
@@ -400,14 +424,11 @@ class MaxiProcessor extends AudioWorkletProcessor {
 			sab,
 			rb,
 			blocksize: data.blocksize,
-			value:
-				data.blocksize > 1
-					? new Float64Array(data.blocksize)
-					: 0,
-		}
-  }
+			value: data.blocksize > 1 ? new Float64Array(data.blocksize) : 0,
+		};
+	};
 
-  eval = data => {
+	eval = (data) => {
 		// check if new code is being sent for evaluation?
 		let setupFunction;
 		let loopFunction;
@@ -456,43 +477,31 @@ class MaxiProcessor extends AudioWorkletProcessor {
 				console.log(loopFunction);
 			}
 		}
-	}
+	};
 	/**
 	 * @onMessageHandler
 	 * * message port async handler
 	 * @param {*} event
 	 */
 	onMessageHandler = (event) => {
-
-    if (event.data.address) {
-
-      this.OSCMessages[event.data.address] = event.data.args;
-
-    } else if (event.data.func){
-
-      if(event.data.func === "sendbuf" ) {
-
-        this.addSampleBuffer(event.data.name, event.data.data);
-
-      } else if (event.data.func === "sab" ) {
-
-        this.addSharedArrayBuffer(event.data);
-      }
-
+		if (event.data.address) {
+			this.OSCMessages[event.data.address] = event.data.args;
+		} else if (event.data.func) {
+			if (event.data.func === "sendbuf") {
+				this.addSampleBuffer(event.data.name, event.data.data);
+			} else if (event.data.func === "sab") {
+				this.addSharedArrayBuffer(event.data);
+			}
 		} else if (event.data.sample) {
-
 			let sampleKey = event.data.sample.substr(0, event.data.sample.length - 4);
 
 			this.addSampleBuffer(sampleKey, event.data.buffer);
-
-    } else if ("phase" in event.data) {
-
+		} else if ("phase" in event.data) {
 			this.netClock.setPhase(event.data.phase, event.data.i);
 			// this.kuraPhase = event.data.phase;
 			// this.kuraPhaseIdx = event.data.i;
 		} else if (event.data.eval) {
-
-      this.eval(event.data);
+			this.eval(event.data);
 		}
 	};
 
@@ -529,7 +538,8 @@ class MaxiProcessor extends AudioWorkletProcessor {
 			let channelCount = output.length;
 
 			for (let i = 0; i < output[0].length; ++i) {
-				this.updateSABInputs();
+
+        this.updateSABInputs();
 
 				for (let channel = 0; channel < channelCount; channel++) {
 					this.DAC[channel] = 0.0;
@@ -586,7 +596,6 @@ class MaxiProcessor extends AudioWorkletProcessor {
 				if (this.codeSwapState == this.codeSwapStates.XFADING) {
 					try {
 						this.signals[0](this._q[0], inputs[0][i], this._mems[0]);
-
 						this.signals[1](this._q[1], inputs[0][i], this._mems[1]);
 					} catch (err) {
 						console.log("EVAL ERROR – XFADING", err);
@@ -635,9 +644,17 @@ class MaxiProcessor extends AudioWorkletProcessor {
 				// let scopeValue = scope !== undefined ? scope : output[channel][0];
 				// output[1][i] = specgramValue;
 
-				for (let channel = 0; channel < channelCount; channel++) {
-					output[channel][i] = this.DAC[channel];
-				}
+        if (parameters.gain.length === 1) {
+          for (let channel = 0; channel < channelCount; channel++) {
+            output[channel][i] = this.DAC[channel] * this.logGain(parameters.gain[0]);
+          }
+        }
+        else {
+          for (let channel = 0; channel < channelCount; channel++) {
+            output[channel][i] = this.DAC[channel] * this.logGain(parameters.gain[i]);
+          }
+        }
+
 			}
 
 			//remove old algo and data?
