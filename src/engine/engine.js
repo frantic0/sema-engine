@@ -399,10 +399,13 @@ export class Engine {
 	hush() {
 		if (this.audioWorkletNode !== undefined) {
 			this.audioWorkletNode.port.postMessage({
-				eval: 1,
-				setup: "() => {}",
-				loop: "( q, inputs, mem ) => {}",
+				hush: 1
 			});
+			// this.audioWorkletNode.port.postMessage({
+			// 	eval: 1,
+			// 	setup: "() => {}",
+			// 	loop: "( q, inputs, mem ) => {}",
+			// });
 			return true;
 		} else return false;
 	}

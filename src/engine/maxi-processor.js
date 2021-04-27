@@ -482,6 +482,40 @@ class MaxiProcessor extends AudioWorkletProcessor {
 			}
 		}
 	};
+
+	hush = () => {
+
+		try {
+
+			const setupFunction = () => {};
+		  const	loopFunction = (q, inputs, mem) => {};
+
+			// this.nextSignalFunction = 1 - this.currentSignalFunction;
+
+			// setup function with the  types
+			// this._q[this.nextSignalFunction] = setupFunction();
+			this._q[this.currentSignalFunction] = setupFunction();
+
+			//allow feedback between evals
+			// this._mems[this.nextSignalFunction] = this._mems[
+			this._mems[this.currentSignalFunction] = this._mems[
+				this.currentSignalFunction
+			];
+			// output[SPECTROGAMCHANNEL][i] = specgramValue;
+			// then use channelsplitter
+			// this.signals[this.nextSignalFunction] = loopFunction;
+			this.signals[this.currentSignalFunction] = loopFunction;
+
+			// this._cleanup[this.nextSignalFunction] = 0;
+			this._cleanup[this.currentSignalFunction] = 0;
+
+
+
+		}catch(err){
+      console.log(err)
+    }
+  }
+
 	/**
 	 * @onMessageHandler
 	 * * message port async handler
@@ -506,6 +540,8 @@ class MaxiProcessor extends AudioWorkletProcessor {
 			// this.kuraPhaseIdx = event.data.i;
 		} else if (event.data.eval) {
 			this.eval(event.data);
+		} else if (event.data.hush) {
+			this.hush();
 		}
 	};
 
@@ -533,6 +569,7 @@ class MaxiProcessor extends AudioWorkletProcessor {
 	 * @param {*} parameters
 	 */
 	process(inputs, outputs, parameters) {
+
 		if (!this.DACInitialised) {
 			this.initialiseDAC(sampleRate, outputs[0].length, 512);
 		}
