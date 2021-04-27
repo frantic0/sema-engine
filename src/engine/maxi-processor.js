@@ -308,20 +308,6 @@ class MaxiProcessor extends AudioWorkletProcessor {
 	};
 
 	/**
-	 * @logGain logaritmic gain
-	 * @param {*} gain
-	 */
-	logGain(minp = 0.05, maxp = 1, value) {
-
-    let gain = -90;
-    const mindB = Math.log(0.0000000099);
-    const maxdB = Math.log(10000000);
-    const scale = (maxdB - mindB) / (maxp - minp);
-    gain = Math.exp(mindB + scale * (value - minp));
-    return gain;
-	}
-
-	/**
 	 * @CLT phasor over one bar length
 	 * * upon EVAL, this is dynamically invoqued from the LOOP function
 	 * @param {*} multiples
@@ -499,26 +485,12 @@ class MaxiProcessor extends AudioWorkletProcessor {
 			const setupFunction = () => {};
 		  const	loopFunction = (q, inputs, mem) => {};
 
-			// this.nextSignalFunction = 1 - this.currentSignalFunction;
-
-			// setup function with the  types
-			// this._q[this.nextSignalFunction] = setupFunction();
 			this._q[this.currentSignalFunction] = setupFunction();
-
-			//allow feedback between evals
-			// this._mems[this.nextSignalFunction] = this._mems[
 			this._mems[this.currentSignalFunction] = this._mems[
 				this.currentSignalFunction
 			];
-			// output[SPECTROGAMCHANNEL][i] = specgramValue;
-			// then use channelsplitter
-			// this.signals[this.nextSignalFunction] = loopFunction;
 			this.signals[this.currentSignalFunction] = loopFunction;
-
-			// this._cleanup[this.nextSignalFunction] = 0;
 			this._cleanup[this.currentSignalFunction] = 0;
-
-
 
 		}catch(err){
       console.log(err)
@@ -696,12 +668,12 @@ class MaxiProcessor extends AudioWorkletProcessor {
 
         if (parameters.gain.length === 1) {
           for (let channel = 0; channel < channelCount; channel++) {
-            output[channel][i] = this.DAC[channel] * this.logGain(0, 10, parameters.gain[0]);
+            output[channel][i] = this.DAC[channel] * Math.pow(parameters.gain[0],2);
           }
         }
         else {
           for (let channel = 0; channel < channelCount; channel++) {
-            output[channel][i] = this.DAC[channel] * this.logGain(0, 10, parameters.gain[0], parameters.gain[i]);
+            output[channel][i] = this.DAC[channel] * Math.pow(parameters.gain[i],2);
           }
         }
 
