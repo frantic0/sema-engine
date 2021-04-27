@@ -362,6 +362,7 @@ export class Engine {
 	 */
 	stop() {
 		if (this.audioWorkletNode !== undefined) {
+			this.hush();
 			this.audioContext.suspend();
 		}
 	}
