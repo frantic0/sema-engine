@@ -379,20 +379,30 @@ export class Engine {
 		}
 	}
 
-	more(gain) {
+
+  setGain(gain){
+		if (this.audioWorkletNode !== undefined && gain >= 0 && gain <= 1) {
+			const gainParam = this.audioWorkletNode.parameters.get("gain");
+			gainParam.value = gain;
+			console.log(gainParam.value); // DEBUG
+			return true;
+		} else return false;
+  }
+
+	more() {
 		if (this.audioWorkletNode !== undefined) {
 			const gainParam = this.audioWorkletNode.parameters.get('gain');
-			gainParam.value += 0.5;
-			console.log(gain + ": " + gainParam.value); // DEBUG
+			gainParam.value += 0.05;
+			console.log(gainParam.value); // DEBUG
 			return true;
 		} else return false;
 	}
 
-	less(gain) {
+	less() {
 		if (this.audioWorkletNode !== undefined) {
 			const gainParam = this.audioWorkletNode.parameters.get('gain');
-			gainParam.value -= 0.5;
-			console.log(gain + ": " + gainParam.value); // DEBUG
+			gainParam.value -= 0.05;
+			console.log(gainParam.value); // DEBUG
 			return true;
 		} else return false;
 	}

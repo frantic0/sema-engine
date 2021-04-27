@@ -126,7 +126,9 @@ class MaxiProcessor extends AudioWorkletProcessor {
 		return [
 			{
 				name: "gain",
-				defaultValue: 2.5,
+				defaultValue: 0.5,
+				minValue: 0.0000009,
+				maxValue: 1.0,
 			}
 		];
 	}
@@ -306,12 +308,17 @@ class MaxiProcessor extends AudioWorkletProcessor {
 	};
 
 	/**
-	 * @CLP phasor over one bar length
+	 * @logGain logaritmic gain
 	 * @param {*} gain
 	 */
-	logGain(gain) {
-		// return 0.095 * Math.exp(this.gain * 0.465);
-		return 0.0375 * Math.exp(gain * 0.465);
+	logGain(minp = 0.05, maxp = 1, value) {
+
+    let gain = -90;
+    const mindB = Math.log(0.0000000099);
+    const maxdB = Math.log(10000000);
+    const scale = (maxdB - mindB) / (maxp - minp);
+    gain = Math.exp(mindB + scale * (value - minp));
+    return gain;
 	}
 
 	/**
@@ -352,7 +359,8 @@ class MaxiProcessor extends AudioWorkletProcessor {
 		} else if (ch < 0) {
 			ch = 0;
 		}
-		this.DAC[ch] = this.logGain(x);
+		// this.DAC[ch] = this.logGain(x);
+		this.DAC[ch] = x;
 		return x;
 	};
 
@@ -364,7 +372,8 @@ class MaxiProcessor extends AudioWorkletProcessor {
 	 */
 	dacOutAll = (x) => {
 		for (let i = 0; i < this.DAC.length; i++) {
-			this.DAC[i] = this.logGain(x);
+			// this.DAC[i] = this.logGain(x);
+			this.DAC[i] = x;
 		}
 		return x;
 	};
@@ -687,12 +696,12 @@ class MaxiProcessor extends AudioWorkletProcessor {
 
         if (parameters.gain.length === 1) {
           for (let channel = 0; channel < channelCount; channel++) {
-            output[channel][i] = this.DAC[channel] * this.logGain(parameters.gain[0]);
+            output[channel][i] = this.DAC[channel] * this.logGain(0, 10, parameters.gain[0]);
           }
         }
         else {
           for (let channel = 0; channel < channelCount; channel++) {
-            output[channel][i] = this.DAC[channel] * this.logGain(parameters.gain[i]);
+            output[channel][i] = this.DAC[channel] * this.logGain(0, 10, parameters.gain[0], parameters.gain[i]);
           }
         }
 
