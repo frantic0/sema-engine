@@ -2,10 +2,13 @@
 // which is different from maxi-processor that
 // dynamically loads from the adjacent ringBuf.js file
 import { RingBuffer } from 'ringbuf.js'; //thanks padenot
+
 import {
   loadSampleToArray
 } from './maximilian.util.js';
+
 import Dispatcher from '../common/dispatcher.js';
+import { expect } from 'chai';
 // import {
 //   kuramotoNetClock
 // } from './interfaces/clockInterface.js';
@@ -393,18 +396,18 @@ export class Engine {
 		if (this.audioWorkletNode !== undefined) {
 			const gainParam = this.audioWorkletNode.parameters.get('gain');
 			gainParam.value += 0.05;
-			console.log(gainParam.value); // DEBUG
-			return true;
-		} else return false;
+			console.info(gainParam.value); // DEBUG
+			return gainParam.value;
+		} else throw new Error('error increasing sound level')
 	}
 
 	less() {
 		if (this.audioWorkletNode !== undefined) {
 			const gainParam = this.audioWorkletNode.parameters.get('gain');
 			gainParam.value -= 0.05;
-			console.log(gainParam.value); // DEBUG
-			return true;
-		} else return false;
+			console.info(gainParam.value); // DEBUG
+			return gainParam.value;
+		} else throw new Error('error decreasing sound level')
 	}
 
 	hush() {
