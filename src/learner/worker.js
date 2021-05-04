@@ -58,9 +58,27 @@ self.createOutputChannel = ( id, blocksize ) => {
   return new MLSABOutputTransducer('ML', id, blocksize);
 };
 
+/**
+ * User-defined function that acts as an event handler
+ * @param {*} value
+ * @param {*} channel
+ */
 self.input = ( value, channel ) => {}
 
-self.output = ( value, channel ) => { postMessage( { func:'data', val:value, ch:channel }); }
+//
+/**
+ * User-invokable function in the JS editor to direct value x to output channel
+ * @param {*} value
+ * @param {*} channel
+ */
+self.output = ( value, channel ) => {
+  postMessage( {
+                  func: 'data',
+                  val: value,
+                  ch: channel
+                }
+  );
+}
 
 self.loadResponders = {};
 
@@ -206,8 +224,10 @@ onmessage = m => {
 
   if(m.data.url)
     initWithURL(m.data.url);
+
   else if (m.data.eval)
     gevalToConsole(m.data.eval);
+
   else if ("val" in m.data) {
     // console.log("DEBUG:ml.worker:onmessage:val");
     let val = m.data.val;
@@ -217,8 +237,10 @@ onmessage = m => {
     // console.log(loadResponders);
     loadResponders[m.data.name](val);
     delete loadResponders[m.data.name];
+
   } else if (m.data.type === "model-input-data") {
     input(m.data.value, m.data.ch);
+
   } else if (m.data.sab){
     console.info('buffer received');
     let sab = m.data.sab;

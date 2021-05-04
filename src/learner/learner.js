@@ -98,7 +98,11 @@ export class Learner {
 				sendcode: (data) => {
 					// console.log(data);
 				},
-
+        // DEPRECATED
+        data: () => {
+					// Publish data to audio engine
+					// messaging.publish("model-output-data", data);
+				},
 				pbcopy: (data) => {
 					copyToPasteBuffer(data.msg);
 					// let copyField=document.getElementById("hiddenCopyField");
