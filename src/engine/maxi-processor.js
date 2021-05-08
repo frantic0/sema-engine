@@ -157,6 +157,8 @@ class MaxiProcessor extends AudioWorkletProcessor {
 
 		this.xfadeControl = new Maximilian.maxiLine();
 
+    this.mediaStreamConnected = false;
+
 		this.OSCMessages = {};
 
 		this.incoming = {};
@@ -617,9 +619,20 @@ class MaxiProcessor extends AudioWorkletProcessor {
 
 				if (this.codeSwapState == this.codeSwapStates.XFADING) {
 					try {
-						this.signals[0](this._q[0], inputs[0][i], this._mems[0]);
-						this.signals[1](this._q[1], inputs[0][i], this._mems[1]);
-					} catch (err) {
+
+						this.signals[0](
+							this._q[0],
+							inputs[0][0] ? inputs[0][0][i] : null,
+							this._mems[0]
+						);
+
+						this.signals[1](
+							this._q[1],
+							inputs[0][0] ? inputs[0][0][i] : null,
+							this._mems[1]
+						);
+
+          } catch (err) {
 						console.log("EVAL ERROR – XFADING", err);
 						console.log("signals: ", this.signals);
 						console.log("currentSignalFunction: ", this.currentSignalFunction);
