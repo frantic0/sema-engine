@@ -64,6 +64,8 @@ export class Engine {
 		// and loaded from localStorage before user-triggered audioContext init
 		this.analysers = {};
 
+    this.mediaStreamSource = {};
+
 		// Shared array buffers for sharing client side data to the audio engine- e.g. mouse coords
 		this.sharedArrayBuffers = {};
 
@@ -382,38 +384,37 @@ export class Engine {
 		}
 	}
 
-
-  setGain(gain){
+	setGain(gain) {
 		if (this.audioWorkletNode !== undefined && gain >= 0 && gain <= 1) {
 			const gainParam = this.audioWorkletNode.parameters.get("gain");
 			gainParam.value = gain;
 			console.log(gainParam.value); // DEBUG
 			return true;
 		} else return false;
-  }
+	}
 
 	more() {
 		if (this.audioWorkletNode !== undefined) {
-			const gainParam = this.audioWorkletNode.parameters.get('gain');
+			const gainParam = this.audioWorkletNode.parameters.get("gain");
 			gainParam.value += 0.05;
 			console.info(gainParam.value); // DEBUG
 			return gainParam.value;
-		} else throw new Error('error increasing sound level')
+		} else throw new Error("error increasing sound level");
 	}
 
 	less() {
 		if (this.audioWorkletNode !== undefined) {
-			const gainParam = this.audioWorkletNode.parameters.get('gain');
+			const gainParam = this.audioWorkletNode.parameters.get("gain");
 			gainParam.value -= 0.05;
 			console.info(gainParam.value); // DEBUG
 			return gainParam.value;
-		} else throw new Error('error decreasing sound level')
+		} else throw new Error("error decreasing sound level");
 	}
 
 	hush() {
 		if (this.audioWorkletNode !== undefined) {
 			this.audioWorkletNode.port.postMessage({
-				hush: 1
+				hush: 1,
 			});
 			// this.audioWorkletNode.port.postMessage({
 			// 	eval: 1,
@@ -464,8 +465,8 @@ export class Engine {
 
 	onAudioInputInit(stream) {
 		// console.log('DEBUG:AudioEngine: Audio Input init');
-		let mediaStreamSource = this.audioContext.createMediaStreamSource(stream);
-		mediaStreamSource.connect(this.audioWorkletNode);
+		this.mediaStreamSource = this.audioContext.createMediaStreamSource(stream);
+		this.mediaStreamSource.connect(this.audioWorkletNode);
 	}
 
 	onAudioInputFail(error) {
@@ -486,7 +487,28 @@ export class Engine {
 
 		navigator.mediaDevices
 			.getUserMedia(constraints)
-			.then( s => this.onAudioInputInit(s) )
+			.then((s) => this.onAudioInputInit(s))
+			.catch(this.onAudioInputFail);
+	}
+
+	onAudioInputDisconnect(stream) {
+		this.mediaStreamSource.disconnect(this.audioWorkletNode);
+		this.mediaStreamSource = null;
+	}
+
+	/**
+	 * Breaks up an AudioIn WAAPI sub-graph
+	 * @disconnectMediaStreamSourceInput
+	 */
+	async disconnectMediaStream() {
+		const constraints = (window.constraints = {
+			audio: true,
+			video: false,
+		});
+
+		navigator.mediaDevices
+			.getUserMedia(constraints)
+			.then((s) => this.onAudioInputDisconnect(s))
 			.catch(this.onAudioInputFail);
 	}
 
