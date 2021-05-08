@@ -3,7 +3,9 @@
  * * exports the Engine class and all its public methods
  * @Engine
  */
-export { Engine } from './engine/engine.js';
+export {
+  Engine
+  } from './engine/engine.js';
 
 /**
  * * exports high-level and more granular compiler utilities
@@ -28,3 +30,29 @@ export { semaa } from "./compiler/sema.js";
 export { Learner } from "./learner/learner.js";
 
 export { getBlock } from "./common/blockTracker.js";
+
+
+export function takeOverConsole(f) {
+
+	var original = window.console;
+
+  function handle(method, args) {
+		var message = Array.prototype.slice.apply(args).join(" ");
+		if (original) original[method]('> ' + message);
+	}
+
+  window.console = {
+		log: function () {
+			handle("log", arguments);
+		},
+		warn: function () {
+			handle("warn", arguments);
+		},
+		error: function () {
+			handle("error", arguments);
+		},
+		info: function () {
+			handle("info", arguments);
+		},
+	};
+}

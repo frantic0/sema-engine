@@ -46,12 +46,15 @@ export class Learner {
 	async init(url) {
 		this.worker = new mlworker();
 
-		return new Promise((resolve, reject) => {
+		return new Promise( (resolve, reject) => {
 			let result = {};
 			if (this.worker && new URL(url)) {
 				this.worker.postMessage({ url });
-				this.worker.onerror = this.onErrorHandler;
-				this.worker.onmessage = (e) => {
+				this.worker.onerror = e => {
+				  console.log("onError");
+          reject(e);
+        };
+				this.worker.onmessage = e => {
 					result = e.data.init;
 					console.info("running Learner");
 					resolve(result);
@@ -63,7 +66,7 @@ export class Learner {
 
 	onMessageHandler = (m) => {
 
-		if (m && m.data && m.data.func) {
+		if ( m && m.data && m.data.func ) {
 
 			let responders = {
 
@@ -138,10 +141,6 @@ export class Learner {
 	// 	// console.log(e);
 	// };
 
-	onErrorHandler = (e) => {
-		console.log("onError");
-		console.log(e);
-	};
 
 	/**
 	 *

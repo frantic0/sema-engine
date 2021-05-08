@@ -197,6 +197,7 @@
       <button id="minusButton">Vol–</button>
       <button id="hushButton">Hush–</button>
       <button id="createAnalyserButton">Create Analyser</button>
+      <button id="createInputButton">Create Input</button>
       <button id="mouseButton">Mouse input</button>
       <span id="outputText"></span>
     </div>
@@ -232,7 +233,8 @@
       Engine,
       compile,
       Learner,
-      getBlock
+      getBlock,
+      takeOverConsole
     } from "./sema-engine.mjs";
 
     let engine,
@@ -250,6 +252,7 @@
     $("playButton", "click", () => {
       if(!engine){
         try{
+          takeOverConsole();
           engine = new Engine();
           engine.init(origin);
         } catch (error) {
@@ -315,9 +318,23 @@
       else throw new Error('ERROR: Learner not initialized. Please press Create Learner first.')
     }
 
+    const createInput = async () => {
+      if(engine){
+        try{
+          engine.connectMediaStream();
+        } catch (err) {
+          console.error("ERROR: Failed to compile and eval: ", err);
+        }
+      }
+      else throw new Error('ERROR: Engine not initialized. Please press Start Engine first.')
+    }
+
+
     $("evalButton", "click", () => evalLiveCode() );
 
     $("evalJsButton", "click", async () => evalJs() );
+
+    $("createInputButton", "click", async () => createInput() );
 
     $("mouseButton", "click", () => {
       if(engine){
@@ -355,6 +372,9 @@
       }
       else throw new Error('ERROR: Engine not initialized. Please press Start Engine first.')
     });
+
+
+
 
     (() => {
       // Subscribe Left `Alt`-key down event to subscribe mouse move

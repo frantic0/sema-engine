@@ -486,7 +486,7 @@ export class Engine {
 
 		navigator.mediaDevices
 			.getUserMedia(constraints)
-			.then((s) => this.onAudioInputInit(s))
+			.then( s => this.onAudioInputInit(s) )
 			.catch(this.onAudioInputFail);
 	}
 

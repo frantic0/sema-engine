@@ -180,19 +180,19 @@ self.sema = {
 function initWithURL(url){
   if( new URL(url) ){
     try {
-      importScripts(url + "/lalolib.js");
+      // importScripts(url + "/lalolib.js");
     } catch (err) {
       console.error("ERROR: importScripts – lalolib.js ", err);
     }
     try{
-      importScripts(url + "/svd.js");
+      // importScripts(url + "/svd.js");
     } catch (err) {
       console.error("ERROR: importScripts – svd.js ", err);
     }
     try{
-      importScripts(
-        "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs/dist/tf.min.js"
-      );
+      // importScripts(
+      //   "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs/dist/tf.min.js"
+      // );
     } catch (err) {
       console.error("ERROR: importScripts – tfjs", err);
     }
