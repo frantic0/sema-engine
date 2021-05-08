@@ -1,6 +1,6 @@
 {
   "name": "sema-engine",
-  "version": "0.0.46",
+  "version": "0.0.47",
   "description": "A Signal Engine for a Live Coding Language Ecosystem",
   "repository": {
     "type": "git",

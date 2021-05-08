@@ -467,9 +467,11 @@ export class Engine {
 		// console.log('DEBUG:AudioEngine: Audio Input init');
 		this.mediaStreamSource = this.audioContext.createMediaStreamSource(stream);
 		this.mediaStreamSource.connect(this.audioWorkletNode);
+    this.mediaStreamSourceConnected = true;
 	}
 
 	onAudioInputFail(error) {
+    this.mediaStreamSourceConnected = false;
 		console.error(
 			`ERROR:Engine:AudioInputFail: ${error.message} ${error.name}`
 		);
@@ -485,10 +487,13 @@ export class Engine {
 			video: false,
 		});
 
-		navigator.mediaDevices
+
+		await navigator.mediaDevices
 			.getUserMedia(constraints)
 			.then((s) => this.onAudioInputInit(s))
 			.catch(this.onAudioInputFail);
+
+    return this.mediaStreamSourceConnected;
 	}
 
 	onAudioInputDisconnect(stream) {
@@ -506,10 +511,12 @@ export class Engine {
 			video: false,
 		});
 
-		navigator.mediaDevices
+		await navigator.mediaDevices
 			.getUserMedia(constraints)
 			.then((s) => this.onAudioInputDisconnect(s))
 			.catch(this.onAudioInputFail);
+
+    return this.mediaStreamSourceConnected;
 	}
 
 	/**
