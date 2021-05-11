@@ -655,7 +655,7 @@ class MaxiProcessor extends AudioWorkletProcessor {
 					try {
 						this.signals[this.currentSignalFunction](
 							this._q[this.currentSignalFunction],
-							inputs[0][i],
+							inputs[0][0] ? inputs[0][0][i] : null,
 							this._mems[this.currentSignalFunction]
 						);
 					} catch (err) {
@@ -689,7 +689,6 @@ class MaxiProcessor extends AudioWorkletProcessor {
             output[channel][i] = this.DAC[channel] * Math.pow(parameters.gain[i],2);
           }
         }
-
 			}
 
 			//remove old algo and data?

@@ -64,7 +64,7 @@ export class Engine {
 		// and loaded from localStorage before user-triggered audioContext init
 		this.analysers = {};
 
-    this.mediaStreamSource = {};
+		this.mediaStreamSource = {};
 
 		// Shared array buffers for sharing client side data to the audio engine- e.g. mouse coords
 		this.sharedArrayBuffers = {};
@@ -220,50 +220,49 @@ export class Engine {
 	 */
 	createAnalyser(analyserID, callback) {
 		// If Analyser creation happens after AudioContext intialization, create and connect WAAPI analyser
-		if (
-			this.audioContext !== undefined &&
-			analyserID !== undefined &&
-			callback !== undefined
-		) {
-			let analyser = this.audioContext.createAnalyser();
-			analyser.smoothingTimeConstant = 0.25;
-			analyser.fftSize = 256; // default 2048;
-			analyser.minDecibels = -90; // default
-			analyser.maxDecibels = -0; // default -10; max 0
-			this.audioWorkletNode.connect(analyser);
+		if (analyserID && callback){
+      if(this.audioContext && this.audioWorkletNode ) {
 
-			let analyserFrameId = -1,
-				analyserData = {};
+        let analyser = this.audioContext.createAnalyser();
+        analyser.smoothingTimeConstant = 0.25;
+        analyser.fftSize = 256; // default 2048;
+        analyser.minDecibels = -90; // default
+        analyser.maxDecibels = -0; // default -10; max 0
+        this.audioWorkletNode.connect(analyser);
 
-			this.analysers[analyserID] = {
-				analyser,
-				analyserFrameId,
-				callback,
-			};
+        let analyserFrameId = -1,
+            analyserData = {};
 
-			/**
-			 * Creates requestAnimationFrame loop for polling data and publishing
-			 * Returns Analyser Frame ID for adding to Analysers hash
-			 * and cancelling animation frame
-			 */
-			const analyserPollingLoop = () => {
-				analyserData = this.pollAnalyserData(
-					this.analysers[analyserID].analyser
-				);
-				this.analysers[analyserID].callback(analyserData); // Invoke callback that carries
-				// This will guarantee feeding poll request at steady animation framerate
-				this.analysers[analyserID].analyserFrameId = requestAnimationFrame(
-					analyserPollingLoop
-				);
-				return analyserFrameId;
-			};
+        this.analysers[analyserID] = {
+          analyser,
+          analyserFrameId,
+          callback,
+        };
 
-			analyserPollingLoop();
+        /**
+         * Creates requestAnimationFrame loop for polling data and publishing
+         * Returns Analyser Frame ID for adding to Analysers hash
+         * and cancelling animation frame
+         */
+        const analyserPollingLoop = () => {
+          analyserData = this.pollAnalyserData(
+            this.analysers[analyserID].analyser
+          );
+          this.analysers[analyserID].callback(analyserData); // Invoke callback that carries
+          // This will guarantee feeding poll request at steady animation framerate
+          this.analysers[analyserID].analyserFrameId = requestAnimationFrame(
+            analyserPollingLoop
+          );
+          return analyserFrameId;
+        };
+
+        analyserPollingLoop();
 
 			// Other if AudioContext is NOT created yet (after app load, before splashScreen click)
-		} else if (this.audioContext === undefined) {
-			this.analysers[analyserID] = { callback };
-		}
+      } else {
+        this.analysers[analyserID] = { callback };
+      }
+    } else throw new Error('Parameters to createAnalyser incorrect')
 	}
 
 	/**
@@ -281,10 +280,7 @@ export class Engine {
 	 * @removeAnalyser
 	 */
 	removeAnalyser(event) {
-		if (
-			this.audioContext !== undefined &&
-			this.audioWorkletNode !== undefined
-		) {
+		if ( this.audioContext && this.audioWorkletNode ) {
 			let analyser = this.analysers[event.id];
 			if (analyser !== undefined) {
 				cancelAnimationFrame(this.analysers[event.id].analyserFrameId);
@@ -416,11 +412,6 @@ export class Engine {
 			this.audioWorkletNode.port.postMessage({
 				hush: 1,
 			});
-			// this.audioWorkletNode.port.postMessage({
-			// 	eval: 1,
-			// 	setup: "() => {}",
-			// 	loop: "( q, inputs, mem ) => {}",
-			// });
 			return true;
 		} else return false;
 	}
@@ -464,17 +455,26 @@ export class Engine {
 	}
 
 	onAudioInputInit(stream) {
-		// console.log('DEBUG:AudioEngine: Audio Input init');
-		this.mediaStreamSource = this.audioContext.createMediaStreamSource(stream);
-		this.mediaStreamSource.connect(this.audioWorkletNode);
-    this.mediaStreamSourceConnected = true;
+    try {
+      this.mediaStreamSource = this.audioContext.createMediaStreamSource(stream);
+      this.mediaStreamSource.connect(this.audioWorkletNode);
+      this.mediaStreamSourceConnected = true;
+    } catch (error) {
+      console.error(error);
+    }
 	}
 
 	onAudioInputFail(error) {
-    this.mediaStreamSourceConnected = false;
+		this.mediaStreamSourceConnected = false;
 		console.error(
 			`ERROR:Engine:AudioInputFail: ${error.message} ${error.name}`
 		);
+	}
+
+	onAudioInputDisconnect(stream) {
+		this.mediaStreamSource.disconnect(this.audioWorkletNode);
+		this.mediaStreamSource = null;
+		this.mediaStreamSourceConnected = false;
 	}
 
 	/**
@@ -487,18 +487,12 @@ export class Engine {
 			video: false,
 		});
 
-
 		await navigator.mediaDevices
 			.getUserMedia(constraints)
-			.then((s) => this.onAudioInputInit(s))
+			.then( s => this.onAudioInputInit(s) )
 			.catch(this.onAudioInputFail);
 
-    return this.mediaStreamSourceConnected;
-	}
-
-	onAudioInputDisconnect(stream) {
-		this.mediaStreamSource.disconnect(this.audioWorkletNode);
-		this.mediaStreamSource = null;
+		return this.mediaStreamSourceConnected;
 	}
 
 	/**
@@ -516,7 +510,7 @@ export class Engine {
 			.then((s) => this.onAudioInputDisconnect(s))
 			.catch(this.onAudioInputFail);
 
-    return this.mediaStreamSourceConnected;
+		return this.mediaStreamSourceConnected;
 	}
 
 	/**
