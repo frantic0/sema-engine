@@ -184,7 +184,7 @@ The *sema-engine* has small API surface that you can find more about on this pro
 
 ## Contributing
 
-Pull requests are wellcome but please observe the [Contributing](https://github.com/frantic0/sema-engine/blob/main/CONTRIBUTING.md) guidelines.
+Pull requests are welcome, please observe the [Contributing](https://github.com/frantic0/sema-engine/blob/main/CONTRIBUTING.md) guidelines.
 
 ## Related Publications
 
