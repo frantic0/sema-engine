@@ -184,7 +184,7 @@ class MaxiProcessor extends AudioWorkletProcessor {
 
 		this.codeQuantModes = {
 			QUANTISE_TO_BAR: 0,
-			DONTQUANTISE:1 
+			DONTQUANTISE: 1
 		};
 		this.codeQuantMode = this.codeQuantModes.DONTQUANTISE;
 
@@ -206,6 +206,13 @@ class MaxiProcessor extends AudioWorkletProcessor {
 
 		this.bitTime = Maximilian.maxiBits.sig(0); //this needs to be decoupled from the audio engine? or not... maybe a 'permenant block' with each grammar?
 		this.dt = 0;
+
+		this.clearBufferModes = {
+			INACTIVE: 0,
+			CLEARING_BUFFER: 1
+		};
+		this.clearBufferModes = this.clearBufferModes.INACTIVE;
+		this.clearBufferCount = 10;
 
 		console.info(`Sample rate: ${sampleRate}`); // moving this to end of ctor for console feedback on successful processor initialisation
 	}
@@ -493,18 +500,21 @@ class MaxiProcessor extends AudioWorkletProcessor {
 	};
 
 	hush = () => {
-
+// insert a couple of buffers of silence into the webaudio buffer,  before telling the audio engine that it's ready to suspend
 		try {
 
-			const setupFunction = () => { };
-			const loopFunction = (q, inputs, mem) => { };
+			this.clearBufferMode = this.clearBufferModes.CLEARING_BUFFER;
+			this.clearBufferCount = 3;
 
-			this._q[this.currentSignalFunction] = setupFunction();
-			this._mems[this.currentSignalFunction] = this._mems[
-				this.currentSignalFunction
-			];
-			this.signals[this.currentSignalFunction] = loopFunction;
-			this._cleanup[this.currentSignalFunction] = 0;
+		} catch (err) {
+			console.log(err)
+		}
+	}
+
+	unhush = () => {
+
+		try {
+			this.clearBufferMode = this.clearBufferModes.INACTIVE;
 
 		} catch (err) {
 			console.log(err)
@@ -537,6 +547,8 @@ class MaxiProcessor extends AudioWorkletProcessor {
 			this.eval(event.data);
 		} else if (event.data.hush) {
 			this.hush();
+		} else if (event.data.unhush) {
+			this.unhush();
 		}
 	};
 
@@ -697,23 +709,41 @@ class MaxiProcessor extends AudioWorkletProcessor {
 				}
 			}
 
-			//remove old algo and data?
-			let oldIdx = 1.0 - this.currentSignalFunction;
-			if (this.xfadeControl.isLineComplete() && this._cleanup[oldIdx] == 0) {
-				this.signals[oldIdx] = this.silence;
-				//clean up object heap - we must do this because emscripten objects need manual memory management
-				for (let obj in this._q[oldIdx]) {
-					//if there a delete() function
-					if (this._q[oldIdx][obj].delete != undefined) {
-						//delete the emscripten object manually
-						this._q[oldIdx][obj].delete();
+
+			if (this.clearBufferMode == this.clearBufferModes.CLEARING_BUFFER) {
+				this.clearBufferCount--;
+				for (let i = 0; i < output[0].length; ++i) {
+
+					for (let channel = 0; channel < channelCount; channel++) {
+						this.DAC[channel] = 0.0;
 					}
 				}
-				//create a blank new heap for the next livecode evaluation
-				this._q[oldIdx] = this.newq();
-				//signal that the cleanup is complete
-				this._cleanup[oldIdx] = 1;
+				if (this.clearBufferCount == 0) {
+					//this.clearBufferMode == this.clearBufferModes.INACTIVE;
+					this.port.postMessage({rq:'rts'}); //ready to suspend					
+				}
+
 			}
+
+
+		}
+
+		//remove old algo and data?
+		let oldIdx = 1.0 - this.currentSignalFunction;
+		if (this.xfadeControl.isLineComplete() && this._cleanup[oldIdx] == 0) {
+			this.signals[oldIdx] = this.silence;
+			//clean up object heap - we must do this because emscripten objects need manual memory management
+			for (let obj in this._q[oldIdx]) {
+				//if there a delete() function
+				if (this._q[oldIdx][obj].delete != undefined) {
+					//delete the emscripten object manually
+					this._q[oldIdx][obj].delete();
+				}
+			}
+			//create a blank new heap for the next livecode evaluation
+			this._q[oldIdx] = this.newq();
+			//signal that the cleanup is complete
+			this._cleanup[oldIdx] = 1;
 		}
 
 		return true;
