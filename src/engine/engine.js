@@ -364,7 +364,7 @@ export class Engine {
 	stop() {
 		if (this.audioWorkletNode !== undefined) {
 			this.hush();
-			this.audioContext.suspend();
+			// this.audioContext.suspend();
 		}
 	}
 
@@ -416,6 +416,14 @@ export class Engine {
 		} else return false;
 	}
 
+	unHush() {
+		if (this.audioWorkletNode !== undefined) {
+			this.audioWorkletNode.port.postMessage({
+				unhush: 1,
+			});
+			return true;
+		} else return false;
+	}
 	eval(dspFunction) {
 		if (this.audioWorkletNode && this.audioWorkletNode.port) {
 			if (this.audioContext.state === "suspended") {
@@ -641,7 +649,9 @@ export class Engine {
 						};
 						break;
 				}
-			}
+			} else if (event.data.rq && event.data.rq === "rts") { // ready to suspend
+			this.audioContext.suspend();
+		}
 		}
 	}
 
