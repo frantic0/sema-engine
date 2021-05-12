@@ -424,11 +424,12 @@ export class Engine {
 			return true;
 		} else return false;
 	}
+
 	eval(dspFunction) {
 		if (this.audioWorkletNode && this.audioWorkletNode.port) {
-			if (this.audioContext.state === "suspended") {
-				this.audioContext.resume();
-			}
+			// if (this.audioContext.state === "suspended") {
+			// 	this.audioContext.resume();
+			// }
 			this.audioWorkletNode.port.postMessage({
 				eval: 1,
 				setup: dspFunction.setup,
