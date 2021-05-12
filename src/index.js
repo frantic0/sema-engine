@@ -14,7 +14,9 @@ export {
 export {
 	compile,
 	compileGrammar,
-	getParserModuleExports
+	getParserModuleExports,
+	ASTreeToDSPcode,
+	parse
 } from "./compiler/compiler.js";
 // import compileGrammar from './compiler/compiler.js';
 export * as ASTreeToJavascript from "./compiler/IR.js";

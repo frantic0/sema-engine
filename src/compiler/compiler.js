@@ -94,6 +94,55 @@ export function compile(grammarSource, livecodeSource) {
   }
 }
 
+/**
+ * Given a livecode's grammar source code, compile a livecode's source
+ * @param {*} grammarSource
+ * @param {*} livecodeSource
+ */
+export function parse(grammarSource, livecodeSource) {
+  try {
+		let dspCode;
+		let sema = semaa;
+
+		const { errors, output } = compileGrammar(grammarSource);
+
+		// const grammar = getModuleExports(output);
+
+		// evalToGlobalScope(output); // FAILS in unit testing, `ReferenceError: window is not defined`
+		// const compiledParser = new nearley.Parser(window.grammar);
+
+		const grammar = getParserModuleExports(output);
+		const compiledParser = new nearley.Parser(grammar);
+
+		// let worker = new compilerWorker();
+		// worker.postMessage({ livecodeSource, grammarSource });
+
+		if (!errors && compiledParser) {
+			const livecodeParseTree = compiledParser.feed(livecodeSource);
+			return livecodeParseTree.results
+		}
+		else return { errors };
+	} catch (error) {
+ 		return { errors: error };
+  }
+}
+
+/**
+ * Given an abstract syntax tree, generate Javascript DSP code
+ * @param {*} liveCodeParseTree
+ */
+export function ASTreeToDSPcode(livecodeParseTree) {
+	if (livecodeParseTree) {
+    try {
+			const dspCode = ASTreeToJavascript.treeToCode(livecodeParseTree, 0);
+      return { dspCode };
+    }
+    catch (error) {
+      return { errors: error };
+    }
+  }
+  else throw new Error('Problem with livecodeParseTree argument passed to ASTreeToDSPCode');
+}
 
 /*
   MIT License
