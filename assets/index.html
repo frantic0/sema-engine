@@ -346,8 +346,8 @@
           let sab = engine.createSharedBuffer(id, ttype, blockSize);
 
           const onMouseMove = e => {
-            const x = e.offsetX/window.innerWidth;
-            const y = e.offsetY/window.innerHeight;
+            const x = e.pageX/window.innerWidth;
+            const y = e.pageY/window.innerHeight;
             document.getElementById('outputText').innerText = `${parseFloat(x).toFixed(5)} ${parseFloat(y).toFixed(5)}`;
             engine.pushDataToSharedBuffer(id, [ x, y ]);
           }
