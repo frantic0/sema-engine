@@ -240,7 +240,8 @@
     let engine,
         analyser = 0,
         dspCode,
-        learner
+        learner,
+        inputStreamConnected = false;
         ;
 
     const $ = (elemId, event, callback) =>
@@ -321,7 +322,12 @@
     const createInput = async () => {
       if(engine){
         try{
-          engine.connectMediaStream();
+          if(!inputStreamConnected){
+            inputStreamConnected = await engine.connectMediaStream();
+          }
+          else {
+            inputStreamConnected = await engine.disconnectMediaStream();
+          }
         } catch (err) {
           console.error("ERROR: Failed to compile and eval: ", err);
         }
@@ -445,7 +451,7 @@
       return editor;
     }
 
-    const editorLivecode = setupEditorWithContent("textArea-livecode", '/langs/default-8-lc.txt');
+    const editorLivecode = setupEditorWithContent("textArea-livecode", '/langs/default-9-lc.txt');
     const editorGrammar =  setupEditorWithContent("textArea-grammar",  '/langs/default-grammar.txt');
     const editorJS =       setupEditorWithContent("textArea-js",       '/js/default-3-js.txt');
     // const editorLivecode = setupEditorWithContent("textArea-livecode", '/langs/rubber-duckling-lc-1.txt');

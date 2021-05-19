@@ -65,6 +65,7 @@ export class Engine {
 		this.analysers = {};
 
 		this.mediaStreamSource = {};
+		this.mediaStream = {};
 
 		// Shared array buffers for sharing client side data to the audio engine- e.g. mouse coords
 		this.sharedArrayBuffers = {};
@@ -467,6 +468,7 @@ export class Engine {
     try {
       this.mediaStreamSource = this.audioContext.createMediaStreamSource(stream);
       this.mediaStreamSource.connect(this.audioWorkletNode);
+      this.mediaStream = stream;
       this.mediaStreamSourceConnected = true;
     } catch (error) {
       console.error(error);
@@ -480,10 +482,8 @@ export class Engine {
 		);
 	}
 
-	onAudioInputDisconnect(stream) {
-		this.mediaStreamSource.disconnect(this.audioWorkletNode);
-		this.mediaStreamSource = null;
-		this.mediaStreamSourceConnected = false;
+	onAudioInputDisconnect() {
+
 	}
 
 	/**
@@ -495,7 +495,7 @@ export class Engine {
 			audio: true,
 			video: false,
 		});
-
+    // onAudioInputDisconnect();
 		await navigator.mediaDevices
 			.getUserMedia(constraints)
 			.then( s => this.onAudioInputInit(s) )
@@ -509,17 +509,24 @@ export class Engine {
 	 * @disconnectMediaStreamSourceInput
 	 */
 	async disconnectMediaStream() {
-		const constraints = (window.constraints = {
-			audio: true,
-			video: false,
-		});
 
-		await navigator.mediaDevices
-			.getUserMedia(constraints)
-			.then((s) => this.onAudioInputDisconnect(s))
-			.catch(this.onAudioInputFail);
+    try {
+			this.mediaStreamSource.disconnect(this.audioWorkletNode);
+			this.mediaStream.getAudioTracks().forEach((at) => at.stop());
+			this.mediaStreamSource = null;
+			this.mediaStreamSourceConnected = false;
+		} catch (error) {
+			console.error(error);
+		}
+    finally {
+      return this.mediaStreamSourceConnected;
+    }
+		// await navigator.mediaDevices
+		// 	.getUserMedia(constraints)
+		// 	.then((s) => this.onAudioInputDisconnect(s))
+		// 	.catch(this.onAudioInputFail);
 
-		return this.mediaStreamSourceConnected;
+
 	}
 
 	/**
