@@ -299,24 +299,29 @@ export class Engine {
 	 */
 	async init(origin) {
 		if (origin && new URL(origin)) {
-			// AudioContext needs lazy loading to workaround the Chrome warning
-			// Audio Engine first play() call, triggered by user, prevents the warning
-			// by setting this.audioContext = new AudioContext();
-			this.audioContext;
-			this.origin = origin;
-			this.audioWorkletName = "maxi-processor";
-			this.audioWorkletUrl = origin + "/" + this.audioWorkletName + ".js";
+      try{
+        // AudioContext needs lazy loading to workaround the Chrome warning
+        // Audio Engine first play() call, triggered by user, prevents the warning
+        // by setting this.audioContext = new AudioContext();
+        this.audioContext;
+        this.origin = origin;
+        this.audioWorkletName = "maxi-processor";
+        this.audioWorkletUrl = origin + "/" + this.audioWorkletName + ".js";
 
-			if (this.audioContext === undefined) {
-				this.audioContext = new AudioContext({
-					// create audio context with latency optimally configured for playback
-					latencyHint: "playback",
-					// latencyHint: 32/44100,  //this doesn't work below 512 on chrome (?)
-					// sampleRate: 44100
-				});
-			}
+        if (this.audioContext === undefined) {
+          this.audioContext = new AudioContext({
+            // create audio context with latency optimally configured for playback
+            latencyHint: "playback",
+            // latencyHint: 32/44100,  //this doesn't work below 512 on chrome (?)
+            // sampleRate: 44100
+          });
+        }
 
-			let isWorkletProcessorLoaded = await this.loadWorkletProcessorCode();
+        let isWorkletProcessorLoaded = await this.loadWorkletProcessorCode();
+      }
+      catch(err){
+        return false;
+      }
 
 			if (isWorkletProcessorLoaded) {
 				this.connectWorkletNode();
