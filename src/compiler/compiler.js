@@ -118,7 +118,7 @@ export function parse(grammarSource, livecodeSource) {
 		// worker.postMessage({ livecodeSource, grammarSource });
 
 		if (!errors && compiledParser) {
-			const ASTree = compiledParser.feed(livecodeSource).results;
+			const livecodeParseTree = compiledParser.feed(livecodeSource).results;
 			return { livecodeParseTree }
 		}
 		else return { errors };

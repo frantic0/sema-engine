@@ -491,8 +491,13 @@ export class Engine {
 	 * @connectMediaStreamSourceInput
 	 */
 	async connectMediaStream() {
-		const constraints = (window.constraints = {
-			audio: true,
+		const constraints = ( window.constraints = {
+      audio: {
+        latency: 0.02,
+        echoCancellation: false,
+        mozNoiseSuppression: false,
+        mozAutoGainControl: false
+      },
 			video: false,
 		});
     // onAudioInputDisconnect();

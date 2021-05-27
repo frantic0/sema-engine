@@ -211,7 +211,7 @@ class MaxiProcessor extends AudioWorkletProcessor {
 			INACTIVE: 0,
 			CLEARING_BUFFER: 1
 		};
-		this.clearBufferModes = this.clearBufferModes.INACTIVE;
+		this.clearBufferMode = this.clearBufferModes.INACTIVE;
 		this.clearBufferCount = 10;
 
 		console.info(`Sample rate: ${sampleRate}`); // moving this to end of ctor for console feedback on successful processor initialisation
@@ -720,7 +720,7 @@ class MaxiProcessor extends AudioWorkletProcessor {
 				}
 				if (this.clearBufferCount == 0) {
 					//this.clearBufferMode == this.clearBufferModes.INACTIVE;
-					this.port.postMessage({rq:'rts'}); //ready to suspend					
+					this.port.postMessage({rq:'rts'}); //ready to suspend
 				}
 
 			}
