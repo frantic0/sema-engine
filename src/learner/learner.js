@@ -64,7 +64,7 @@ export class Learner {
 		});
 	}
 
-	onMessageHandler = (m) => {
+	onMessageHandler(m){
 
 		if ( m && m.data && m.data.func ) {
 
