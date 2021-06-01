@@ -9,6 +9,7 @@ import {
 
 import Dispatcher from '../common/dispatcher.js';
 import { expect } from 'chai';
+// import { isThisTypeNode } from 'typescript';
 // import {
 //   kuramotoNetClock
 // } from './interfaces/clockInterface.js';
@@ -74,6 +75,7 @@ export class Engine {
 		this.dispatcher = new Dispatcher();
 
 		this.samplesLoaded = false;
+    this.isHushed = false;
 	}
 
 	/**
@@ -299,6 +301,7 @@ export class Engine {
 	 */
 	async init(origin) {
 		if (origin && new URL(origin)) {
+      let isWorkletProcessorLoaded;
       try{
         // AudioContext needs lazy loading to workaround the Chrome warning
         // Audio Engine first play() call, triggered by user, prevents the warning
@@ -317,7 +320,7 @@ export class Engine {
           });
         }
 
-        let isWorkletProcessorLoaded = await this.loadWorkletProcessorCode();
+        isWorkletProcessorLoaded = await this.loadWorkletProcessorCode();
       }
       catch(err){
         return false;
@@ -668,8 +671,9 @@ export class Engine {
 						break;
 				}
 			} else if (event.data.rq && event.data.rq === "rts") { // ready to suspend
-			this.audioContext.suspend();
-		}
+		  	this.audioContext.suspend();
+        this.isHushed = true;
+		  }
 		}
 	}
 
