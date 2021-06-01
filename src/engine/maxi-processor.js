@@ -269,7 +269,7 @@ class MaxiProcessor extends AudioWorkletProcessor {
 		if (bufferName in this.sampleVectorBuffers) {
 			sample = this.sampleVectorBuffers[bufferName];
 		} else {
-			// console.warn(`${bufferName} doesn't exist yet`);
+			// this error will be caught on the this.eval() function catch, line 488
       throw new Error(`${bufferName} doesn't exist yet`);
 		}
 		return sample;
@@ -486,9 +486,7 @@ class MaxiProcessor extends AudioWorkletProcessor {
 			this.codeSwapState = this.codeSwapStates.QUEUD;
 
 		} catch (err) {
-  		// console.log(
-  		// 	"Error in worklet evaluation: " + err.name + " – " + err.message
-  		// );
+      // Propagate error to the AWN scope
   		this.port.postMessage(err); //ready to suspend
 		}
 	};
