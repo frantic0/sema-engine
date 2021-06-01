@@ -107,9 +107,9 @@ export const loadSampleToArray = (audioContext, sampleObjectName, url, audioWork
     // throw new Error("Lazy loading should have been performed (contents set) in createLazyFile, but it was not. Lazy loading only works in web workers.
     // Use --embed-file or --preload-file in emcc on the main thread.");
     var request = new XMLHttpRequest();
-    // request.addEventListener("load", () =>
-		// 	// console.info(`loading sample '${sampleObjectName}'`)
-		// );
+    request.addEventListener("load", () =>
+			console.info(`loading sample '${sampleObjectName}'`)
+		);
     request.open("GET", url, true);
     request.responseType = "arraybuffer";
     request.onload = function () {
