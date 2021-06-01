@@ -301,7 +301,9 @@ export class Engine {
 	 */
 	async init(origin) {
 		if (origin && new URL(origin)) {
+
       let isWorkletProcessorLoaded;
+
       try{
         // AudioContext needs lazy loading to workaround the Chrome warning
         // Audio Engine first play() call, triggered by user, prevents the warning
@@ -612,6 +614,7 @@ export class Engine {
 				// gets replaced by user callback with 'subscribeAsyncMessage'
 				this.audioWorkletNode.port.onmessage = (e) =>
 					this.onProcessorMessageHandler(e);
+
 			} catch (err) {
 				console.error("Error connecting WorkletNode: ", err);
 			}
@@ -674,6 +677,9 @@ export class Engine {
 		  	this.audioContext.suspend();
         this.isHushed = true;
 		  }
+      else if (event.data instanceof Error){
+        console.error(`On Processor Message ${event.data}`);
+      }
 		}
 	}
 

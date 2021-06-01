@@ -269,7 +269,8 @@ class MaxiProcessor extends AudioWorkletProcessor {
 		if (bufferName in this.sampleVectorBuffers) {
 			sample = this.sampleVectorBuffers[bufferName];
 		} else {
-			console.warn(`${bufferName} doesn't exist yet`);
+			// console.warn(`${bufferName} doesn't exist yet`);
+      throw new Error(`${bufferName} doesn't exist yet`);
 		}
 		return sample;
 	};
@@ -485,17 +486,10 @@ class MaxiProcessor extends AudioWorkletProcessor {
 			this.codeSwapState = this.codeSwapStates.QUEUD;
 
 		} catch (err) {
-			if (err instanceof TypeError) {
-				console.log(
-					"TypeError in worklet evaluation: " + err.name + " – " + err.message
-				);
-			} else {
-				console.log(
-					"Error in worklet evaluation: " + err.name + " – " + err.message
-				);
-				console.log(setupFunction);
-				console.log(loopFunction);
-			}
+  		// console.log(
+  		// 	"Error in worklet evaluation: " + err.name + " – " + err.message
+  		// );
+  		this.port.postMessage(err); //ready to suspend
 		}
 	};
 

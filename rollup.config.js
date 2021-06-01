@@ -7,7 +7,7 @@ import serve from "rollup-plugin-serve";
 import livereload from "rollup-plugin-livereload";
 import workerLoader from "rollup-plugin-web-worker-loader";
 import sourcemaps from "rollup-plugin-sourcemaps";
-import nodePolyfills from "rollup-plugin-node-polyfills";
+// import nodePolyfills from "rollup-plugin-node-polyfills";
 // import eslint from "@rollup/plugin-eslint";
 
 const isDevelopment = !process.env.BUILD;
