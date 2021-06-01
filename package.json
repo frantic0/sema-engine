@@ -1,6 +1,6 @@
 {
   "name": "sema-engine",
-  "version": "0.0.59",
+  "version": "0.0.60",
   "description": "Module containing Sema's signal engine and compiler for a live coding language ecosystem",
   "repository": {
     "type": "git",
@@ -23,6 +23,9 @@
   ],
   "module": "dist/sema-engine.mjs",
   "main": "dist/sema-engine.js",
+  "engines": {
+    "node": ">=14.4.0 <15"
+  },
   "scripts": {
     "build": "rollup -c --environment BUILD:development",
     "dev": "rollup -c -w",

@@ -423,6 +423,7 @@ export class Engine {
 			this.audioWorkletNode.port.postMessage({
 				hush: 1,
 			});
+      this.isHushed = true;
 			return true;
 		} else return false;
 	}
@@ -432,6 +433,7 @@ export class Engine {
 			this.audioWorkletNode.port.postMessage({
 				unhush: 1,
 			});
+      this.isHushed = false;
 			return true;
 		} else return false;
 	}
@@ -446,6 +448,7 @@ export class Engine {
 				setup: dspFunction.setup,
 				loop: dspFunction.loop,
 			});
+      this.isHushed = false;
 			return true;
 		} else return false;
 	}
@@ -678,6 +681,7 @@ export class Engine {
         this.isHushed = true;
 		  }
       else if (event.data instanceof Error){
+        // TODO use a logger to inject error
         console.error(`On Processor Message ${event.data}`);
       }
 		}
