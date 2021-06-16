@@ -50,17 +50,21 @@ export class Learner {
 		return new Promise( (resolve, reject) => {
 			let result = {};
 			if (this.worker && new URL(url)) {
+
 				this.worker.postMessage({ url });
+
 				this.worker.onerror = e => {
-				  console.log("onError");
+					console.log("onError");
           reject(e);
         };
+
 				this.worker.onmessage = e => {
 					result = e.data.init;
 					console.info("running Learner");
 					resolve(result);
-					this.worker.onmessage = this.onMessageHandler;
+					this.worker.onmessage = this.onMessageHandler.bind(this);
 				};
+
 			}
 		});
 	}
