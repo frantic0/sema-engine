@@ -17,7 +17,7 @@ export class Learner {
 	 */
 	constructor() {
 		// Manager of events subscrition and emission, that should be subscribed by SAB receivers
-		this.dispatcher = new Dispatcher();
+		// this.dispatcher = new Dispatcher();
 	}
 
 	/**
@@ -44,6 +44,7 @@ export class Learner {
 	 * @param {*} sab
 	 */
 	async init(url) {
+		this.dispatcher = new Dispatcher();
 		this.worker = new mlworker();
 
 		return new Promise( (resolve, reject) => {
