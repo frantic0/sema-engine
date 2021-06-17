@@ -62,7 +62,8 @@ export class Learner {
 					result = e.data.init;
 					console.info("running Learner");
 					resolve(result);
-					this.worker.onmessage = this.onMessageHandler.bind(this);
+					this.worker.onmessage = this.onMessageHandler;
+					// this.worker.onmessage = this.onMessageHandler.bind(this);
 				};
 
 			}
@@ -196,6 +197,7 @@ export class Learner {
 	 *
 	 */
 	terminate() {
+		this.worker.onmessage = null; // remove event handler subscription
 		this.worker.terminate();
 		this.worker = null; // make sure it is deleted by GC
 	}

@@ -81,17 +81,21 @@ export class Engine {
 	/**
 	 * Add learner instance
 	 */
-	async addLearner(learnerID, learner) {
+	async addLearner(id, learner) {
 		if (learner) {
 			try {
 				await learner.init(this.origin);
+
 				this.addEventListener("onSharedBuffer", (e) =>
 					learner.addSharedBuffer(e)
 				); // Engine's SAB emissions subscribed by Learner
+
 				learner.addEventListener("onSharedBuffer", (e) =>
 					this.addSharedBuffer(e)
 				); // Learner's SAB emissions subscribed by Engine
-				this.learners[learnerID] = learner;
+
+				this.learners[id] = learner;
+
 			} catch (error) {
 				console.error("Error adding Learner to Engine: ", error);
 			}
