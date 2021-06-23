@@ -17,7 +17,7 @@ export class Learner {
 	 */
 	constructor() {
 		// Manager of events subscrition and emission, that should be subscribed by SAB receivers
-		// this.dispatcher = new Dispatcher();
+		this.dispatcher = new Dispatcher();
 	}
 
 	/**
@@ -32,7 +32,7 @@ export class Learner {
 		else throw new Error("Error adding event listener to Learner");
 	}
 
-	removeEventListner(event, callback) {
+	removeEventListener(event, callback) {
 		if (this.dispatcher && event && callback)
 			this.dispatcher.removeEventListener(event, callback);
 		else throw new Error("Error removing event listener to Learner");
@@ -44,7 +44,7 @@ export class Learner {
 	 * @param {*} sab
 	 */
 	async init(url) {
-		this.dispatcher = new Dispatcher();
+		// this.dispatcher = new Dispatcher();
 		this.worker = new mlworker();
 
 		return new Promise( (resolve, reject) => {
@@ -62,8 +62,8 @@ export class Learner {
 					result = e.data.init;
 					console.info("running Learner");
 					resolve(result);
-					this.worker.onmessage = this.onMessageHandler;
-					// this.worker.onmessage = this.onMessageHandler.bind(this);
+					// this.worker.onmessage = this.onMessageHandler;
+					this.worker.onmessage = this.onMessageHandler.bind(this);
 				};
 
 			}

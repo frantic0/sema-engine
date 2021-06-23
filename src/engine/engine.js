@@ -84,6 +84,7 @@ export class Engine {
 	async addLearner(id, learner) {
 		if (learner) {
 			try {
+				// `this` is the scope that will
 				await learner.init(this.origin);
 
 				this.addEventListener("onSharedBuffer", (e) =>
@@ -103,9 +104,17 @@ export class Engine {
 	}
 
 	removeLearner(id) {
-		if (id && this.learners && this.learners[id]) {
-			delete this.learners[id];
-		} else throw new Error("Error removing Learner from Engine: ");
+		if (id){
+			if (this.learners && ( id in this.learners ) ) {
+				let learner = this.learners[id];
+				learner.removeEventListener("onSharedBuffer", (e) =>
+					this.addSharedBuffer(e)
+				);
+				learner = null;
+				delete this.learners[id];
+			}
+			// else throw new Error("Error removing Learner from Engine: ");
+		} else throw new Error("Error with learner ID when removing Learner from Engine");
 	}
 
 	/**
