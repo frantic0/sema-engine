@@ -81,10 +81,10 @@ export default [
 									src: "src/engine/maxi-processor.js",
 									dest: "dist",
 								},
-								{
-									src: "src/engine/sema-engine.wasmmodule.js",
-									dest: "dist",
-								},
+								// {
+								// 	src: "src/engine/sema-engine.wasmmodule.js",
+								// 	dest: "dist",
+								// },
 								{
 									src: "src/engine/open303.wasmmodule.js",
 									dest: "dist",
@@ -161,10 +161,10 @@ export default [
 									src: "src/engine/maxi-processor.js",
 									dest: "dist",
 								},
-								{
-									src: "assets/sema-engine.wasmmodule.js",
-									dest: "dist",
-								},
+								// {
+								// 	src: "assets/sema-engine.wasmmodule.js",
+								// 	dest: "dist",
+								// },
 								{
 									src: "assets/open303.wasmmodule.js",
 									dest: "dist",
