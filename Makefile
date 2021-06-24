@@ -14,7 +14,7 @@ MKDIR_P = mkdir -p
 POST_JS=src/maximilian.post.js
 
 # OUTPUT=$(BUILD_DIR)/maximilian.wasmmodule.js
-OUTPUT=$(BUILD_DIR)/sema-engine.wasm.js
+OUTPUT=$(BUILD_DIR)/sema-engine.wasmmodule.js
 
 
 # AudioWorklet working configuration

@@ -33,13 +33,13 @@ const globals = {
 export default [
 	{
 		input: "src/index.js",
-    onwarn,
+		onwarn,
 		output: [
 			{
 				file: pkg.module,
 				format: "es",
 				sourcemap: true,
-        globals
+				globals,
 				// sourcemap: isDevelopment ? true : "inline", // generate sourcemap files if true
 			},
 			{
@@ -47,7 +47,7 @@ export default [
 				format: "umd",
 				name: "sema-engine",
 				sourcemap: true,
-        globals
+				globals,
 				// sourcemap: isDevelopment ? true : "inline",
 			},
 			{
@@ -55,7 +55,7 @@ export default [
 				format: "iife",
 				name: "version",
 				sourcemap: true,
-        globals
+				globals,
 				// sourcemap: isDevelopment ? true : "inline", // do not generate sourcemap files if true
 				// plugins: [terser()],
 			},
@@ -66,9 +66,9 @@ export default [
 						resolve(), // so Rollup can find `nearley`
 						commonjs(), // so Rollup can convert `nearley` to an ES module
 						workerLoader(),
-            // nodePolyfills(),
+						// nodePolyfills(),
 						// {
-						//// debug the Rollup bundling process by injecting a hook in the plugin chain!
+						// 	// debug the Rollup bundling process by injecting a hook in the plugin chain!
 						// 	transform(code, id) {
 						// 		console.log(id);
 						// 		console.log(code);
@@ -138,6 +138,13 @@ export default [
 						resolve(), // so Rollup can find `nearley` f e.g.
 						commonjs(), // so Rollup can convert `nearley` to an ES module
 						workerLoader(/* configuration */),
+						// {
+						// 	// debug the Rollup bundling process by injecting a hook in the plugin chain!
+						// 	transform(code, id) {
+						// 		console.log(id);
+						// 		console.log(code);
+						// 	}, // not returning anything, so doesn't affect bundle
+						// },
 						sourcemaps(),
 						terser(),
 						copy({
