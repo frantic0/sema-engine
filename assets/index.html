@@ -193,9 +193,11 @@
       <button id="stopButton">Stop Engine</button>
       <button id="loadSamplesButton">Load Samples</button>
       <button id="learnerButton">Create Learner</button>
-      <!-- <button id="plusButton">Vol+</button>
+      <button id="plusButton">Vol+</button>
       <button id="minusButton">Vol–</button>
-      <button id="createAnalyserButton">Create Analyser</button> -->
+      <button id="hushButton">Hush–</button>
+      <button id="createAnalyserButton">Create Analyser</button>
+      <button id="createInputButton">Create Input</button>
       <button id="mouseButton">Mouse input</button>
       <span id="outputText"></span>
     </div>
@@ -231,13 +233,15 @@
       Engine,
       compile,
       Learner,
-      getBlock
+      getBlock,
+      takeOverConsole
     } from "./sema-engine.mjs";
 
     let engine,
         analyser = 0,
         dspCode,
-        learner
+        learner,
+        inputStreamConnected = false;
         ;
 
     const $ = (elemId, event, callback) =>
@@ -249,6 +253,7 @@
     $("playButton", "click", () => {
       if(!engine){
         try{
+          takeOverConsole();
           engine = new Engine();
           engine.init(origin);
         } catch (error) {
@@ -258,7 +263,10 @@
       engine.play();
     });
 
-    $("stopButton", "click", () => engine.stop());
+    $("stopButton", "click", () => {
+      engine.hush();
+      // engine.stop()
+    });
 
     $("loadSamplesButton", "click", () => {
       if(engine){
@@ -311,9 +319,28 @@
       else throw new Error('ERROR: Learner not initialized. Please press Create Learner first.')
     }
 
+    const createInput = async () => {
+      if(engine){
+        try{
+          if(!inputStreamConnected){
+            inputStreamConnected = await engine.connectMediaStream();
+          }
+          else {
+            inputStreamConnected = await engine.disconnectMediaStream();
+          }
+        } catch (err) {
+          console.error("ERROR: Failed to compile and eval: ", err);
+        }
+      }
+      else throw new Error('ERROR: Engine not initialized. Please press Start Engine first.')
+    }
+
+
     $("evalButton", "click", () => evalLiveCode() );
 
     $("evalJsButton", "click", async () => evalJs() );
+
+    $("createInputButton", "click", async () => createInput() );
 
     $("mouseButton", "click", () => {
       if(engine){
@@ -325,8 +352,8 @@
           let sab = engine.createSharedBuffer(id, ttype, blockSize);
 
           const onMouseMove = e => {
-            const x = e.offsetX/window.innerWidth;
-            const y = e.offsetY/window.innerHeight;
+            const x = e.pageX/window.innerWidth;
+            const y = e.pageY/window.innerHeight;
             document.getElementById('outputText').innerText = `${parseFloat(x).toFixed(5)} ${parseFloat(y).toFixed(5)}`;
             engine.pushDataToSharedBuffer(id, [ x, y ]);
           }
@@ -352,6 +379,9 @@
       else throw new Error('ERROR: Engine not initialized. Please press Start Engine first.')
     });
 
+
+
+
     (() => {
       // Subscribe Left `Alt`-key down event to subscribe mouse move
       document.addEventListener("keydown", e => {
@@ -364,9 +394,31 @@
       });
     })();
 
-    // $("minusButton", "click", () => engine.less());
-    // $("plusButton", "click", () => engine.more());
-    // $("createAnalyserButton", "click", () => engine.createAnalyser(analyser++, data => console.log(data)) );
+    function sabPrinter() {
+      try {
+        for (let v in engine.sharedArrayBuffers) {
+          let avail = engine.sharedArrayBuffers[v].rb.available_read();
+          if ( avail > 0 && avail != engine.sharedArrayBuffers[v].rb.capacity ) {
+            for (let i = 0; i < avail; i += engine.sharedArrayBuffers[v].blocksize) {
+              if(engine.sharedArrayBuffers[v].ttype === 'scope'){
+                let val = new Float64Array(engine.sharedArrayBuffers[v].blocksize);
+                engine.sharedArrayBuffers[v].rb.pop(val);
+                console.log(v, val);
+              }
+            }
+          }
+        }
+        setTimeout(sabPrinter, 20);
+      } catch (error) {
+        // console.log(error);
+        setTimeout(sabPrinter, 100);
+      }
+    }
+
+    $("minusButton", "click", () => engine.less());
+    $("plusButton", "click", () => engine.more());
+    $("hushButton", "click", () => engine.hush());
+    $("createAnalyserButton", "click", () => sabPrinter() );
 
   </script>
   <script>
@@ -399,7 +451,7 @@
       return editor;
     }
 
-    const editorLivecode = setupEditorWithContent("textArea-livecode", '/langs/default-5-lc.txt');
+    const editorLivecode = setupEditorWithContent("textArea-livecode", '/langs/default-9-lc.txt');
     const editorGrammar =  setupEditorWithContent("textArea-grammar",  '/langs/default-grammar.txt');
     const editorJS =       setupEditorWithContent("textArea-js",       '/js/default-3-js.txt');
     // const editorLivecode = setupEditorWithContent("textArea-livecode", '/langs/rubber-duckling-lc-1.txt');

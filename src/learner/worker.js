@@ -6,62 +6,79 @@ self.RingBuffer = RingBuffer;
 var outputSABs = {};
 
 class MLSABOutputTransducer {
+	constructor(ttype, channel, blocksize) {
+		this.channel = channel;
+		this.blocksize = blocksize;
+		//check for existing channels
+		if (channel in outputSABs && outputSABs[channel].blocksize == blocksize) {
+			//reuse existing
+			this.ringbuf = outputSABs[channel].rb;
+		} else {
+			//create a new SAB and notify the receiver
+			this.sab = RingBuffer.getStorageForCapacity(32 * blocksize, Float64Array);
+			this.ringbuf = new RingBuffer(this.sab, Float64Array);
 
-  constructor(bufferType, channel, blocksize) {
-    this.channel = channel;
-    this.blocksize = blocksize;
-      //check for existing channels
-    if (channel in outputSABs && outputSABs[channel].blocksize == blocksize) {
-      //reuse existing
-      this.ringbuf = outputSABs[channel].rb;
-    }else{
-      //create a new SAB and notify the receiver
-      this.sab = RingBuffer.getStorageForCapacity(32 * blocksize, Float64Array);
-      this.ringbuf = new RingBuffer(this.sab, Float64Array);
+			outputSABs[channel] = {
+				rb: this.ringbuf,
+				sab: this.sab,
+				created: Date.now(),
+				blocksize: blocksize,
+			};
 
-      outputSABs[channel] = {
-        rb:this.ringbuf,
-        sab:this.sab,
-        created:Date.now(),
-        blocksize:blocksize };
+			postMessage({
+				func: "sab",
+				value: this.sab,
+				ttype: ttype,
+				channelID: channel,
+				blocksize: blocksize,
+			});
+		}
+	}
 
-      postMessage({
-        func: 'sab',
-        value: this.sab,
-        ttype: bufferType,
-        channelID: channel,
-        blocksize:blocksize
-      });
-    }
-  }
-
-  send(value) {
-    if (this.ringbuf.available_write() > 1) {
-      if (typeof(value) == "number") {
-        this.ringbuf.push(new Float64Array([value]));
-      }else{
-        if (value.length == this.blocksize) {
-          this.ringbuf.push(value);
-        }else if (value.length < this.blocksize) {
-          let newVal = new Float64Array(this.blocksize);
-          for(let i in value) newVal[i] = value[i];
-          this.ringbuf.push(newVal);
-        }else{
-          this.ringbuf.push(value.slice(0,this.blocksize));
-        }
-      }
-    }
-  }
-
+	send(value) {
+		if (this.ringbuf.available_write() > 1) {
+			if (typeof value == "number") {
+				this.ringbuf.push(new Float64Array([value]));
+			} else {
+				if (value.length == this.blocksize) {
+					this.ringbuf.push(value);
+				} else if (value.length < this.blocksize) {
+					let newVal = new Float64Array(this.blocksize);
+					for (let i in value) newVal[i] = value[i];
+					this.ringbuf.push(newVal);
+				} else {
+					this.ringbuf.push(value.slice(0, this.blocksize));
+				}
+			}
+		}
+	}
 }
 
 self.createOutputChannel = ( id, blocksize ) => {
   return new MLSABOutputTransducer('ML', id, blocksize);
 };
 
+/**
+ * User-defined function that acts as an event handler
+ * @param {*} value
+ * @param {*} channel
+ */
 self.input = ( value, channel ) => {}
 
-self.output = ( value, channel ) => { postMessage( { func:'data', val:value, ch:channel }); }
+//
+/**
+ * User-invokable function in the JS editor to direct value x to output channel
+ * @param {*} value
+ * @param {*} channel
+ */
+self.output = ( value, channel ) => {
+  postMessage( {
+                  func: 'data',
+                  val: value,
+                  ch: channel
+                }
+  );
+}
 
 self.loadResponders = {};
 
@@ -163,19 +180,19 @@ self.sema = {
 function initWithURL(url){
   if( new URL(url) ){
     try {
-      importScripts(url + "/lalolib.js");
+      // importScripts(url + "/lalolib.js");
     } catch (err) {
       console.error("ERROR: importScripts – lalolib.js ", err);
     }
     try{
-      importScripts(url + "/svd.js");
+      // importScripts(url + "/svd.js");
     } catch (err) {
       console.error("ERROR: importScripts – svd.js ", err);
     }
     try{
-      importScripts(
-        "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs/dist/tf.min.js"
-      );
+      // importScripts(
+      //   "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs/dist/tf.min.js"
+      // );
     } catch (err) {
       console.error("ERROR: importScripts – tfjs", err);
     }
@@ -207,8 +224,10 @@ onmessage = m => {
 
   if(m.data.url)
     initWithURL(m.data.url);
+
   else if (m.data.eval)
     gevalToConsole(m.data.eval);
+
   else if ("val" in m.data) {
     // console.log("DEBUG:ml.worker:onmessage:val");
     let val = m.data.val;
@@ -218,8 +237,10 @@ onmessage = m => {
     // console.log(loadResponders);
     loadResponders[m.data.name](val);
     delete loadResponders[m.data.name];
+
   } else if (m.data.type === "model-input-data") {
     input(m.data.value, m.data.ch);
+
   } else if (m.data.sab){
     console.info('buffer received');
     let sab = m.data.sab;

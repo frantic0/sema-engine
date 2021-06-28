@@ -2,10 +2,14 @@
 // which is different from maxi-processor that
 // dynamically loads from the adjacent ringBuf.js file
 import { RingBuffer } from 'ringbuf.js'; //thanks padenot
+
 import {
   loadSampleToArray
 } from './maximilian.util.js';
+
 import Dispatcher from '../common/dispatcher.js';
+import { expect } from 'chai';
+// import { isThisTypeNode } from 'typescript';
 // import {
 //   kuramotoNetClock
 // } from './interfaces/clockInterface.js';
@@ -61,6 +65,9 @@ export class Engine {
 		// and loaded from localStorage before user-triggered audioContext init
 		this.analysers = {};
 
+		this.mediaStreamSource = {};
+		this.mediaStream = {};
+
 		// Shared array buffers for sharing client side data to the audio engine- e.g. mouse coords
 		this.sharedArrayBuffers = {};
 
@@ -68,34 +75,47 @@ export class Engine {
 		this.dispatcher = new Dispatcher();
 
 		this.samplesLoaded = false;
+    this.isHushed = false;
 	}
 
 	/**
 	 * Add learner instance
 	 */
-	async addLearner(learnerID, learner) {
+	async addLearner(id, learner) {
 		if (learner) {
 			try {
+				// `this` is the scope that will
 				await learner.init(this.origin);
+
 				this.addEventListener("onSharedBuffer", (e) =>
 					learner.addSharedBuffer(e)
 				); // Engine's SAB emissions subscribed by Learner
+
 				learner.addEventListener("onSharedBuffer", (e) =>
 					this.addSharedBuffer(e)
 				); // Learner's SAB emissions subscribed by Engine
-				this.learners[learnerID] = learner;
+
+				this.learners[id] = learner;
+
 			} catch (error) {
 				console.error("Error adding Learner to Engine: ", error);
 			}
 		} else throw new Error("Error adding Learner instance to Engine");
 	}
 
-  removeLearner(id){
-    if(id && this.learners && this.learners[id]){
-      delete this.learners[id];
-    }
-    else throw new Error("Error removing Learner from Engine: ");
-  }
+	removeLearner(id) {
+		if (id){
+			if (this.learners && ( id in this.learners ) ) {
+				let learner = this.learners[id];
+				learner.removeEventListener("onSharedBuffer", (e) =>
+					this.addSharedBuffer(e)
+				);
+				learner = null;
+				delete this.learners[id];
+			}
+			// else throw new Error("Error removing Learner from Engine: ");
+		} else throw new Error("Error with learner ID when removing Learner from Engine");
+	}
 
 	/**
 	 * Engine's event subscription
@@ -143,36 +163,34 @@ export class Engine {
 	 * @param {*} e
 	 */
 	addSharedBuffer(e) {
-    if (e){
-      if( e.value && e.value instanceof SharedArrayBuffer ) {
-        try {
-          let ringbuf = new RingBuffer(e.value, Float64Array);
-          this.audioWorkletNode.port.postMessage({
-            func: "sab",
-            value: e.value,
-            ttype: e.ttype,
-            channelID: e.channelID,
-            blocksize: e.blocksize,
-          });
+		if (e) {
+			if (e.value && e.value instanceof SharedArrayBuffer) {
+				try {
+					let ringbuf = new RingBuffer(e.value, Float64Array);
+					this.audioWorkletNode.port.postMessage({
+						func: "sab",
+						value: e.value,
+						ttype: e.ttype,
+						channelID: e.channelID,
+						blocksize: e.blocksize,
+					});
 
-          this.sharedArrayBuffers[e.channelID] = {
-            sab: e.value, // TODO this is redundant, you can access the sab from the rb,
-            // TODO also change hashmap name it is confusing and induces error
-            rb: ringbuf,
-          };
-        } catch (err) {
-          console.error("Error pushing SharedBuffer to engine");
-        }
-      }
-      else if ( e.name && e.data ) {
-        this.audioWorkletNode.port.postMessage({
+					this.sharedArrayBuffers[e.channelID] = {
+						sab: e.value, // TODO this is redundant, you can access the sab from the rb,
+						// TODO also change hashmap name it is confusing and induces error
+						rb: ringbuf,
+					};
+				} catch (err) {
+					console.error("Error pushing SharedBuffer to engine");
+				}
+			} else if (e.name && e.data) {
+				this.audioWorkletNode.port.postMessage({
 					func: "sendbuf",
 					name: e.name,
 					data: e.data,
 				});
-      }
-    }
-    else throw new Error("Error with onSharedBuffer event");
+			}
+		} else throw new Error("Error with onSharedBuffer event");
 	}
 
 	/**
@@ -218,50 +236,49 @@ export class Engine {
 	 */
 	createAnalyser(analyserID, callback) {
 		// If Analyser creation happens after AudioContext intialization, create and connect WAAPI analyser
-		if (
-			this.audioContext !== undefined &&
-			analyserID !== undefined &&
-			callback !== undefined
-		) {
-			let analyser = this.audioContext.createAnalyser();
-			analyser.smoothingTimeConstant = 0.25;
-			analyser.fftSize = 256; // default 2048;
-			analyser.minDecibels = -90; // default
-			analyser.maxDecibels = -0; // default -10; max 0
-			this.audioWorkletNode.connect(analyser);
+		if (analyserID && callback){
+      if(this.audioContext && this.audioWorkletNode ) {
 
-			let analyserFrameId = -1,
-				analyserData = {};
+        let analyser = this.audioContext.createAnalyser();
+        analyser.smoothingTimeConstant = 0.25;
+        analyser.fftSize = 256; // default 2048;
+        analyser.minDecibels = -90; // default
+        analyser.maxDecibels = -0; // default -10; max 0
+        this.audioWorkletNode.connect(analyser);
 
-			this.analysers[analyserID] = {
-				analyser,
-				analyserFrameId,
-				callback,
-			};
+        let analyserFrameId = -1,
+            analyserData = {};
 
-			/**
-			 * Creates requestAnimationFrame loop for polling data and publishing
-			 * Returns Analyser Frame ID for adding to Analysers hash
-			 * and cancelling animation frame
-			 */
-			const analyserPollingLoop = () => {
-				analyserData = this.pollAnalyserData(
-					this.analysers[analyserID].analyser
-				);
-				this.analysers[analyserID].callback(analyserData); // Invoke callback that carries
-				// This will guarantee feeding poll request at steady animation framerate
-				this.analysers[analyserID].analyserFrameId = requestAnimationFrame(
-					analyserPollingLoop
-				);
-				return analyserFrameId;
-			};
+        this.analysers[analyserID] = {
+          analyser,
+          analyserFrameId,
+          callback,
+        };
 
-			analyserPollingLoop();
+        /**
+         * Creates requestAnimationFrame loop for polling data and publishing
+         * Returns Analyser Frame ID for adding to Analysers hash
+         * and cancelling animation frame
+         */
+        const analyserPollingLoop = () => {
+          analyserData = this.pollAnalyserData(
+            this.analysers[analyserID].analyser
+          );
+          this.analysers[analyserID].callback(analyserData); // Invoke callback that carries
+          // This will guarantee feeding poll request at steady animation framerate
+          this.analysers[analyserID].analyserFrameId = requestAnimationFrame(
+            analyserPollingLoop
+          );
+          return analyserFrameId;
+        };
+
+        analyserPollingLoop();
 
 			// Other if AudioContext is NOT created yet (after app load, before splashScreen click)
-		} else if (this.audioContext === undefined) {
-			this.analysers[analyserID] = { callback };
-		}
+      } else {
+        this.analysers[analyserID] = { callback };
+      }
+    } else throw new Error('Parameters to createAnalyser incorrect')
 	}
 
 	/**
@@ -279,10 +296,7 @@ export class Engine {
 	 * @removeAnalyser
 	 */
 	removeAnalyser(event) {
-		if (
-			this.audioContext !== undefined &&
-			this.audioWorkletNode !== undefined
-		) {
+		if ( this.audioContext && this.audioWorkletNode ) {
 			let analyser = this.analysers[event.id];
 			if (analyser !== undefined) {
 				cancelAnimationFrame(this.analysers[event.id].analyserFrameId);
@@ -300,24 +314,32 @@ export class Engine {
 	 */
 	async init(origin) {
 		if (origin && new URL(origin)) {
-			// AudioContext needs lazy loading to workaround the Chrome warning
-			// Audio Engine first play() call, triggered by user, prevents the warning
-			// by setting this.audioContext = new AudioContext();
-			this.audioContext;
-			this.origin = origin;
-			this.audioWorkletName = "maxi-processor";
-			this.audioWorkletUrl = origin + "/" + this.audioWorkletName + ".js";
 
-			if (this.audioContext === undefined) {
-				this.audioContext = new AudioContext({
-					// create audio context with latency optimally configured for playback
-					latencyHint: "playback",
-					// latencyHint: 32/44100,  //this doesn't work below 512 on chrome (?)
-					// sampleRate: 44100
-				});
-			}
+      let isWorkletProcessorLoaded;
 
-			let isWorkletProcessorLoaded = await this.loadWorkletProcessorCode();
+      try{
+        // AudioContext needs lazy loading to workaround the Chrome warning
+        // Audio Engine first play() call, triggered by user, prevents the warning
+        // by setting this.audioContext = new AudioContext();
+        this.audioContext;
+        this.origin = origin;
+        this.audioWorkletName = "maxi-processor";
+        this.audioWorkletUrl = origin + "/" + this.audioWorkletName + ".js";
+
+        if (this.audioContext === undefined) {
+          this.audioContext = new AudioContext({
+            // create audio context with latency optimally configured for playback
+            latencyHint: "playback",
+            // latencyHint: 32/44100,  //this doesn't work below 512 on chrome (?)
+            // sampleRate: 44100
+          });
+        }
+
+        isWorkletProcessorLoaded = await this.loadWorkletProcessorCode();
+      }
+      catch(err){
+        return false;
+      }
 
 			if (isWorkletProcessorLoaded) {
 				this.connectWorkletNode();
@@ -348,12 +370,13 @@ export class Engine {
 	 */
 	play() {
 		if (this.audioContext !== undefined) {
-			if (this.audioContext.state !== "suspended") {
-				this.stop();
-				return false;
-			} else {
+			if (this.audioContext.state === "suspended") {
 				this.audioContext.resume();
 				return true;
+			} else {
+				this.hush();
+				// this.stop();
+				return false;
 			}
 		}
 	}
@@ -364,7 +387,8 @@ export class Engine {
 	 */
 	stop() {
 		if (this.audioWorkletNode !== undefined) {
-			this.audioContext.suspend();
+			this.hush();
+			// this.audioContext.suspend();
 		}
 	}
 
@@ -380,20 +404,49 @@ export class Engine {
 		}
 	}
 
-	more(gain) {
-		if (this.audioWorkletNode !== undefined) {
-			const gainParam = this.audioWorkletNode.parameters.get(gain);
-			gainParam.value += 0.5;
-			console.log(gain + ": " + gainParam.value); // DEBUG
+	setGain(gain) {
+		if (this.audioWorkletNode !== undefined && gain >= 0 && gain <= 1) {
+			const gainParam = this.audioWorkletNode.parameters.get("gain");
+			gainParam.value = gain;
+			console.log(gainParam.value); // DEBUG
 			return true;
 		} else return false;
 	}
 
-	less(gain) {
+	more() {
 		if (this.audioWorkletNode !== undefined) {
-			const gainParam = this.audioWorkletNode.parameters.get(gain);
-			gainParam.value -= 0.5;
-			console.log(gain + ": " + gainParam.value); // DEBUG
+			const gainParam = this.audioWorkletNode.parameters.get("gain");
+			gainParam.value += 0.05;
+			console.info(gainParam.value); // DEBUG
+			return gainParam.value;
+		} else throw new Error("error increasing sound level");
+	}
+
+	less() {
+		if (this.audioWorkletNode !== undefined) {
+			const gainParam = this.audioWorkletNode.parameters.get("gain");
+			gainParam.value -= 0.05;
+			console.info(gainParam.value); // DEBUG
+			return gainParam.value;
+		} else throw new Error("error decreasing sound level");
+	}
+
+	hush() {
+		if (this.audioWorkletNode !== undefined) {
+			this.audioWorkletNode.port.postMessage({
+				hush: 1,
+			});
+      this.isHushed = true;
+			return true;
+		} else return false;
+	}
+
+	unHush() {
+		if (this.audioWorkletNode !== undefined) {
+			this.audioWorkletNode.port.postMessage({
+				unhush: 1,
+			});
+      this.isHushed = false;
 			return true;
 		} else return false;
 	}
@@ -408,6 +461,7 @@ export class Engine {
 				setup: dspFunction.setup,
 				loop: dspFunction.loop,
 			});
+      this.isHushed = false;
 			return true;
 		} else return false;
 	}
@@ -437,15 +491,25 @@ export class Engine {
 	}
 
 	onAudioInputInit(stream) {
-		// console.log('DEBUG:AudioEngine: Audio Input init');
-		let mediaStreamSource = this.audioContext.createMediaStreamSource(stream);
-		mediaStreamSource.connect(this.audioWorkletNode);
+    try {
+      this.mediaStreamSource = this.audioContext.createMediaStreamSource(stream);
+      this.mediaStreamSource.connect(this.audioWorkletNode);
+      this.mediaStream = stream;
+      this.mediaStreamSourceConnected = true;
+    } catch (error) {
+      console.error(error);
+    }
 	}
 
 	onAudioInputFail(error) {
+		this.mediaStreamSourceConnected = false;
 		console.error(
 			`ERROR:Engine:AudioInputFail: ${error.message} ${error.name}`
 		);
+	}
+
+	onAudioInputDisconnect() {
+
 	}
 
 	/**
@@ -453,15 +517,47 @@ export class Engine {
 	 * @connectMediaStreamSourceInput
 	 */
 	async connectMediaStream() {
-		const constraints = (window.constraints = {
-			audio: true,
+		const constraints = ( window.constraints = {
+      audio: {
+        latency: 0.02,
+        echoCancellation: false,
+        mozNoiseSuppression: false,
+        mozAutoGainControl: false
+      },
 			video: false,
 		});
-
-		navigator.mediaDevices
+    // onAudioInputDisconnect();
+		await navigator.mediaDevices
 			.getUserMedia(constraints)
-			.then((s) => this.onAudioInputInit(s))
+			.then( s => this.onAudioInputInit(s) )
 			.catch(this.onAudioInputFail);
+
+		return this.mediaStreamSourceConnected;
+	}
+
+	/**
+	 * Breaks up an AudioIn WAAPI sub-graph
+	 * @disconnectMediaStreamSourceInput
+	 */
+	async disconnectMediaStream() {
+
+    try {
+			this.mediaStreamSource.disconnect(this.audioWorkletNode);
+			this.mediaStream.getAudioTracks().forEach((at) => at.stop());
+			this.mediaStreamSource = null;
+			this.mediaStreamSourceConnected = false;
+		} catch (error) {
+			console.error(error);
+		}
+    finally {
+      return this.mediaStreamSourceConnected;
+    }
+		// await navigator.mediaDevices
+		// 	.getUserMedia(constraints)
+		// 	.then((s) => this.onAudioInputDisconnect(s))
+		// 	.catch(this.onAudioInputFail);
+
+
 	}
 
 	/**
@@ -518,15 +614,12 @@ export class Engine {
 				// All possible error event handlers subscribed
 				this.audioWorkletNode.onprocessorerror = (e) =>
 					// Errors from the processor
-					console.error(
-						`Engine processor error detected`, e
-					);
+					console.error(`Engine processor error detected`, e);
 
 				// Subscribe state changes in the audio worklet processor
 				this.audioWorkletNode.onprocessorstatechange = (e) =>
 					console.info(
-						`Engine processor state change: ` +
-							audioWorkletNode.processorState
+						`Engine processor state change: ` + audioWorkletNode.processorState
 					);
 
 				// Subscribe errors from the processor port
@@ -537,6 +630,7 @@ export class Engine {
 				// gets replaced by user callback with 'subscribeAsyncMessage'
 				this.audioWorkletNode.port.onmessage = (e) =>
 					this.onProcessorMessageHandler(e);
+
 			} catch (err) {
 				console.error("Error connecting WorkletNode: ", err);
 			}
@@ -576,8 +670,33 @@ export class Engine {
 							blocksize: event.data.blocksize,
 						});
 						break;
+					case "scope":
+						// this.dispatcher.dispatch("onSharedBuffer", {
+						// 	sab: event.data.value,
+						// 	channelID: event.data.channelID, //channel ID
+						// 	blocksize: event.data.blocksize,
+						// });
+
+						let ringbuf = new RingBuffer(event.data.value, Float64Array);
+
+						this.sharedArrayBuffers[event.data.channelID] = {
+							sab: event.data.value, // TODO: this is redundant, you can access the sab from the rb,
+							// TODO change hashmap name it is confusing and induces error
+							rb: ringbuf,
+							ttype: event.data.ttype,
+							channelID: event.data.channelID, //channel ID
+							blocksize: event.data.blocksize,
+						};
+						break;
 				}
-			}
+			} else if (event.data.rq && event.data.rq === "rts") { // ready to suspend
+		  	this.audioContext.suspend();
+        this.isHushed = true;
+		  }
+      else if (event.data instanceof Error){
+        // TODO use a logger to inject error
+        console.error(`On Processor Message ${event.data}`);
+      }
 		}
 	}
 

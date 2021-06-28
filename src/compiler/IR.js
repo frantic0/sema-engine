@@ -204,6 +204,18 @@ var jsFuncMap = {
 	// 	setup: (o, p) => `${o} = this.createMLOutputTransducer(${p[0].loop})`,
 	// 	loop:  (o, p) => `${o}.send(${p[1].loop}, ${p[2].loop})`
 	// },
+	scop: {
+		//freq, data, channel, [blocksize]
+		setup: (o, p) =>
+			`${o} = new SABOutputTransducer(outputSABs,
+                                      this.port,
+                                      'scope',
+                                      ${p[1].loop},
+                                      this.currentSample,
+                                      ${p.length == 3 ? 1 : p[3].loop})`,
+		loop: (o, p) => `${o}.send(${p[0].loop}, ${p[2].loop})`,
+	},
+
 	toJS: {
 		//freq, data, channel, [blocksize]
 		setup: (o, p) =>
@@ -430,6 +442,19 @@ var jsFuncMap = {
 		loop: (o, p) =>
 			`(()=>{this.setBPM(${p[0].loop}); this.setBeatsPerBar(${p[1].loop});})()`,
 	},
+	/*quantise code evaluations to the bar. 
+	values from maxiProcessor
+		this.codeQuantModes = {
+			QUANTISE_TO_BAR: 0,
+			DONTQUANTISE:1 
+		};
+*/
+	quantise: {
+		setup: (o, p) => `this.setCodeQuantiseMode(${p[0].loop > 0 ? 0 : 1})`,
+		loop: (o, p) =>
+			"",
+	},
+
 
 	onzx: {
 		setup: (o, p) => `${o} = new Maximilian.maxiTrigger();`,

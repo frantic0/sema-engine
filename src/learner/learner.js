@@ -32,7 +32,7 @@ export class Learner {
 		else throw new Error("Error adding event listener to Learner");
 	}
 
-	removeEventListner(event, callback) {
+	removeEventListener(event, callback) {
 		if (this.dispatcher && event && callback)
 			this.dispatcher.removeEventListener(event, callback);
 		else throw new Error("Error removing event listener to Learner");
@@ -44,26 +44,35 @@ export class Learner {
 	 * @param {*} sab
 	 */
 	async init(url) {
+		// this.dispatcher = new Dispatcher();
 		this.worker = new mlworker();
 
-		return new Promise((resolve, reject) => {
+		return new Promise( (resolve, reject) => {
 			let result = {};
 			if (this.worker && new URL(url)) {
+
 				this.worker.postMessage({ url });
-				this.worker.onerror = this.onErrorHandler;
-				this.worker.onmessage = (e) => {
+
+				this.worker.onerror = e => {
+					console.log("onError");
+          reject(e);
+        };
+
+				this.worker.onmessage = e => {
 					result = e.data.init;
 					console.info("running Learner");
 					resolve(result);
-					this.worker.onmessage = this.onMessageHandler;
+					// this.worker.onmessage = this.onMessageHandler;
+					this.worker.onmessage = this.onMessageHandler.bind(this);
 				};
+
 			}
 		});
 	}
 
-	onMessageHandler = (m) => {
+	onMessageHandler(m){
 
-		if (m && m.data && m.data.func) {
+		if ( m && m.data && m.data.func ) {
 
 			let responders = {
 
@@ -98,7 +107,11 @@ export class Learner {
 				sendcode: (data) => {
 					// console.log(data);
 				},
-
+        // DEPRECATED
+        data: () => {
+					// Publish data to audio engine
+					// messaging.publish("model-output-data", data);
+				},
 				pbcopy: (data) => {
 					copyToPasteBuffer(data.msg);
 					// let copyField=document.getElementById("hiddenCopyField");
@@ -134,10 +147,6 @@ export class Learner {
 	// 	// console.log(e);
 	// };
 
-	onErrorHandler = (e) => {
-		console.log("onError");
-		console.log(e);
-	};
 
 	/**
 	 *
@@ -188,6 +197,7 @@ export class Learner {
 	 *
 	 */
 	terminate() {
+		this.worker.onmessage = null; // remove event handler subscription
 		this.worker.terminate();
 		this.worker = null; // make sure it is deleted by GC
 	}

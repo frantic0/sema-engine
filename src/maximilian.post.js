@@ -2,8 +2,14 @@
 
 "use strict";
 
+// console.log(
+// 	"running %cmaximilian-wasm v.0.0.1 (Wasm)",
+// 	"font-weight: bold; background: #000; color: #bada55"
+// );
+
+
 console.log(
-	"running %cmaximilian-wasm v.0.0.1 (Wasm)",
+	"running %cMaximilian v2.4.0 (Wasm)",
 	"font-weight: bold; background: #000; color: #bada55"
 );
 

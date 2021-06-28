@@ -25,11 +25,12 @@ export class SABInputTransducer {
 }
 
 export class SABOutputTransducer {
-	constructor(outputSABs, port, bufferType, channel, now, blocksize) {
+	constructor(outputSABs, port, ttype, channel, now, blocksize) {
 		this.port = port;
 		this.zx = new Maximilian.maxiTrigger();
 		this.channel = channel;
 		this.blocksize = blocksize;
+    this.ttype = ttype;
 
 		//check for existing channels
 		if (channel in outputSABs && outputSABs[channel].blocksize == blocksize) {
@@ -39,7 +40,8 @@ export class SABOutputTransducer {
 			//create a new SAB and notify the receiver
 			this.sab = RingBuffer.getStorageForCapacity(32 * blocksize, Float64Array);
 			this.ringbuf = new RingBuffer(this.sab, Float64Array);
-			outputSABs[channel] = {
+
+      outputSABs[channel] = {
 				rb: this.ringbuf,
 				sab: this.sab,
 				created: now,
@@ -49,7 +51,7 @@ export class SABOutputTransducer {
 			this.port.postMessage({
 				rq: "buf",
 				value: this.sab,
-				ttype: bufferType,
+				ttype: ttype,
 				channelID: channel,
 				blocksize: blocksize,
 			});

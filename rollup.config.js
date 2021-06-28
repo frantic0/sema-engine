@@ -7,6 +7,7 @@ import serve from "rollup-plugin-serve";
 import livereload from "rollup-plugin-livereload";
 import workerLoader from "rollup-plugin-web-worker-loader";
 import sourcemaps from "rollup-plugin-sourcemaps";
+// import nodePolyfills from "rollup-plugin-node-polyfills";
 // import eslint from "@rollup/plugin-eslint";
 
 const isDevelopment = !process.env.BUILD;
@@ -18,31 +19,43 @@ const onwarn = (warning, warn) =>  {
 	warn(warning)
 }
 
+const globals = {
+  process: 'process',
+  perf_hooks: 'perf_hooks',
+  fs: 'fs',
+  path: 'path',
+  os: 'os',
+  crypto: 'crypto',
+  buffer: 'buffer',
+  inspector: 'inspector'
+}
 
 export default [
-
 	{
 		input: "src/index.js",
-    onwarn,
+		onwarn,
 		output: [
 			{
 				file: pkg.module,
 				format: "es",
-				sourcemap: true
+				sourcemap: true,
+				globals,
 				// sourcemap: isDevelopment ? true : "inline", // generate sourcemap files if true
 			},
 			{
 				file: pkg.main,
 				format: "umd",
 				name: "sema-engine",
-				sourcemap: true
+				sourcemap: true,
+				globals,
 				// sourcemap: isDevelopment ? true : "inline",
 			},
 			{
 				file: "dist/sema-engine.min.js",
 				format: "iife",
 				name: "version",
-				sourcemap: true
+				sourcemap: true,
+				globals,
 				// sourcemap: isDevelopment ? true : "inline", // do not generate sourcemap files if true
 				// plugins: [terser()],
 			},
@@ -53,8 +66,9 @@ export default [
 						resolve(), // so Rollup can find `nearley`
 						commonjs(), // so Rollup can convert `nearley` to an ES module
 						workerLoader(),
+						// nodePolyfills(),
 						// {
-						//// debug the Rollup bundling process by injecting a hook in the plugin chain!
+						// 	// debug the Rollup bundling process by injecting a hook in the plugin chain!
 						// 	transform(code, id) {
 						// 		console.log(id);
 						// 		console.log(code);
@@ -67,10 +81,10 @@ export default [
 									src: "src/engine/maxi-processor.js",
 									dest: "dist",
 								},
-								{
-									src: "src/engine/sema-engine.wasmmodule.js",
-									dest: "dist",
-								},
+								// {
+								// 	src: "src/engine/sema-engine.wasmmodule.js",
+								// 	dest: "dist",
+								// },
 								{
 									src: "src/engine/open303.wasmmodule.js",
 									dest: "dist",
@@ -124,6 +138,13 @@ export default [
 						resolve(), // so Rollup can find `nearley` f e.g.
 						commonjs(), // so Rollup can convert `nearley` to an ES module
 						workerLoader(/* configuration */),
+						// {
+						// 	// debug the Rollup bundling process by injecting a hook in the plugin chain!
+						// 	transform(code, id) {
+						// 		console.log(id);
+						// 		console.log(code);
+						// 	}, // not returning anything, so doesn't affect bundle
+						// },
 						sourcemaps(),
 						terser(),
 						copy({
@@ -140,10 +161,10 @@ export default [
 									src: "src/engine/maxi-processor.js",
 									dest: "dist",
 								},
-								{
-									src: "assets/sema-engine.wasmmodule.js",
-									dest: "dist",
-								},
+								// {
+								// 	src: "assets/sema-engine.wasmmodule.js",
+								// 	dest: "dist",
+								// },
 								{
 									src: "assets/open303.wasmmodule.js",
 									dest: "dist",
