@@ -6,8 +6,6 @@ EMSCR=em++
 
 SRC=src/maximilian/src/maximilian.cpp
 SRC_EM=src/maximilian/src/maximilian.embind.cpp
-# SRC_LIBS=../../../src/libs/*.cpp
-# SRC_LIBS=../../src/libs/maxiSynths.cpp
 SRC_LIBS=src/maximilian/src/libs/maxiSynths.cpp src/maximilian/src/libs/maxiGrains.cpp src/maximilian/src/libs/maxiFFT.cpp src/maximilian/src/libs/fft.cpp src/maximilian/src/libs/maxiMFCC.cpp
 C_SRC_LIBS=src/maximilian/src/libs/stb_vorbis.c
 
@@ -15,20 +13,21 @@ BUILD_DIR=dist
 MKDIR_P = mkdir -p
 
 # POST_JS compilation – appending external js handling web audio and PureJS CHEERP transpilation
-POST_JS=src/maximilian.post.js
+# POST_JS=src/maximilian.post.js
+POST_JS=src/maxi-processor.post.js
 TRANSPILE=$(BUILD_DIR)/maximilian.transpile.js
 
-OUTPUT=$(BUILD_DIR)/sema-engine.wasmmodule.js
 
 
 # OUTPUT=$(BUILD_DIR)/maximilian.wasmmodule.js
-OUTPUT=$(BUILD_DIR)/sema-engine.wasmmodule.js
+# OUTPUT=$(BUILD_DIR)/sema-engine.wasmmodule.js
+OUTPUT=$(BUILD_DIR)/maxi-processor.js
 
 
 # AudioWorklet working configuration
 
 CFLAGS=--bind -O3\
-	-s WASM=1 \
+	-s WASM=0 \
 	-s BINARYEN_ASYNC_COMPILATION=0 \
 	-s SINGLE_FILE=1 \
 	-s ALLOW_MEMORY_GROWTH=1 \
@@ -48,6 +47,7 @@ CFLAGS=--bind -O3\
 
 	# -s MODULARIZE=1
 	# --llvm-lto 1 \
+	# -s LLD_REPORT_UNDEFINED\
  	# --js-opts 0 \  # Enables JavaScript optimizations, relevant when we generate JavaScript — 0 prevents optimizer from running
 	# -g4 \ # Controls the level of debuggability. g4 value is the highest level, generates a source map using LLVM debug information, when linking
   # -s MODULARIZE=1 \ # Don't use this with --post-js, it will get messy. MODULARIZE puts all the output into a function. It minifies globals to names that might conflict with others in the global scope, including the name of Module itself. make sure a global variable called Module already exists before the closure-compiled code runs.
@@ -91,11 +91,13 @@ ${BUILD_DIR}:
 	${MKDIR_P} ${BUILD_DIR}
 
 full: directory
-	@echo "${YELLOW}\r\nmaximilian.transpile.js — Transpiling to pure JS\r\n ${RESET}"
+	@echo "${CYAN}\r\nmaximilian.transpile.js — Transpiling to pure JS\r\n ${RESET}"
 	$(CLANGBIN) $(CFLAGS-CHRP) -target cheerp -I$(HEADERS) -o $(OUTPUT-CHEERP) $(SRC_CHEERP) $(SRC)
 	cat src/maximilian/js/purejs/module-bindings.js >> dist/maximilian.transpile.js
-	@echo "${YELLOW}\r\nsema-engine.wasmmodule.js – Building WebAssembly (Wasm) for Web Audio API AudioWorklet\r\n ${RESET}"
-	$(EMSCR) $(CFLAGS) --post-js $(POST_JS) --post-js $(TRANSPILE) -o $(OUTPUT) $(SRC_EM) $(SRC) $(SRC_LIBS) $(C_SRC_LIBS)
+	@echo "${YELLOW}\r\nmaxi-processor.js – Building Monolithic Module (Wasm + Cheerp + Processor code) for Web Audio API AudioWorklet\r\n ${RESET}"
+	$(EMSCR) $(CFLAGS) --post-js $(TRANSPILE) --post-js $(POST_JS) -o $(OUTPUT) $(SRC_EM) $(SRC) $(SRC_LIBS) $(C_SRC_LIBS)
+# @echo "${YELLOW}\r\nsema-engine.wasmmodule.js – Building WebAssembly (Wasm) for Web Audio API AudioWorklet\r\n ${RESET}"
+# $(EMSCR) $(CFLAGS) --post-js $(POST_JS) --post-js $(TRANSPILE) -o $(OUTPUT) $(SRC_EM) $(SRC) $(SRC_LIBS) $(C_SRC_LIBS)
 
 
 

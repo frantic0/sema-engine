@@ -77,10 +77,10 @@ export default [
 						// terser(),
 						copy({
 							targets: [
-								{
-									src: "src/engine/maxi-processor.js",
-									dest: "dist",
-								},
+								// {
+								// 	src: "src/engine/maxi-processor.js",
+								// 	dest: "dist",
+								// },
 								// {
 								// 	src: "src/engine/sema-engine.wasmmodule.js",
 								// 	dest: "dist",
@@ -157,10 +157,10 @@ export default [
 									src: "README.md",
 									dest: "dist",
 								},
-								{
-									src: "src/engine/maxi-processor.js",
-									dest: "dist",
-								},
+								// {
+								// 	src: "src/engine/maxi-processor.js",
+								// 	dest: "dist",
+								// },
 								// {
 								// 	src: "assets/sema-engine.wasmmodule.js",
 								// 	dest: "dist",
