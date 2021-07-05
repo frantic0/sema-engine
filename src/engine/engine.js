@@ -8,7 +8,6 @@ import {
 } from './maximilian.util.js';
 
 import Dispatcher from '../common/dispatcher.js';
-import { expect } from 'chai';
 // import { isThisTypeNode } from 'typescript';
 // import {
 //   kuramotoNetClock

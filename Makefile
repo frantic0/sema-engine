@@ -99,7 +99,7 @@ CFLAGS_O303=--bind -O3\
   -s "BINARYEN_METHOD='native-wasm'" \
   -g4 --source-map-base "${BUILD_DIR}/"
 
-
+OUTPUT_O303=$(BUILD_DIR)/open303.wasmmodule.js
 
 # --post-js $(POST_JS)
 
@@ -117,7 +117,7 @@ full: directory
 	$(CLANGBIN) $(CFLAGS-CHRP) -target cheerp -I$(HEADERS) -o $(OUTPUT-CHEERP) $(SRC_CHEERP) $(SRC)
 	cat src/maximilian/js/purejs/module-bindings.js >> dist/maximilian.transpile.js
 	@echo "${GREEN}\r\nopen303.wasmmodule.js – Build for Web Audio API AudioWorklet (Wasm)  \r\n ${RESET}"
-	$(EMSCR) $(CFLAGS) --post-js $(POST_JS) -o $(OUTPUT)  -I $(SRC) $(SRC_EM) $(SRC_LIBS) $(C_SRC_LIBS)
+	$(EMSCR) $(CFLAGS) --post-js $(POST_JS) -o $(OUTPUT_O303)  -I $(SRC_O303) $(SRC_O303_EM) $(SRC_O303_LIBS)
 	@echo "${YELLOW}\r\nmaxi-processor.js – Building Monolithic Module (Wasm + Cheerp + Processor code) for Web Audio API AudioWorklet\r\n ${RESET}"
 	$(EMSCR) $(CFLAGS) --post-js $(TRANSPILE) --post-js $(TRANSDUCERS_POST_JS) --post-js $(RINGBUF_JS) --post-js $(PROCESSOR_JS) -o $(OUTPUT) $(SRC_EM) $(SRC) $(SRC_LIBS) $(C_SRC_LIBS)
 # @echo "${YELLOW}\r\nsema-engine.wasmmodule.js – Building WebAssembly (Wasm) for Web Audio API AudioWorklet\r\n ${RESET}"
