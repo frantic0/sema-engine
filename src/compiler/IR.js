@@ -501,7 +501,7 @@ var jsFuncMap = {
 		},
 	},
 	o303: {
-		setup: (o, p) => `${o} = new Open303.Open303();
+		setup: (o, p) => `${o} = new Module.Open303();
                       ${o}.setSampleRate(sampleRate);
                       ${o}_tnote = new Module.maxiTrigger();
                       ${o}_twf = new Module.maxiTrigger();

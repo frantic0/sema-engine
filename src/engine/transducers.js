@@ -1,12 +1,12 @@
-import Maximilian from "./sema-engine.wasmmodule.js";
-import RingBuffer from "./ringbuf.js";
+// import Maximilian from "./sema-engine.wasmmodule.js";
+// import RingBuffer from "./ringbuf.js";
 // import { RingBuffer } from "ringbuf.js";
 export class SABInputTransducer {
 	constructor(id, triggered = 0) {
 		this.value = 0;
 		this.id = id;
 		this.triggered = triggered;
-		this.zx = new Maximilian.maxiTrigger();
+		this.zx = new Module.maxiTrigger();
 	}
 
 	getSABValue(inputBuffers, trigger) {
@@ -27,7 +27,7 @@ export class SABInputTransducer {
 export class SABOutputTransducer {
 	constructor(outputSABs, port, ttype, channel, now, blocksize) {
 		this.port = port;
-		this.zx = new Maximilian.maxiTrigger();
+		this.zx = new Module.maxiTrigger();
 		this.channel = channel;
 		this.blocksize = blocksize;
     this.ttype = ttype;

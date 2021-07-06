@@ -29,7 +29,7 @@ OUTPUT=$(BUILD_DIR)/maxi-processor.js
 # AudioWorklet working configuration
 
 CFLAGS=--bind -O3\
-	-s WASM=0 \
+	-s WASM=1 \
 	-s BINARYEN_ASYNC_COMPILATION=0 \
 	-s SINGLE_FILE=1 \
 	-s ALLOW_MEMORY_GROWTH=1 \
@@ -85,23 +85,43 @@ RESET=\x1b[0m
 ######## OPEN303 BUILD VARIABLES AND FLAGS
 
 SRC_O303=src/open303/Source/DSPCode
+
 SRC_O303_EM=src/open303/wasm/open303.embind.cpp
-SRC_O303_LIBS= src/open303/Source/DSPCode/GlobalFunctions.cpp  src/open303/Source/DSPCode/rosic_AcidPattern.cpp src/open303/Source/DSPCode/rosic_AcidSequencer.cpp src/open303/Source/DSPCode/rosic_AnalogEnvelope.cpp src/open303/Source/DSPCode/rosic_BlendOscillator.cpp src/open303/Source/DSPCode/rosic_BiquadFilter.cpp src/open303/Source/DSPCode/rosic_Complex.cpp src/open303/Source/DSPCode/rosic_DecayEnvelope.cpp src/open303/Source/DSPCode/rosic_FourierTransformerRadix2.cpp src/open303/Source/DSPCode/rosic_EllipticQuarterBandFilter.cpp    src/open303/Source/DSPCode/rosic_FunctionTemplates.cpp  src/open303/Source/DSPCode/rosic_LeakyIntegrator.cpp src/open303/Source/DSPCode/rosic_MidiNoteEvent.cpp src/open303/Source/DSPCode/rosic_NumberManipulations.cpp src/open303/Source/DSPCode/rosic_MipMappedWaveTable.cpp src/open303/Source/DSPCode/rosic_OnePoleFilter.cpp src/open303/Source/DSPCode/rosic_Open303.cpp src/open303/Source/DSPCode/rosic_RealFunctions.cpp src/open303/Source/DSPCode/rosic_TeeBeeFilter.cpp
 
-CFLAGS_O303=--bind -O3\
-	-s WASM=1 \
-	-s BINARYEN_ASYNC_COMPILATION=0 \
-	-s SINGLE_FILE=1 \
-	-s ALLOW_MEMORY_GROWTH=1 \
-	-s ABORTING_MALLOC=0 \
-	-s TOTAL_MEMORY=16Mb  \
-	-s "EXPORT_NAME='Open303'" \
-  -s "BINARYEN_METHOD='native-wasm'" \
-  -g4 --source-map-base "${BUILD_DIR}/"
+SRC_O303_LIBS=src/open303/Source/DSPCode/GlobalFunctions.cpp \
+								src/open303/Source/DSPCode/rosic_AcidPattern.cpp \
+								src/open303/Source/DSPCode/rosic_AcidSequencer.cpp \
+								src/open303/Source/DSPCode/rosic_AnalogEnvelope.cpp \
+								src/open303/Source/DSPCode/rosic_BlendOscillator.cpp \
+								src/open303/Source/DSPCode/rosic_BiquadFilter.cpp \
+								src/open303/Source/DSPCode/rosic_Complex.cpp \
+								src/open303/Source/DSPCode/rosic_DecayEnvelope.cpp \
+								src/open303/Source/DSPCode/rosic_FourierTransformerRadix2.cpp \
+								src/open303/Source/DSPCode/rosic_EllipticQuarterBandFilter.cpp \
+								src/open303/Source/DSPCode/rosic_FunctionTemplates.cpp \
+								src/open303/Source/DSPCode/rosic_LeakyIntegrator.cpp \
+								src/open303/Source/DSPCode/rosic_MidiNoteEvent.cpp \
+								src/open303/Source/DSPCode/rosic_NumberManipulations.cpp \
+								src/open303/Source/DSPCode/rosic_MipMappedWaveTable.cpp \
+								src/open303/Source/DSPCode/rosic_OnePoleFilter.cpp \
+								src/open303/Source/DSPCode/rosic_Open303.cpp \
+								src/open303/Source/DSPCode/rosic_RealFunctions.cpp \
+								src/open303/Source/DSPCode/rosic_TeeBeeFilter.cpp
 
-OUTPUT_O303=$(BUILD_DIR)/open303.wasmmodule.js
+# CFLAGS_O303=--bind -O3\
+# 	-s WASM=1 \
+# 	-s BINARYEN_ASYNC_COMPILATION=0 \
+# 	-s SINGLE_FILE=1 \
+# 	-s ALLOW_MEMORY_GROWTH=1 \
+# 	-s ABORTING_MALLOC=0 \
+# 	-s TOTAL_MEMORY=16Mb  \
+# 	-s "EXPORT_NAME='Open303'" \
+#   -s "BINARYEN_METHOD='native-wasm'" \
+#   -g4 --source-map-base "${BUILD_DIR}/"
 
-# --post-js $(POST_JS)
+# OUTPUT_O303=$(BUILD_DIR)/open303.wasmmodule.js
+# OUTPUT_O303=$(BUILD_DIR)/maxi-processor.js
+
 
 all: full
 
@@ -116,14 +136,8 @@ full: directory
 	@echo "${CYAN}\r\nmaximilian.transpile.js — Transpiling to pure JS\r\n ${RESET}"
 	$(CLANGBIN) $(CFLAGS-CHRP) -target cheerp -I$(HEADERS) -o $(OUTPUT-CHEERP) $(SRC_CHEERP) $(SRC)
 	cat src/maximilian/js/purejs/module-bindings.js >> dist/maximilian.transpile.js
-	@echo "${GREEN}\r\nopen303.wasmmodule.js – Build for Web Audio API AudioWorklet (Wasm)  \r\n ${RESET}"
-	$(EMSCR) $(CFLAGS) --post-js $(POST_JS) -o $(OUTPUT_O303)  -I $(SRC_O303) $(SRC_O303_EM) $(SRC_O303_LIBS)
 	@echo "${YELLOW}\r\nmaxi-processor.js – Building Monolithic Module (Wasm + Cheerp + Processor code) for Web Audio API AudioWorklet\r\n ${RESET}"
-	$(EMSCR) $(CFLAGS) --post-js $(TRANSPILE) --post-js $(TRANSDUCERS_POST_JS) --post-js $(RINGBUF_JS) --post-js $(PROCESSOR_JS) -o $(OUTPUT) $(SRC_EM) $(SRC) $(SRC_LIBS) $(C_SRC_LIBS)
-# @echo "${YELLOW}\r\nsema-engine.wasmmodule.js – Building WebAssembly (Wasm) for Web Audio API AudioWorklet\r\n ${RESET}"
-# $(EMSCR) $(CFLAGS) --post-js $(POST_JS) --post-js $(TRANSPILE) -o $(OUTPUT) $(SRC_EM) $(SRC) $(SRC_LIBS) $(C_SRC_LIBS)
-
-
+	$(EMSCR) $(CFLAGS) --post-js $(TRANSPILE) --post-js $(TRANSDUCERS_POST_JS) --post-js $(RINGBUF_JS) --post-js $(PROCESSOR_JS) -o $(OUTPUT) $(SRC_EM) $(SRC) -I $(SRC_O303) $(SRC_LIBS) $(C_SRC_LIBS)  $(SRC_O303_EM) $(SRC_O303_LIBS)
 
 clean:
 	@echo "Cleaning up"

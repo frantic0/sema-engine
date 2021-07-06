@@ -3,12 +3,14 @@ import { terser } from "rollup-plugin-terser";
 import commonjs from "@rollup/plugin-commonjs"; // converts CommonJS modules to ES6, which stops them from breaking Rollup
 import pkg from "./package.json";
 import copy from "rollup-plugin-copy";
-import serve from "rollup-plugin-serve";
+// import serve from "rollup-plugin-serve";
+// serve does not support proxy, to use livereload.js wih CORS
+// https://github.com/ionic-team/ionic-cli/issues/89
+// https://github.com/thgh/rollup-plugin-serve/pull/40
+import serve from "rollup-plugin-serve-proxy";
 import livereload from "rollup-plugin-livereload";
 import workerLoader from "rollup-plugin-web-worker-loader";
 import sourcemaps from "rollup-plugin-sourcemaps";
-// import nodePolyfills from "rollup-plugin-node-polyfills";
-// import eslint from "@rollup/plugin-eslint";
 
 const isDevelopment = !process.env.BUILD;
 
@@ -85,20 +87,20 @@ export default [
 								// 	src: "src/engine/sema-engine.wasmmodule.js",
 								// 	dest: "dist",
 								// },
-								{
-									src: "src/engine/open303.wasmmodule.js",
-									dest: "dist",
-								},
-								{
-									// ringbuf is imported by both the Engine (AW node) and maxi-processor (AWP) so needs to be both bundled AND copied!
-									src: "src/common/ringbuf.js",
-									dest: ["dist"],
-								},
-								{
-									// transducers is imported by Engine maxi-processor (AWP) so needs to be both bundled AND copied!
-									src: "src/engine/transducers.js",
-									dest: ["dist"],
-								},
+								// {
+								// 	src: "src/engine/open303.wasmmodule.js",
+								// 	dest: "dist",
+								// },
+								// {
+								// 	// ringbuf is imported by both the Engine (AW node) and maxi-processor (AWP) so needs to be both bundled AND copied!
+								// 	src: "src/common/ringbuf.js",
+								// 	dest: ["dist"],
+								// },
+								// {
+								// 	// transducers is imported by Engine maxi-processor (AWP) so needs to be both bundled AND copied!
+								// 	src: "src/engine/transducers.js",
+								// 	dest: ["dist"],
+								// },
 								{
 									src: "assets/*",
 									dest: "dist",
@@ -127,6 +129,16 @@ export default [
 								// set custom mime types, usage https://github.com/broofa/mime#mimedefinetypemap-force--false
 								"application/javascript": ["js"],
 								"application/wasm": ["wasm"],
+							},
+							headers: {
+								"Cross-Origin-Opener-Policy": "same-origin",
+								"Cross-Origin-Embedder-Policy": "require-corp",
+								"Cross-Origin-Resource-Policy": "cross-origin",
+								"Access-Control-Allow-Origin": "*",
+								foo: "bar",
+							},
+							proxy: {
+								livereload: "http://localhost:35729/livereload.js?snipver=1",
 							},
 						}),
 						livereload({
@@ -165,20 +177,20 @@ export default [
 								// 	src: "assets/sema-engine.wasmmodule.js",
 								// 	dest: "dist",
 								// },
-								{
-									src: "assets/open303.wasmmodule.js",
-									dest: "dist",
-								},
-								{
-									// transducers is imported by Engine maxi-processor (AWP) so needs to be both bundled AND copied!
-									src: "src/engine/transducers.js",
-									dest: ["dist"],
-								},
-								{
-									// ringbuf is imported by both the Engine (AW node) and maxi-processor (AWP) so needs to be both bundled AND copied!
-									src: "assets/ringbuf.js",
-									dest: ["dist"],
-								},
+								// {
+								// 	src: "assets/open303.wasmmodule.js",
+								// 	dest: "dist",
+								// },
+								// {
+								// 	// transducers is imported by Engine maxi-processor (AWP) so needs to be both bundled AND copied!
+								// 	src: "src/engine/transducers.js",
+								// 	dest: ["dist"],
+								// },
+								// {
+								// 	// ringbuf is imported by both the Engine (AW node) and maxi-processor (AWP) so needs to be both bundled AND copied!
+								// 	src: "assets/ringbuf.js",
+								// 	dest: ["dist"],
+								// },
 								{
 									// ringbuf is imported by both the Engine (AW node) and maxi-processor (AWP) so needs to be both bundled AND copied!
 									src: "assets/mlworkerscripts.js",
@@ -202,28 +214,5 @@ export default [
 			// }),
 		],
 	},
-
-	// {
-	// 	input: "src/engine/maxi-processor.js",
-	// external: ["nearley"],
-	// 	output: [
-	// 		{ file: "dist/sema-engine.processor.js", format: "es", sourcemap: true },
-	// 	],
-	// },
-
-	// CommonJS (for Node) and ES module (for bundlers) build.
-	// (We could have three entries in the configuration array
-	// instead of two, but it's quicker to generate multiple
-	// builds from a single configuration where possible, using
-	// an array for the `output` option, where we can specify
-	// `file` and `format` for each target)
-	// {
-	// 	input: "src/index.js",
-	// 	// external: ["nearley"],
-	// 	output: [
-	// 		{ file: pkg.main, format: "cjs" },
-	// 		{ file: pkg.module, format: "es" },
-	// 	],
-	// },
 ];
 

@@ -1,14 +1,7 @@
-// import Maximilian from './sema-engine.wasmMaximilian.js';
-
-// // NOTE: dynamically loads from the adjacent ringBuf.js file
-// import RingBuffer from "./ringbuf.js"; //thanks padenot
-
-// import Open303 from './open303.wasmmodule.js';
-// import { SABInputTransducer, SABOutputTransducer } from './transducers.js';
-
 console.log(
 	"running %cMaximilian v2.5.0 (Wasm)",
-	"font-weight: bold; background: #000; color: #bada55"
+	"font-weight: bold; color: #bada55"
+	// "font-weight: bold; background: #000; color: #bada55"
 );
 
 class fft {
@@ -108,7 +101,7 @@ class MaxiProcessor extends AudioWorkletProcessor {
 		super();
 
 		//indicate audio settings in WASM and JS domains
-		Module.maxiSettings.setup(sampleRate, 1, 512);
+		// Module.maxiSettings.setup(sampleRate, 1, 512);
 		Module.maxiJSSettings.setup(sampleRate, 1, 512);
 		//we don't know the number of channels at this stage, so reserve lots for the DAC
 		this.DAC = [];
@@ -517,7 +510,7 @@ class MaxiProcessor extends AudioWorkletProcessor {
 		console.info(`DAC: ${channels} channels`);
 
 		Module.maxiJSSettings.setup(sampleRate, channels, bufferSize);
-		Module.maxiSettings.setup(sampleRate, channels, bufferSize);
+		// Module.maxiSettings.setup(sampleRate, channels, bufferSize);
 
 		this.DACInitialised = true;
 	};
