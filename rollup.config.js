@@ -140,6 +140,15 @@ export default [
 							proxy: {
 								livereload: "http://localhost:35729/livereload.js?snipver=1",
 							},
+							onListening: function (server) {
+								const address = server.getAddress();
+								const host = address.host === "::" ? "localhost" : address.host;
+								// by using a bound function, we can access options as `this`
+								const protocol = this.https ? "https" : "http";
+								console.log(
+									`Server listening at ${protocol}://${host}:${address.port}/`
+								);
+							},
 						}),
 						livereload({
 							watch: "dist",
