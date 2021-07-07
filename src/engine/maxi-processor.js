@@ -510,7 +510,6 @@ class MaxiProcessor extends AudioWorkletProcessor {
 		console.info(`DAC: ${channels} channels`);
 
 		Module.maxiJSSettings.setup(sampleRate, channels, bufferSize);
-		// Module.maxiSettings.setup(sampleRate, channels, bufferSize);
 
 		this.DACInitialised = true;
 	};

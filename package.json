@@ -1,63 +1,64 @@
 {
-  "name": "sema-engine",
-  "version": "0.0.62",
-  "description": "Module containing Sema's signal engine and compiler for a live coding language ecosystem",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/frantic0/sema-engine.git"
-  },
-  "author": "Francisco Bernardo <f.bernardo@sussex.ac.uk>",
-  "contributors": [
-    "Chris Kiefer <c.kiefer@sussex.ac.uk> (http://luuma.net)",
-    "Thor Magnusson <t.magnusson@sussex.ac.uk> (http://www.ixi-audio.net)"
-  ],
-  "license": "MIT",
-  "keywords": [
-    "Web Audio",
-    "Web Audio API",
-    "Synthesis",
-    "Playback",
-    "DSP",
-    "Signal Processing",
-    "Interactive Music"
-  ],
-  "module": "dist/sema-engine.mjs",
-  "main": "dist/sema-engine.js",
-  "engines": {
-    "node": ">=14.4.0 <15"
-  },
-  "scripts": {
-    "build": "rollup -c --environment BUILD:development",
-    "dev": "rollup -c -w",
-    "pretest": "cpx 'assets/langs/*' './test/fixtures/lang/'",
-    "test": "mocha --recursive --require esm",
-    "coverage": "nyc npm run test",
-    "clean": "rm -rf build dist",
-    "clean-all": "rm -rf .cache dist node_modules package-lock.json"
-  },
-  "dependencies": {
-    "nearley": "^2.20.1",
-    "ringbuf.js": "^0.1.0"
-  },
-  "devDependencies": {
-    "@rollup/plugin-commonjs": "^17.0.0",
-    "@rollup/plugin-eslint": "^8.0.1",
-    "@rollup/plugin-node-resolve": "^11.2.1",
-    "@rollup/plugin-wasm": "^5.1.2",
-    "chai": "^4.3.4",
-    "cpx": "^1.5.0",
-    "eslint": "^7.27.0",
-    "eslint-config-google": "^0.14.0",
-    "esm": "^3.2.25",
-    "mocha": "^7.2.0",
-    "nyc": "^15.1.0",
-    "rollup": "^2.50.5",
-    "rollup-plugin-copy": "^3.4.0",
-    "rollup-plugin-livereload": "^2.0.0",
-    "rollup-plugin-serve": "^1.1.0",
-    "rollup-plugin-serve-proxy": "^1.1.4",
-    "rollup-plugin-sourcemaps": "^0.6.3",
-    "rollup-plugin-terser": "^7.0.2",
-    "rollup-plugin-web-worker-loader": "^1.6.1"
-  }
+	"name": "sema-engine",
+	"version": "0.0.62",
+	"description": "Module containing Sema's signal engine and compiler for a live coding language ecosystem",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/frantic0/sema-engine.git"
+	},
+	"author": "Francisco Bernardo <f.bernardo@sussex.ac.uk>",
+	"contributors": [
+		"Chris Kiefer <c.kiefer@sussex.ac.uk> (http://luuma.net)",
+		"Thor Magnusson <t.magnusson@sussex.ac.uk> (http://www.ixi-audio.net)"
+	],
+	"license": "MIT",
+	"keywords": [
+		"Web Audio",
+		"Web Audio API",
+		"Synthesis",
+		"Playback",
+		"DSP",
+		"Signal Processing",
+		"Interactive Music"
+	],
+	"module": "dist/sema-engine.mjs",
+	"main": "dist/sema-engine.js",
+	"engines": {
+		"node": ">=14.4.0 <15"
+	},
+	"scripts": {
+		"build": "rollup -c --environment BUILD:development",
+		"dev": "rollup -c -w",
+		"pretest": "cpx 'assets/langs/*' './test/fixtures/lang/'",
+		"test": "mocha --recursive --require esm",
+		"coverage": "nyc npm run test",
+		"clean": "rm -rf build dist",
+		"clean-all": "rm -rf .cache dist node_modules package-lock.json"
+	},
+	"dependencies": {
+		"nearley": "^2.20.1",
+		"ringbuf.js": "^0.1.0"
+	},
+	"devDependencies": {
+		"livereload": "git+https://github.com/frantic0/node-livereload.git",
+		"@rollup/plugin-commonjs": "^17.0.0",
+		"@rollup/plugin-eslint": "^8.0.1",
+		"@rollup/plugin-node-resolve": "^11.2.1",
+		"@rollup/plugin-wasm": "^5.1.2",
+		"chai": "^4.3.4",
+		"cpx": "^1.5.0",
+		"eslint": "^7.27.0",
+		"eslint-config-google": "^0.14.0",
+		"esm": "^3.2.25",
+		"mocha": "^7.2.0",
+		"nyc": "^15.1.0",
+		"rollup": "^2.50.5",
+		"rollup-plugin-copy": "^3.4.0",
+		"rollup-plugin-livereload": "git+https://github.com/frantic0/rollup-plugin-livereload.git",
+		"rollup-plugin-serve": "^1.1.0",
+		"rollup-plugin-serve-proxy": "^1.1.4",
+		"rollup-plugin-sourcemaps": "^0.6.3",
+		"rollup-plugin-terser": "^7.0.2",
+		"rollup-plugin-web-worker-loader": "^1.6.1"
+	}
 }
