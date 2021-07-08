@@ -102,7 +102,7 @@ class MaxiProcessor extends AudioWorkletProcessor {
 
 		//indicate audio settings in WASM and JS domains
 		Module.maxiSettings.setup(sampleRate, 1, 512);
-		Module.maxiJSSettings.setup(sampleRate, 1, 512);
+		// Module.maxiJSSettings.setup(sampleRate, 1, 512);
 		//we don't know the number of channels at this stage, so reserve lots for the DAC
 		this.DAC = [];
 		this.DACInitialised = false;
