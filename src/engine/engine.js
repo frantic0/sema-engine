@@ -330,7 +330,7 @@ export class Engine {
             // create audio context with latency optimally configured for playback
             latencyHint: "playback",
             // latencyHint: 32/44100,  //this doesn't work below 512 on chrome (?)
-            // sampleRate: 44100
+            // sampleRate: 48000
           });
         }
 
