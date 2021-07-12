@@ -1,6 +1,6 @@
 {
 	"name": "sema-engine",
-	"version": "0.0.62",
+	"version": "0.1.0",
 	"description": "Module containing Sema's signal engine and compiler for a live coding language ecosystem",
 	"repository": {
 		"type": "git",
@@ -21,8 +21,8 @@
 		"Signal Processing",
 		"Interactive Music"
 	],
-	"module": "dist/sema-engine.mjs",
-	"main": "dist/sema-engine.js",
+	"module": "sema-engine.mjs",
+	"main": "sema-engine.js",
 	"engines": {
 		"node": ">=14.4.0 <15"
 	},
@@ -32,7 +32,7 @@
 		"pretest": "cpx 'assets/langs/*' './test/fixtures/lang/'",
 		"test": "mocha --recursive --require esm",
 		"coverage": "nyc npm run test",
-		"clean": "rm -rf build dist",
+		"clean": "rm -rf maxi-processor.js maximilian.transpile.js sema-engine.*",
 		"clean-all": "rm -rf .cache dist node_modules package-lock.json"
 	},
 	"dependencies": {

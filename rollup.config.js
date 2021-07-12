@@ -53,7 +53,7 @@ export default [
 				// sourcemap: isDevelopment ? true : "inline",
 			},
 			{
-				file: "dist/sema-engine.min.js",
+				file: "sema-engine.min.js",
 				format: "iife",
 				name: "version",
 				sourcemap: true,
@@ -77,46 +77,14 @@ export default [
 						// 	}, // not returning anything, so doesn't affect bundle
 						// },
 						// terser(),
-						copy({
-							targets: [
-								// {
-								// 	src: "src/engine/maxi-processor.js",
-								// 	dest: "dist",
-								// },
-								// {
-								// 	src: "src/engine/sema-engine.wasmmodule.js",
-								// 	dest: "dist",
-								// },
-								// {
-								// 	src: "src/engine/open303.wasmmodule.js",
-								// 	dest: "dist",
-								// },
-								// {
-								// 	// ringbuf is imported by both the Engine (AW node) and maxi-processor (AWP) so needs to be both bundled AND copied!
-								// 	src: "src/common/ringbuf.js",
-								// 	dest: ["dist"],
-								// },
-								// {
-								// 	// transducers is imported by Engine maxi-processor (AWP) so needs to be both bundled AND copied!
-								// 	src: "src/engine/transducers.js",
-								// 	dest: ["dist"],
-								// },
-								{
-									src: "assets/*",
-									dest: "dist",
-								},
-								{
-									// lalolib is imported dynamically (importScripts) by the ml.worker, needs to be served in 'dist'
-									src: "src/learning/lalolib.js",
-									dest: "dist",
-								},
-								{
-									// svd is imported dynamically (importScripts) by the ml.worker, needs to be served in 'dist'
-									src: "src/learning/svd.js",
-									dest: ["dist"],
-								},
-							],
-						}),
+						// copy({
+						// 	targets: [
+						// 		{
+						// 			src: "assets/*",
+						// 			dest: "dist",
+						// 		},
+						// 	],
+						// }),
 						serve({
 							open: false, // Launch in browser (default: false)
 							verbose: true, // Show server address in console (default: true)
@@ -167,55 +135,18 @@ export default [
 						// },
 						sourcemaps(),
 						terser(),
-						copy({
-							targets: [
-								{
-									src: "assets/package.json",
-									dest: "dist",
-								},
-								{
-									src: "README.md",
-									dest: "dist",
-								},
-								// {
-								// 	src: "src/engine/maxi-processor.js",
-								// 	dest: "dist",
-								// },
-								// {
-								// 	src: "assets/sema-engine.wasmmodule.js",
-								// 	dest: "dist",
-								// },
-								// {
-								// 	src: "assets/open303.wasmmodule.js",
-								// 	dest: "dist",
-								// },
-								// {
-								// 	// transducers is imported by Engine maxi-processor (AWP) so needs to be both bundled AND copied!
-								// 	src: "src/engine/transducers.js",
-								// 	dest: ["dist"],
-								// },
-								// {
-								// 	// ringbuf is imported by both the Engine (AW node) and maxi-processor (AWP) so needs to be both bundled AND copied!
-								// 	src: "assets/ringbuf.js",
-								// 	dest: ["dist"],
-								// },
-								{
-									// ringbuf is imported by both the Engine (AW node) and maxi-processor (AWP) so needs to be both bundled AND copied!
-									src: "assets/mlworkerscripts.js",
-									dest: ["dist"],
-								},
-								{
-									// lalolib is imported dynamically (importScripts) by the ml.worker, needs to be served in 'dist'
-									src: "assets/lalolib.js",
-									dest: "dist",
-								},
-								{
-									// svd is imported dynamically (importScripts) by the ml.worker, needs to be served in 'dist'
-									src: "assets/svd.js",
-									dest: ["dist"],
-								},
-							],
-						}),
+						// copy({
+						// 	targets: [
+						// 		{
+						// 			src: "assets/package.json",
+						// 			dest: "dist",
+						// 		},
+						// 		{
+						// 			src: "README.md",
+						// 			dest: "dist",
+						// 		},
+						// 	],
+						// }),
 				  ]),
 			// eslint({
 			// 	/* your options */
