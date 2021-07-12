@@ -1,29 +1,44 @@
-export function takeOverConsole(f) {
-	if (f) {
-		try {
-			var original = window.console;
+export class Logger {
+	/**
+	 * @constructor
+	 */
+	constructor() {
+		if (Logger.instance) {
+			return Logger.instance; // Singleton pattern
+		}
+		Logger.instance = this;
 
-			function handle(method, args) {
-				var message = Array.prototype.slice.apply(args).join(" ");
-				if (original) original[method]("> " + message);
+	}
+
+
+	takeOverConsole(f) {
+		if (f) {
+			try {
+				var original = window.console;
+
+				function handle(method, args) {
+					var message = Array.prototype.slice.apply(args).join(" ");
+					if (original) original[method]("> " + message);
+				}
+
+				window.console = {
+					log: function () {
+						handle("log", arguments);
+					},
+					warn: function () {
+						handle("warn", arguments);
+					},
+					error: function () {
+						handle("error", arguments);
+					},
+					info: function () {
+						handle("info", arguments);
+					},
+				};
+			} catch (error) {
+				console.error(error);
 			}
-
-			window.console = {
-				log: function () {
-					handle("log", arguments);
-				},
-				warn: function () {
-					handle("warn", arguments);
-				},
-				error: function () {
-					handle("error", arguments);
-				},
-				info: function () {
-					handle("info", arguments);
-				},
-			};
-		} catch (error) {
-			console.error(error);
 		}
 	}
+
 }
