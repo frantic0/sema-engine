@@ -5,7 +5,7 @@ const patch1_DSP = {
   setup: `() => {
             () => {
               let q = this.newq();
-              q.b0u2 = new Maximilian.maxiOsc();
+              q.b0u2 = new Module.maxiOsc();
               q.b0u2.phaseReset(0);;;;
               return q;
             }
@@ -22,15 +22,15 @@ const patch2_DSP = {
             q.b0l5 = new Float64Array(2);
             q.b0l5[0] = 3;
             q.b0l5[1] = 2;
-            q.b0u3 = new Maximilian.maxiRatioSeq();;
-            q.b0u2 = new Maximilian.maxiSample();
+            q.b0u3 = new Module.maxiRatioSeq();;
+            q.b0u2 = new Module.maxiSample();
             q.b0u2.setSample(this.getSampleBuffer('crebit2'));;
-            q.b0u1 = new Maximilian.maxiNonlinearity();;
+            q.b0u1 = new Module.maxiNonlinearity();;
             q.b0l9 = new Float64Array(2);
             q.b0l9[0] = 1;
             q.b0l9[1] = 0;
-            q.b0u7 = new Maximilian.maxiRatioSeq();;
-            q.b0u6 = new Maximilian.maxiSample();
+            q.b0u7 = new Module.maxiRatioSeq();;
+            q.b0u6 = new Module.maxiSample();
             q.b0u6.setSample(this.getSampleBuffer('snare1'));;;;;
             return q; }`,
   loop: `(q, inputs, mem) => {
