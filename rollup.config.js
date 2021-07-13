@@ -53,7 +53,7 @@ export default [
 				// sourcemap: isDevelopment ? true : "inline",
 			},
 			{
-				file: "sema-engine.min.js",
+				file: "index.min.js",
 				format: "iife",
 				name: "version",
 				sourcemap: true,

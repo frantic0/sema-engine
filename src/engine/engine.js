@@ -345,7 +345,7 @@ export class Engine {
 				this.connectWorkletNode();
 
 				console.log(
-					"running %csema-engine v0.1.0",
+					"running %csema-engine v0.1.1",
 					"font-weight: bold; color: #ffb7c5"
 					// "font-weight: bold; background: #000; color: #bada55"
 				);

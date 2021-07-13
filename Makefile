@@ -144,4 +144,4 @@ full: directory
 
 clean:
 	@echo "Cleaning up"
-	rm -f $(BUILD_DIR)/maximilian.*
+	rm -f maxi-processor.js sema-engine.*

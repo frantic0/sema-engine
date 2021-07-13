@@ -21,8 +21,8 @@
 		"Signal Processing",
 		"Interactive Music"
 	],
-	"module": "sema-engine.mjs",
-	"browser": "sema-engine.js",
+	"module": "index.mjs",
+	"main": "index.js",
 	"engines": {
 		"node": ">=14.4.0 <15"
 	},

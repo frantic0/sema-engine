@@ -30,6 +30,7 @@ straightforward as possible.
 
 - maxi-processor.js concatenates Maximilian PureJS and Wasm, open303, and custom processor code
 - make does the build and packages the different sema-engine module formats
-- the structure of the package to facilitate local development with npm link
-
-### Fixed
+- all modules are now index to enable module import with `import { Engine } from 'sema-engine';`
+- structure of the package now facilitates local development with npm link
+- update README code snippets for importing the library
+- simplified rollup build workflow
