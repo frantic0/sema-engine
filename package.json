@@ -1,6 +1,6 @@
 {
 	"name": "sema-engine",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "Module containing Sema's signal engine and compiler for a live coding language ecosystem",
 	"repository": {
 		"type": "git",
@@ -22,7 +22,7 @@
 		"Interactive Music"
 	],
 	"module": "sema-engine.mjs",
-	"main": "sema-engine.js",
+	"browser": "sema-engine.js",
 	"engines": {
 		"node": ">=14.4.0 <15"
 	},
@@ -61,5 +61,18 @@
 		"rollup-plugin-terser": "^7.0.2",
 		"rollup-plugin-web-worker-loader": "^1.6.1"
 	},
-	"files": {}
+	"files": [
+		"maxi-processor.js",
+		"package.json",
+		"sema-engine.js",
+		"sema-engine.js.map",
+		"sema-engine.min.js",
+		"sema-engine.min.js.map",
+		"sema-engine.mjs",
+		"sema-engine.mjs.map"
+	],
+	"directories": {
+		"src": "src/",
+		"doc": "docs/"
+	}
 }
