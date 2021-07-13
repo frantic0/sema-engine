@@ -140,8 +140,9 @@ full: directory
 	@echo "${YELLOW}\r\nmaxi-processor.js – Building Monolithic Module (Wasm + Cheerp + Processor code) for Web Audio API AudioWorklet\r\n ${RESET}"
 	$(EMSCR) $(CFLAGS) --post-js $(TRANSPILE) --post-js $(TRANSDUCERS_POST_JS) --post-js $(RINGBUF_JS) --post-js $(PROCESSOR_JS) -o $(OUTPUT) $(SRC_EM) $(SRC) -I $(SRC_O303) $(SRC_LIBS) $(C_SRC_LIBS)  $(SRC_O303_EM) $(SRC_O303_LIBS)
 	rm $(TRANSPILE)
+	npm i
 	npm run build
 
 clean:
 	@echo "Cleaning up"
-	rm -f maxi-processor.js sema-engine.*
+	rm -f maxi-processor.js index.* node_modules
