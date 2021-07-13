@@ -2,7 +2,7 @@ import resolve from "@rollup/plugin-node-resolve"; // allows us to load third-pa
 import { terser } from "rollup-plugin-terser";
 import commonjs from "@rollup/plugin-commonjs"; // converts CommonJS modules to ES6, which stops them from breaking Rollup
 import pkg from "./package.json";
-import copy from "rollup-plugin-copy";
+// import copy from "rollup-plugin-copy";
 // import serve from "rollup-plugin-serve";
 // serve does not support proxy, to use livereload.js wih CORS
 // https://github.com/ionic-team/ionic-cli/issues/89
@@ -105,18 +105,6 @@ export default [
 								"Cross-Origin-Resource-Policy": "cross-origin",
 								"Access-Control-Allow-Origin": "*",
 							},
-							// proxy: {
-							// 	livereload: "http://localhost:35729/livereload.js?snipver=1",
-							// },
-							// onListening: function (server) {
-							// 	const address = server.getAddress();
-							// 	const host = address.host === "::" ? "localhost" : address.host;
-							// 	// by using a bound function, we can access options as `this`
-							// 	const protocol = this.https ? "https" : "http";
-							// 	console.log(
-							// 		`Server listening at ${protocol}://${host}:${address.port}/`
-							// 	);
-							// },
 						}),
 						livereload({
 							watch: "",
