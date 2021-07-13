@@ -34,12 +34,6 @@ The following is a set of guidelines for contributing to the sema-engine, hosted
 This project and everyone participating in it is governed by the [Sema Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to [sema.live.coding@gmail.com](mailto:sema.live.coding@gmail.com).
 
 
-
-## Code of Conduct
-
-This project and everyone participating in it is governed by the [Sema Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to [sema.live.coding@gmail.com](mailto:sema.live.coding@gmail.com).
-
-
 ## I don't want to read this whole thing I just have a question!!!
 
 > **Note:** [Please don't file an issue to ask a question.]() You'll get faster results by using the resources below.
@@ -63,37 +57,37 @@ Before creating bug reports, please check [this list](#before-submitting-a-bug-r
 
 #### How Do I Submit A (Good) Bug Report?
 
-Bugs are tracked as [GitHub issues](https://guides.github.com/features/issues/). After you've determined [which repository](#atom-and-packages) your bug is related to, create an issue on the repository and provide the following information by filling in [the template](https://github.com/atom/.github/blob/master/.github/ISSUE_TEMPLATE/bug_report.md).
+Bugs are tracked as [GitHub issues](https://guides.github.com/features/issues/). After you've determined [which repository](#atom-and-packages) your bug is related to, create an issue on the repository and provide the following information by filling in the following template:
 
-##### Description
+#### Description
 
-<!-- Description of the issue -->
+`<!-- Description of the issue -->`
 
-##### Steps to Reproduce
+#### Steps to Reproduce
 
-1. <!-- First Step -->
-2. <!-- Second Step -->
-3. <!-- and so on… -->
+1. `<!-- First Step -->`
+2. `<!-- Second Step -->`
+3. `<!-- and so on… -->`
 
-##### Expected behavior:
+#### Expected behavior:
 
-<!-- What you expect to happen -->
+`<!-- What you expect to happen -->`
 
-##### Actual behavior:
+#### Actual behavior:
 
-<!-- What actually happens -->
+`<!-- What actually happens -->`
 
-##### Reproduces how often:
+#### Reproduces how often:
 
-<!-- What percentage of the time does it reproduce? -->
+`<!-- What percentage of the time does it reproduce? -->`
 
-##### Versions
+#### Versions
 
-<!-- Also, please include the OS and what version of the OS you're running, the browser and the the browser version. -->
+`<!-- Also, please include the OS and what version of the OS you're running, the browser and the the browser version. -->`
 
-##### Additional Information
+#### Additional Information
 
-<!-- Any additional information, configuration or data that might be necessary to reproduce the issue. -->
+`<!-- Any additional information, configuration or data that might be necessary to reproduce the issue. -->`
 
 
 Explain the problem and include additional details to help maintainers reproduce the problem:
