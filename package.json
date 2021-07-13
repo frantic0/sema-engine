@@ -29,7 +29,7 @@
 	"scripts": {
 		"build": "rollup -c --environment BUILD:development",
 		"dev": "rollup -c -w",
-		"pretest": "cpx 'assets/langs/*' './test/fixtures/lang/'",
+		"pretest": "cpx './test/assets/langs/*' './test/fixtures/lang/'",
 		"test": "mocha --recursive --require esm",
 		"coverage": "nyc npm run test",
 		"clean": "rm -rf maxi-processor.js maximilian.transpile.js sema-engine.*",

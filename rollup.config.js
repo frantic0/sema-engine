@@ -86,9 +86,10 @@ export default [
 						// 	],
 						// }),
 						serve({
-							open: false, // Launch in browser (default: false)
+							open: true, // Launch in browser (default: false)
+							openPage: "/test/index.html",
 							verbose: true, // Show server address in console (default: true)
-							contentBase: "dist", // Folder to serve files from
+							contentBase: "", // Folder to serve files from
 							historyApiFallback: false, // Set to true to return index.html (200) instead of error page (404)
 							historyApiFallback: "/200.html", // Path to fallback page
 							host: "localhost", // Options used in setting up server
@@ -118,7 +119,7 @@ export default [
 							// },
 						}),
 						livereload({
-							watch: "dist",
+							watch: "",
 							verbose: true,
 						}),
 				  ]

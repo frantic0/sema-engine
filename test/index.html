@@ -235,8 +235,8 @@
       compile,
       Learner,
       getBlock,
-      takeOverConsole
-    } from "./sema-engine.mjs";
+      // takeOverConsole
+    } from "../sema-engine.mjs";
 
     let engine,
         analyser = 0,
@@ -254,7 +254,7 @@
     $("playButton", "click", () => {
       if(!engine){
         try{
-          takeOverConsole();
+          // takeOverConsole();
           engine = new Engine();
           engine.init(origin);
         } catch (error) {
@@ -272,13 +272,13 @@
     $("loadSamplesButton", "click", () => {
       if(engine){
         try{
-          engine.loadSample("909.wav",       "/audio/909.wav");
-          engine.loadSample("909b.wav",      "/audio/909b.wav");
-          engine.loadSample("909closed.wav", "/audio/909closed.wav");
-          engine.loadSample("909open.wav",   "/audio/909closed.wav");
-          engine.loadSample("crebit2.ogg",   "/audio/crebit2.ogg");
-          engine.loadSample("kick1.wav",     "/audio/kick1.wav");
-          engine.loadSample("snare1.wav",    "/audio/snare1.wav");
+          engine.loadSample("909.wav",       "/test/audio/909.wav");
+          engine.loadSample("909b.wav",      "/test/audio/909b.wav");
+          engine.loadSample("909closed.wav", "/test/audio/909closed.wav");
+          engine.loadSample("909open.wav",   "/test/audio/909closed.wav");
+          engine.loadSample("crebit2.ogg",   "/test/audio/crebit2.ogg");
+          engine.loadSample("kick1.wav",     "/test/audio/kick1.wav");
+          engine.loadSample("snare1.wav",    "/test/audio/snare1.wav");
         } catch (error) {
           console.error("ERROR: Failed to compile and eval: ", error);
         }
@@ -454,9 +454,9 @@
 
     // const editorLivecode = setupEditorWithContent("textArea-livecode", '/langs/default-0-lc.txt');
     // const editorGrammar =  setupEditorWithContent("textArea-grammar",  '/langs/default-grammar.txt');
-    const editorJS =       setupEditorWithContent("textArea-js",       '/js/default-3-js.txt');
-    const editorLivecode = setupEditorWithContent("textArea-livecode", '/langs/rubber-duckling-lc-1.txt');
-    const editorGrammar =  setupEditorWithContent("textArea-grammar",  '/langs/rubber-duckling-grammar.txt');
+    const editorJS =       setupEditorWithContent("textArea-js",       '/test/js/default-3-js.txt');
+    const editorLivecode = setupEditorWithContent("textArea-livecode", '/test/langs/rubber-duckling-lc-1.txt');
+    const editorGrammar =  setupEditorWithContent("textArea-grammar",  '/test/langs/rubber-duckling-grammar.txt');
 
   </script>
 </body>
