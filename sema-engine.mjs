@@ -1,5 +1,5 @@
 
-(function(l, r) { if (!l || l.getElementById('livereloadscript')) return; r = l.createElement('script'); r.async = 1; r.src = '//' + (self.location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1'; r.id = 'livereloadscript'; r.crossOrigin='anonymous'; l.getElementsByTagName('head')[0].appendChild(r) })(self.document);
+(function(l, r) { if (!l || l.getElementById('livereloadscript')) return; r = l.createElement('script'); r.async = 1; r.src = '//' + (self.location.host || 'localhost').split(':')[0] + ':35730/livereload.js?snipver=1'; r.id = 'livereloadscript'; r.crossOrigin='anonymous'; l.getElementsByTagName('head')[0].appendChild(r) })(self.document);
 // Send audio interleaved audio frames between threads, wait-free.
 
 // A Single Producer - Single Consumer thread-safe wait-free ring buffer.
@@ -661,7 +661,15 @@ class Engine {
       }
 
 			if (isWorkletProcessorLoaded) {
+
 				this.connectWorkletNode();
+
+				console.log(
+					"running %csema-engine v0.1.0",
+					"font-weight: bold; color: #ffb7c5"
+					// "font-weight: bold; background: #000; color: #bada55"
+				);
+
 				return true;
 			} else return false;
 

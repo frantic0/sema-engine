@@ -4,6 +4,8 @@ console.log(
 	// "font-weight: bold; background: #000; color: #bada55"
 );
 
+
+
 class fft {
 	constructor(bins, hopPercentage) {
 		this.fft = new Module.maxiFFTAdaptor();

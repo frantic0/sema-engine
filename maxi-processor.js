@@ -8473,6 +8473,12 @@ console.log(
 	// "font-weight: bold; background: #000; color: #bada55"
 );
 
+console.log(
+	"running %csema-engine v0.1.0",
+	"font-weight: bold; color: #ffb7c5"
+	// "font-weight: bold; background: #000; color: #bada55"
+);
+
 class fft {
 	constructor(bins, hopPercentage) {
 		this.fft = new Module.maxiFFTAdaptor();

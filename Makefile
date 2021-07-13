@@ -139,6 +139,8 @@ full: directory
 	cat src/maximilian/js/purejs/module-bindings.js >> ./maximilian.transpile.js
 	@echo "${YELLOW}\r\nmaxi-processor.js – Building Monolithic Module (Wasm + Cheerp + Processor code) for Web Audio API AudioWorklet\r\n ${RESET}"
 	$(EMSCR) $(CFLAGS) --post-js $(TRANSPILE) --post-js $(TRANSDUCERS_POST_JS) --post-js $(RINGBUF_JS) --post-js $(PROCESSOR_JS) -o $(OUTPUT) $(SRC_EM) $(SRC) -I $(SRC_O303) $(SRC_LIBS) $(C_SRC_LIBS)  $(SRC_O303_EM) $(SRC_O303_LIBS)
+	rm $(TRANSPILE)
+	npm run build
 
 clean:
 	@echo "Cleaning up"
