@@ -178,7 +178,7 @@ The *sema-engine* has small API surface that you can find more about on this pro
 
 ## Contributing
 
-Pull requests are welcome, please observe the [Contributing](https://github.com/frantic0/sema-engine/blob/main/CONTRIBUTING.md) guidelines.
+Pull requests are welcome! Fork the the project and submit PRs to the *develop* branch. Please observe the [Contributing](https://github.com/frantic0/sema-engine/blob/main/CONTRIBUTING.md) guidelines for other ways to contribute (issues, documentation, styles, etc).
 
 ## Related Publications
 
@@ -186,4 +186,4 @@ Bernardo, F., Kiefer, C., Magnusson, T. (2020). A Signal Engine for a Live Code 
 
 ## Funding
 
-This project has received funding from two UKRI/AHRC research grants [MIMIC: Musically Intelligent Machines Interacting Creatively (Ref: AH/R002657/1)](https://gtr.ukri.org/projects?ref=AH%2FR002657%2F1) and [Innovating Sema (Ref: AH/R002657/1)](https://gtr.ukri.org/projects?ref=AH%2FR002657%2F1)
+This project has received funding from two UKRI/AHRC research grants [MIMIC: Musically Intelligent Machines Interacting Creatively (Ref: AH/R002657/1)](https://gtr.ukri.org/projects?ref=AH%2FR002657%2F1) and [Innovating Sema (Ref: AH/V005154/1)](https://gtr.ukri.org/projects?ref=AH/V005154/1).
