@@ -130,8 +130,10 @@ For the JS code, we provide `getBlock`, an utility function that pulls code from
 
 ## Prerequisites
 
-The emscripten SDK is required, https://emscripten.org/docs/getting_started/downloads.html
+If you would like to make contributions to the sema-engine custom WAAPI audio worklet processor, there are two compilers required to build it:
+* Emscripten SDK https://emscripten.org/docs/getting_started/downloads.html
 
+* Cheerp compiler https://leaningtech.com/cheerp/
 
 ## Build
 
