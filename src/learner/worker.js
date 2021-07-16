@@ -5,6 +5,36 @@ self.RingBuffer = RingBuffer;
 
 var outputSABs = {};
 
+var console = {}
+console.log = function(text){
+	postMessage({
+		func:"logs",
+		text: text,
+	});
+}
+
+console.error = function(text){
+	postMessage({
+		func:"logs",
+		text: text,
+	});
+}
+
+console.warn = function(text){
+	postMessage({
+		func:"logs",
+		text: text,
+	});
+}
+
+console.info = function(text){
+	postMessage({
+		func:"logs",
+		text: text,
+	});
+}
+
+
 class MLSABOutputTransducer {
 	constructor(ttype, channel, blocksize) {
 		this.channel = channel;

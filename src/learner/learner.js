@@ -4,6 +4,8 @@ import Dispatcher from "../common/dispatcher.js";
 // here we use the default pattern but any RegEx can be configured
 import mlworker from 'web-worker:./worker.js';
 
+import {Logger} from "../logger/logger.js";
+
 /**
  * The Learner class encapsulates a worker thread
  * and does async initialization and manages all async communication with it
@@ -46,6 +48,7 @@ export class Learner {
 	async init(url) {
 		// this.dispatcher = new Dispatcher();
 		this.worker = new mlworker();
+		this.logger = new Logger(); //make a logger instance
 
 		return new Promise( (resolve, reject) => {
 			let result = {};
@@ -72,6 +75,7 @@ export class Learner {
 
 	onMessageHandler(m){
 
+		// data is a property of postMessage. func is then a property of data sent in our messages.
 		if ( m && m.data && m.data.func ) {
 
 			let responders = {
@@ -131,6 +135,12 @@ export class Learner {
 				peerinfo: (data) => {
 					messaging.publish("peerinfo-request", {});
 				},
+				// data from the worker.js for the logger widget
+				logs: (data) => {
+					console.log("logs through here", data); //for now just log to console and have it captured here.
+					this.logger.push(data);
+					
+				}
 			};
 
 			responders[m.data.func](m.data);
