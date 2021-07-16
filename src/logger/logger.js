@@ -15,25 +15,26 @@ export class Logger {
 		this.dispatcher = new Dispatcher();
 	}
 
-	/*
 	//pass in svelte store, of log
-	setStore(storeLog){
-		storeLog.set = this.rawLog;
-	}
-	
+	// setStore(storeLog){
+	// 	storeLog.set = this.rawLog;
+	// }
+
 
 	addEventListener(event, callback) {
-		if (this.dispatcher && event && callback)
+		console.log("registering", event, callback);
+		if (this.dispatcher && event && callback){
 			this.dispatcher.addEventListener(event, callback);
+			console.log("registered");
+		}
 		else throw new Error("Error adding event listener to Logger");
 	}
-	*/
-	
+
 
 	push(data){
 		this.log.push(data);
 		this.rawLog = this.rawLog + "\n" + data.text;
-		this.dispatcher.dispatch("onConsoleLogsUpdate", {test:10});
+		this.dispatcher.dispatch("onLog", {test:10});
 		//console.log("getting dispatched", this.rawLog);
 		//this.dispatcher.dispatch("onConsoleLogsUpdate", {test:10});
 	}
