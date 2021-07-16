@@ -1,3 +1,5 @@
+import Dispatcher from '../common/dispatcher.js';
+
 export class Logger {
 	/**
 	 * @constructor
@@ -8,8 +10,35 @@ export class Logger {
 		}
 		Logger.instance = this;
 
+		this.log = [];
+		this.rawLog = ">"; //raw log of string data
+		this.dispatcher = new Dispatcher();
 	}
 
+	/*
+	//pass in svelte store, of log
+	setStore(storeLog){
+		storeLog.set = this.rawLog;
+	}
+	
+
+	addEventListener(event, callback) {
+		if (this.dispatcher && event && callback)
+			this.dispatcher.addEventListener(event, callback);
+		else throw new Error("Error adding event listener to Logger");
+	}
+	*/
+	
+
+	push(data){
+		this.log.push(data);
+		this.rawLog = this.rawLog + "\n" + data.text;
+		this.dispatcher.dispatch("onConsoleLogsUpdate", {test:10});
+		//console.log("getting dispatched", this.rawLog);
+		//this.dispatcher.dispatch("onConsoleLogsUpdate", {test:10});
+	}
+
+	//console.log = overrideConsoleLog();
 
 	takeOverConsole(f) {
 		if (f) {
@@ -24,6 +53,7 @@ export class Logger {
 				window.console = {
 					log: function () {
 						handle("log", arguments);
+						log.push
 					},
 					warn: function () {
 						handle("warn", arguments);
