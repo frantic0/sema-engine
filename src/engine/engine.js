@@ -344,11 +344,7 @@ export class Engine {
 
 				this.connectWorkletNode();
 
-				console.log(
-					"running %csema-engine v0.1.1",
-					"font-weight: bold; color: #ffb7c5"
-					// "font-weight: bold; background: #000; color: #bada55"
-				);
+
 
 				return true;
 			} else return false;
@@ -575,7 +571,14 @@ export class Engine {
 	async loadWorkletProcessorCode() {
 		if (this.audioContext !== undefined) {
 			try {
-				await this.audioContext.audioWorklet.addModule(this.audioWorkletUrl);
+				await this.audioContext.audioWorklet.addModule(this.audioWorkletUrl)
+					.then(
+						console.info(
+							"running %csema-engine v0.1.0",
+							"font-weight: bold; color: #ffb7c5"
+							// "font-weight: bold; background: #000; color: #bada55"
+						)
+				);
 			} catch (err) {
 				console.error(
 					"ERROR:Engine:loadWorkletProcessorCode: AudioWorklet not supported in this browser: ",

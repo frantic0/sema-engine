@@ -136,7 +136,7 @@ If you would like to make contributions to the sema-engine custom WAAPI audio wo
 
 * Cheerp compiler https://leaningtech.com/cheerp/
 
-Check the Makefile to understand the compilation workflow.
+Check the Makefile to better understand the compilation workflow.
 
 ## Build
 
