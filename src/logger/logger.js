@@ -22,10 +22,10 @@ export class Logger {
 
 
 	addEventListener(event, callback) {
-		console.log("registering", event, callback);
+		// console.log("registering", event, callback);
 		if (this.dispatcher && event && callback){
 			this.dispatcher.addEventListener(event, callback);
-			console.log("registered");
+			// console.log("registered");
 		}
 		else throw new Error("Error adding event listener to Logger");
 	}

@@ -7,14 +7,14 @@ export default class Dispatcher {
 	}
 
 	dispatch(eventName, data) {
-		console.log("dispatch is getting called.");
+		// console.log("dispatch is getting called.");
 		const event = this.events[eventName];
 		//let event = Event()
 
-		console.log("event", this.events, "data", data);
-		console.log("data", data, event);
+		// console.log("event", this.events, "data", data);
+		// console.log("data", data, event);
 		if (event) {
-			console.log("data being emitted", data)
+			// console.log("data being emitted", data)
 			event.emit(data);
 		}
 	}

@@ -26,7 +26,7 @@ import Dispatcher from '../common/dispatcher.js';
 class CustomMaxiNode extends AudioWorkletNode {
   constructor(audioContext, processorName) {
     // super(audioContext, processorName);
-    console.log();
+    // console.log();
     let options = {
       numberOfInputs: 1,
       numberOfOutputs: 1,

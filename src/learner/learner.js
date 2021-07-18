@@ -137,9 +137,9 @@ export class Learner {
 				},
 				// data from the worker.js for the logger widget
 				logs: (data) => {
-					console.log("logs through here", data); //for now just log to console and have it captured here.
+					console.log(">", data.text); //for now just log to console and have it captured here.
 					this.logger.push(data);
-					
+
 				}
 			};
 
