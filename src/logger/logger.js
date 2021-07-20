@@ -11,7 +11,8 @@ export class Logger {
 		Logger.instance = this;
 
 		this.log = [];
-		this.rawLog = ">"; //raw log of string data
+		this.rawLog = ""; //raw log of string data
+
 		this.dispatcher = new Dispatcher();
 	}
 
@@ -33,13 +34,15 @@ export class Logger {
 
 	push(data){
 		this.log.push(data);
-		this.rawLog = this.rawLog + "\n" + data.text;
+		this.rawLog = this.rawLog + "\n" + data.type + " " + data.text;
 		this.dispatcher.dispatch("onLog", {test:10});
 		//console.log("getting dispatched", this.rawLog);
 		//this.dispatcher.dispatch("onConsoleLogsUpdate", {test:10});
 	}
 
 	//console.log = overrideConsoleLog();
+
+	
 
 	takeOverConsole(f) {
 		if (f) {

@@ -10,6 +10,7 @@ console.log = function(text){
 	postMessage({
 		func:"logs",
 		text: text,
+		type: "[LEARNER WORKER]",
 	});
 }
 
@@ -17,6 +18,7 @@ console.error = function(text){
 	postMessage({
 		func:"logs",
 		text: text,
+		type: "[LEARNER WORKER]",
 	});
 }
 
@@ -24,6 +26,7 @@ console.warn = function(text){
 	postMessage({
 		func:"logs",
 		text: text,
+		type: "[LEARNER WORKER]",
 	});
 }
 
@@ -31,6 +34,7 @@ console.info = function(text){
 	postMessage({
 		func:"logs",
 		text: text,
+		type: "[LEARNER WORKER]",
 	});
 }
 
