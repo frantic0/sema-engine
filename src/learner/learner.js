@@ -20,6 +20,32 @@ export class Learner {
 	constructor() {
 		// Manager of events subscrition and emission, that should be subscribed by SAB receivers
 		this.dispatcher = new Dispatcher();
+		this.logger = new Logger();
+		
+		/*
+		//console.log("this is the logger", this.logger);
+		if (this.logger != undefined){
+			var console = {}
+			
+			console.log = function(text){ 
+				this.logger.push({text:text}); 
+			}
+
+			console.error = function(text){
+				this.logger.push({text:text});
+			}
+
+			console.warn = function(text){
+				this.logger.push({text:text});
+			}
+
+			console.info = function(text){
+				this.logger.push({text:text});
+			}
+			//console.log("testttt");
+		}
+		*/
+		
 	}
 
 	/**
@@ -48,7 +74,9 @@ export class Learner {
 	async init(url) {
 		// this.dispatcher = new Dispatcher();
 		this.worker = new mlworker();
-		this.logger = new Logger(); //make a logger instance
+		//this.logger = new Logger(); //make a logger instance
+
+		//console.log("TEST CONSOLE TAKEOVER IN LEARNER");
 
 		return new Promise( (resolve, reject) => {
 			let result = {};
@@ -137,8 +165,8 @@ export class Learner {
 				},
 				// data from the worker.js for the logger widget
 				logs: (data) => {
-					console.log(">", data.text); //for now just log to console and have it captured here.
-					this.logger.push(data);
+					//console.log(">", data.text); //for now just log to console and have it captured here.
+					this.logger.push(data); //recieve data from the worker.js and push it to the logger.
 
 				}
 			};
