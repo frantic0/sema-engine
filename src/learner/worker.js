@@ -5,38 +5,57 @@ self.RingBuffer = RingBuffer;
 
 var outputSABs = {};
 
-var console = {}
-console.log = function(text){
-	postMessage({
-		func:"logs",
-		text: text,
-		type: "[LEARNER WORKER]",
-	});
+// var console = self.console;
+var cl, ci, cw, ce;
+
+if (self.console) {
+	if (self.console.log) cl = console.log;
+	if (self.console.log) ci = console.info;
+	if (self.console.log) cw = console.warn;
+	if (self.console.log) ce = console.error;
+	if(cl && ci && cw && ce){
+		cw("taking over console");
+		console.log = function () {
+			self.postMessage({
+				func: "logs",
+				payload: [...arguments],
+				type: "[LEARNER WORKER]",
+			});
+			cl.apply(this, arguments);
+		};
+		console.info = function (text) {
+			self.postMessage({
+				func: "logs",
+				payload: [...arguments],
+				type: "[LEARNER WORKER]",
+			});
+			ci.apply(this, arguments);
+		};
+		console.warn = function (text) {
+			self.postMessage({
+				func: "logs",
+				payload: [...arguments],
+				type: "[LEARNER WORKER]",
+			});
+			cw.apply(this, arguments);
+		};
+		console.error = function (text) {
+			self.postMessage({
+				func: "logs",
+				payload: [...arguments],
+				type: "[LEARNER WORKER]",
+			});
+			ce.apply(this, arguments);
+		};
+		ce("console taken over");
+	}
 }
 
-console.error = function(text){
-	postMessage({
-		func:"logs",
-		text: text,
-		type: "[LEARNER WORKER]",
-	});
-}
+// console.log("log");
+// console.info("info");
+// console.warn("warn");
+// console.error("error");
 
-console.warn = function(text){
-	postMessage({
-		func:"logs",
-		text: text,
-		type: "[LEARNER WORKER]",
-	});
-}
-
-console.info = function(text){
-	postMessage({
-		func:"logs",
-		text: text,
-		type: "[LEARNER WORKER]",
-	});
-}
 
 
 class MLSABOutputTransducer {
@@ -211,6 +230,9 @@ self.sema = {
 
 };
 
+
+
+
 function initWithURL(url){
   if( new URL(url) ){
     try {
@@ -243,13 +265,14 @@ function initWithURL(url){
 
 const gevalToConsole = e => {
   try {
-    if (!geval)
-      var geval = eval;
+		if (!geval) var geval = eval;
+
     let res = geval(e);
-    if (res !== undefined) {
-      console.info(res); // print to console if successful
-    } else  console.info("done");
-  } catch (error) {
+		// console.info(res);
+    if (res !== undefined) console.info(res); // print to console if successful
+		else console.info("done");
+
+	} catch (error) {
     console.error(`Eval exception on Learner: `, error);
   }
 }

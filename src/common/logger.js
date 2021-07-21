@@ -1,4 +1,4 @@
-import Dispatcher from '../common/dispatcher.js';
+import Dispatcher from './dispatcher.js';
 
 export class Logger {
 	/**
@@ -34,15 +34,15 @@ export class Logger {
 
 	push(data){
 		this.log.push(data);
-		this.rawLog = this.rawLog + "\n" + data.type + " " + data.text;
-		this.dispatcher.dispatch("onLog", {test:10});
+		this.rawLog = this.rawLog + "\n" + data.type + " " + [...data.payload].join();
+		this.dispatcher.dispatch("onLog");
 		//console.log("getting dispatched", this.rawLog);
 		//this.dispatcher.dispatch("onConsoleLogsUpdate", {test:10});
 	}
 
 	//console.log = overrideConsoleLog();
 
-	
+
 
 	takeOverConsole(f) {
 		if (f) {
@@ -57,7 +57,6 @@ export class Logger {
 				window.console = {
 					log: function () {
 						handle("log", arguments);
-						log.push
 					},
 					warn: function () {
 						handle("warn", arguments);

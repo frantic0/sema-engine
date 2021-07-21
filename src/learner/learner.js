@@ -4,7 +4,7 @@ import Dispatcher from "../common/dispatcher.js";
 // here we use the default pattern but any RegEx can be configured
 import mlworker from 'web-worker:./worker.js';
 
-import {Logger} from "../logger/logger.js";
+import { Logger } from "../common/logger.js";
 
 /**
  * The Learner class encapsulates a worker thread
@@ -21,31 +21,6 @@ export class Learner {
 		// Manager of events subscrition and emission, that should be subscribed by SAB receivers
 		this.dispatcher = new Dispatcher();
 		this.logger = new Logger();
-		
-		/*
-		//console.log("this is the logger", this.logger);
-		if (this.logger != undefined){
-			var console = {}
-			
-			console.log = function(text){ 
-				this.logger.push({text:text}); 
-			}
-
-			console.error = function(text){
-				this.logger.push({text:text});
-			}
-
-			console.warn = function(text){
-				this.logger.push({text:text});
-			}
-
-			console.info = function(text){
-				this.logger.push({text:text});
-			}
-			//console.log("testttt");
-		}
-		*/
-		
 	}
 
 	/**
@@ -165,16 +140,16 @@ export class Learner {
 				},
 				// data from the worker.js for the logger widget
 				logs: (data) => {
-					//console.log(">", data.text); //for now just log to console and have it captured here.
+					console.log(">", [...data.payload].join()); //for now just log to console and have it captured here.
 					this.logger.push(data); //recieve data from the worker.js and push it to the logger.
-
 				}
 			};
 
 			responders[m.data.func](m.data);
 
-    } else if (m.data !== undefined && m.data.length != 0) {
-			res(m.data);
+    } else if (m.data !== undefined && m.data.length !== 0) {
+			// res(m.data);
+			console.log(m.data);
 		}
 		// clearTimeout(timeout);
 	};
