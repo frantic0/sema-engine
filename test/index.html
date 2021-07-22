@@ -134,6 +134,11 @@
       resize: vertical;
     }
 
+		#textArea-console {
+      height:100%;
+      width: 100%;
+		}
+
 
     #container-eval-js{
       grid-row: 6 / 6;
@@ -164,7 +169,7 @@
       /* margin-top:-5em; */
     }
 
-    .container-c {
+    .container-console {
       grid-row:8;
       grid-column: 3/ 4;
       position:relative;
@@ -255,10 +260,10 @@
       </div>
     </div>
     <span id="console-header" class="editor-header">Console</span>
-    <div class="container-c">
-      <div class="console-container-c">
+    <div class="container-console">
+      <!-- <div class="console-container-c"> -->
         <textarea id="textArea-console"></textarea>
-      </div>
+      <!-- </div> -->
     </div>
   </div>
 
@@ -290,7 +295,7 @@
 		function eventListener(log){
 			let myConsole = document.getElementById('textArea-console')
 			// myConsole.innerHTML = logger.rawLog;
-			myConsole.innerText = "asdfasdfasdfasdf";
+			myConsole.innerText = logger.rawLog;
 		}
 
 		logger.addEventListener("onLog", eventListener);

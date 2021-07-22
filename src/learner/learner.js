@@ -140,7 +140,7 @@ export class Learner {
 				},
 				// data from the worker.js for the logger widget
 				logs: (data) => {
-					console.log(">", [...data.payload].join()); //for now just log to console and have it captured here.
+					// console.log(">", [...data.payload].join()); //for now just log to console and have it captured here.
 					this.logger.push(data); //recieve data from the worker.js and push it to the logger.
 				}
 			};

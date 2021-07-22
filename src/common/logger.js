@@ -1,5 +1,7 @@
 import Dispatcher from './dispatcher.js';
 
+// var cl, ci, cw, ce;
+
 export class Logger {
 	/**
 	 * @constructor
@@ -14,31 +16,27 @@ export class Logger {
 		this.rawLog = ""; //raw log of string data
 
 		this.dispatcher = new Dispatcher();
-		this.cl;
-		this.ci;
-		this.cw;
-		this.ce;
 	}
+
+
 
 	//pass in svelte store, of log
 	// setStore(storeLog){
 	// 	storeLog.set = this.rawLog;
 	// }
 
-
 	addEventListener(event, callback) {
 		// console.log("registering", event, callback);
-		if (this.dispatcher && event && callback){
+		if (this.dispatcher && event && callback) {
 			this.dispatcher.addEventListener(event, callback);
 			// console.log("registered");
-		}
-		else throw new Error("Error adding event listener to Logger");
+		} else throw new Error("Error adding event listener to Logger");
 	}
 
-
-	push(data){
+	push(data) {
 		this.log.push(data);
-		this.rawLog = this.rawLog + "\n" + data.type + " " + [...data.payload].join();
+		this.rawLog =
+		this.rawLog + "\n" + data.type + " " + [...data.payload].join();
 		this.dispatcher.dispatch("onLog");
 		//console.log("getting dispatched", this.rawLog);
 		//this.dispatcher.dispatch("onConsoleLogsUpdate", {test:10});
@@ -46,51 +44,59 @@ export class Logger {
 
 	//console.log = overrideConsoleLog();
 
-	takeOverConsole(){
+	takeOverConsole() {
 		if (window.console) {
-			if (window.console.log) this.cl = console.log;
-			if (window.console.info) this.ci = console.info;
-			if (window.console.warn) this.cw = console.warn;
-			if (window.console.error) this.ce = console.error;
-			if(this.cl && this.ci && this.cw && this.ce){
-				this.cw("taking over MAIN console");
-				console.log = function () {
-					window.postMessage({
+// this.onMessageHandler.bind(this);
+			let cl, ci, cw, ce;
+
+			if (window.console.log) cl = console.log;
+			if (window.console.info) ci = console.info;
+			if (window.console.warn) cw = console.warn;
+			if (window.console.error) ce = console.error;
+			if (cl && ci && cw && ce) {
+				cw("taking over MAIN console");
+
+				console.log = function (text) {
+					this.push({
 						func: "logs",
 						payload: [...arguments],
 						type: "[MAIN]",
 					});
-					this.cl.apply(this, arguments);
-				};
+					cl.apply(this, arguments);
+				}.bind(this);
+
 				console.info = function (text) {
-					window.postMessage({
+					this.push({
 						func: "logs",
 						payload: [...arguments],
 						type: "[MAIN]",
 					});
-					this.ci.apply(this, arguments);
-				};
+					ci.apply(this, arguments);
+				}.bind(this);
+
 				console.warn = function (text) {
-					window.postMessage({
+					// window.postMessage({
+					this.push({
 						func: "logs",
 						payload: [...arguments],
 						type: "[MAIN]",
 					});
-					this.cw.apply(this, arguments);
-				};
+					cw.apply(this, arguments);
+				}.bind(this);
+
 				console.error = function (text) {
-					window.postMessage({
+					// window.postMessage({
+					this.push({
 						func: "logs",
 						payload: [...arguments],
 						type: "[MAIN]",
 					});
 					ce.apply(this, arguments);
 				};
-				this.ce("MAIN console taken over");
+				ce("MAIN console taken over");
 			}
 		}
 	}
-
 
 	// takeOverConsole(f) {
 	// 	if (f) {
@@ -121,5 +127,4 @@ export class Logger {
 	// 		}
 	// 	}
 	// }
-
 }
