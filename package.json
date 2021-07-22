@@ -1,6 +1,6 @@
 {
 	"name": "sema-engine",
-	"version": "0.1.1",
+	"version": "0.1.4",
 	"description": "Module containing Sema's signal engine and compiler for a live coding language ecosystem",
 	"repository": {
 		"type": "git",
@@ -64,12 +64,12 @@
 	"files": [
 		"maxi-processor.js",
 		"package.json",
-		"sema-engine.js",
-		"sema-engine.js.map",
-		"sema-engine.min.js",
-		"sema-engine.min.js.map",
-		"sema-engine.mjs",
-		"sema-engine.mjs.map"
+		"index.js",
+		"index.js.map",
+		"index.min.js",
+		"index.min.js.map",
+		"index.mjs",
+		"index.mjs.map"
 	],
 	"directories": {
 		"src": "src/",

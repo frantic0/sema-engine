@@ -5,6 +5,53 @@ self.RingBuffer = RingBuffer;
 
 var outputSABs = {};
 
+// var console = self.console;
+var cl, ci, cw, ce;
+
+if (self.console) {
+	if (self.console.log) cl = console.log;
+	if (self.console.log) ci = console.info;
+	if (self.console.log) cw = console.warn;
+	if (self.console.log) ce = console.error;
+	if(cl && ci && cw && ce){
+		cw("taking over console");
+		console.log = function () {
+			self.postMessage({
+				func: "logs",
+				payload: [...arguments],
+				type: "[LEARNER WORKER]",
+			});
+			cl.apply(this, arguments);
+		};
+		console.info = function (text) {
+			self.postMessage({
+				func: "logs",
+				payload: [...arguments],
+				type: "[LEARNER WORKER]",
+			});
+			ci.apply(this, arguments);
+		};
+		console.warn = function (text) {
+			self.postMessage({
+				func: "logs",
+				payload: [...arguments],
+				type: "[LEARNER WORKER]",
+			});
+			cw.apply(this, arguments);
+		};
+		console.error = function (text) {
+			self.postMessage({
+				func: "logs",
+				payload: [...arguments],
+				type: "[LEARNER WORKER]",
+			});
+			ce.apply(this, arguments);
+		};
+		ce("console taken over");
+	}
+}
+
+
 class MLSABOutputTransducer {
 	constructor(ttype, channel, blocksize) {
 		this.channel = channel;
@@ -177,6 +224,9 @@ self.sema = {
 
 };
 
+
+
+
 function initWithURL(url){
   if( new URL(url) ){
     try {
@@ -209,13 +259,14 @@ function initWithURL(url){
 
 const gevalToConsole = e => {
   try {
-    if (!geval)
-      var geval = eval;
+		if (!geval) var geval = eval;
+
     let res = geval(e);
-    if (res !== undefined) {
-      console.info(res); // print to console if successful
-    } else  console.info("done");
-  } catch (error) {
+		// console.info(res);
+    if (res !== undefined) console.info(res); // print to console if successful
+		else console.info("done");
+
+	} catch (error) {
     console.error(`Eval exception on Learner: `, error);
   }
 }

@@ -33,4 +33,4 @@ export { Learner } from "./learner/learner.js";
 
 export { getBlock } from "./common/blockTracker.js";
 
-export { Logger } from "./logger/logger.js"
+export { Logger } from "./common/logger.js"

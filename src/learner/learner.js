@@ -4,6 +4,8 @@ import Dispatcher from "../common/dispatcher.js";
 // here we use the default pattern but any RegEx can be configured
 import mlworker from 'web-worker:./worker.js';
 
+import { Logger } from "../common/logger.js";
+
 /**
  * The Learner class encapsulates a worker thread
  * and does async initialization and manages all async communication with it
@@ -18,6 +20,7 @@ export class Learner {
 	constructor() {
 		// Manager of events subscrition and emission, that should be subscribed by SAB receivers
 		this.dispatcher = new Dispatcher();
+		this.logger = new Logger();
 	}
 
 	/**
@@ -46,6 +49,9 @@ export class Learner {
 	async init(url) {
 		// this.dispatcher = new Dispatcher();
 		this.worker = new mlworker();
+		//this.logger = new Logger(); //make a logger instance
+
+		//console.log("TEST CONSOLE TAKEOVER IN LEARNER");
 
 		return new Promise( (resolve, reject) => {
 			let result = {};
@@ -72,6 +78,7 @@ export class Learner {
 
 	onMessageHandler(m){
 
+		// data is a property of postMessage. func is then a property of data sent in our messages.
 		if ( m && m.data && m.data.func ) {
 
 			let responders = {
@@ -131,12 +138,18 @@ export class Learner {
 				peerinfo: (data) => {
 					messaging.publish("peerinfo-request", {});
 				},
+				// data from the worker.js for the logger widget
+				logs: (data) => {
+					// console.log(">", [...data.payload].join()); //for now just log to console and have it captured here.
+					this.logger.push(data); //recieve data from the worker.js and push it to the logger.
+				}
 			};
 
 			responders[m.data.func](m.data);
 
-    } else if (m.data !== undefined && m.data.length != 0) {
-			res(m.data);
+    } else if (m.data !== undefined && m.data.length !== 0) {
+			// res(m.data);
+			console.log(m.data);
 		}
 		// clearTimeout(timeout);
 	};
