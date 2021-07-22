@@ -51,12 +51,6 @@ if (self.console) {
 	}
 }
 
-// console.log("log");
-// console.info("info");
-// console.warn("warn");
-// console.error("error");
-
-
 
 class MLSABOutputTransducer {
 	constructor(ttype, channel, blocksize) {

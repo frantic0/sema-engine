@@ -16,6 +16,16 @@ straightforward as possible.
   PATCH Ticket title goes here.
 
 
+## [0.1.4] - 2021-07-22
+
+### Added
+- new worker method takes over the worker thread console.log
+- new Console textarea and Logger event subscription on test index.html file to display console.log listings
+
+### Changed
+- `Logger` method `consoleTakeOver` takes over the main JS thread console.log but also keeps original console functionality now
+
+
 ## [0.1.1] - 2021-07-13
 
 ### Added

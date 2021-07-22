@@ -294,8 +294,7 @@
 
 		function eventListener(log){
 			let myConsole = document.getElementById('textArea-console')
-			// myConsole.innerHTML = logger.rawLog;
-			myConsole.innerText = logger.rawLog;
+			myConsole.value = logger.rawLog + '\r\n';
 		}
 
 		logger.addEventListener("onLog", eventListener);
