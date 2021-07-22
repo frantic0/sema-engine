@@ -14,6 +14,10 @@ export class Logger {
 		this.rawLog = ""; //raw log of string data
 
 		this.dispatcher = new Dispatcher();
+		this.cl;
+		this.ci;
+		this.cw;
+		this.ce;
 	}
 
 	//pass in svelte store, of log
@@ -42,36 +46,80 @@ export class Logger {
 
 	//console.log = overrideConsoleLog();
 
-
-
-	takeOverConsole(f) {
-		if (f) {
-			try {
-				var original = window.console;
-
-				function handle(method, args) {
-					var message = Array.prototype.slice.apply(args).join(" ");
-					if (original) original[method]("> " + message);
-				}
-
-				window.console = {
-					log: function () {
-						handle("log", arguments);
-					},
-					warn: function () {
-						handle("warn", arguments);
-					},
-					error: function () {
-						handle("error", arguments);
-					},
-					info: function () {
-						handle("info", arguments);
-					},
+	takeOverConsole(){
+		if (window.console) {
+			if (window.console.log) this.cl = console.log;
+			if (window.console.info) this.ci = console.info;
+			if (window.console.warn) this.cw = console.warn;
+			if (window.console.error) this.ce = console.error;
+			if(this.cl && this.ci && this.cw && this.ce){
+				this.cw("taking over MAIN console");
+				console.log = function () {
+					window.postMessage({
+						func: "logs",
+						payload: [...arguments],
+						type: "[MAIN]",
+					});
+					this.cl.apply(this, arguments);
 				};
-			} catch (error) {
-				console.error(error);
+				console.info = function (text) {
+					window.postMessage({
+						func: "logs",
+						payload: [...arguments],
+						type: "[MAIN]",
+					});
+					this.ci.apply(this, arguments);
+				};
+				console.warn = function (text) {
+					window.postMessage({
+						func: "logs",
+						payload: [...arguments],
+						type: "[MAIN]",
+					});
+					this.cw.apply(this, arguments);
+				};
+				console.error = function (text) {
+					window.postMessage({
+						func: "logs",
+						payload: [...arguments],
+						type: "[MAIN]",
+					});
+					ce.apply(this, arguments);
+				};
+				this.ce("MAIN console taken over");
 			}
 		}
 	}
+
+
+	// takeOverConsole(f) {
+	// 	if (f) {
+	// 		try {
+	// 			var original = window.console;
+
+	// 			function handle(method, args) {
+	// 				var message = Array.prototype.slice.apply(args).join(" ");
+	// 				if (original) original[method]("> " + message);
+	// 			}
+
+	// 			window.console = {
+	// 				log: function () {
+	// 					handle("log", arguments);
+	// 				},
+	// 				warn: function () {
+	// 					handle("warn", arguments);
+	// 				},
+	// 				error: function () {
+	// 					handle("error", arguments);
+	// 				},
+	// 				info: function () {
+	// 					handle("info", arguments);
+	// 				},
+	// 			};
+	// 		} catch (error) {
+	// 			console.error(error);
+	// 		}
+	// 	}
+	// }
 
 }

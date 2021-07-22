@@ -72,6 +72,13 @@
       width: auto;
     }
 
+    #console-header {
+      grid-row:7;
+      grid-column:3/3;
+      font-weight: bold;
+      width: auto;
+    }
+
     #editor-header-ge {
       grid-row:7;
       grid-column:2/2;
@@ -145,7 +152,7 @@
 
     .container-ge {
       grid-row:8;
-      grid-column: 2/ 4;
+      grid-column: 2/ 2;
       position:relative;
       height:100%;
       width: 100%;
@@ -156,6 +163,27 @@
       /* resize: both; */
       /* margin-top:-5em; */
     }
+
+    .container-c {
+      grid-row:8;
+      grid-column: 3/ 4;
+      position:relative;
+      height:100%;
+      width: 100%;
+      border: 1px solid #ddd;
+      min-width: 20em;
+      /* max-width: 0.5fr; */
+      /* overflow:hidden; */
+      /* resize: both; */
+      /* margin-top:-5em; */
+    }
+
+		.console-container-ce {
+      width: 100%;
+      height: 100%;
+      position:absolute;
+		}
+
 
     .editor-container-ge {
       width: 100%;
@@ -226,6 +254,12 @@
         <textarea id="textArea-grammar"></textarea>
       </div>
     </div>
+    <span id="console-header" class="editor-header">Console</span>
+    <div class="container-c">
+      <div class="console-container-c">
+        <textarea id="textArea-console"></textarea>
+      </div>
+    </div>
   </div>
 
   <script type="module">
@@ -235,6 +269,7 @@
       compile,
       Learner,
       getBlock,
+			Logger
       // takeOverConsole
     } from "../index.mjs";
 
@@ -242,6 +277,7 @@
         analyser = 0,
         dspCode,
         learner,
+				logger = new Logger(),
         inputStreamConnected = false;
         ;
 
@@ -251,10 +287,18 @@
     // var origin = 'https://frantic0.github.io/sema-engine';
     let origin = document.location.origin;
 
+		function eventListener(log){
+			let myConsole = document.getElementById('textArea-console')
+			// myConsole.innerHTML = logger.rawLog;
+			myConsole.innerText = "asdfasdfasdfasdf";
+		}
+
+		logger.addEventListener("onLog", eventListener);
+
     $("playButton", "click", () => {
       if(!engine){
         try{
-          // takeOverConsole();
+          logger.takeOverConsole();
           engine = new Engine();
           engine.init(origin);
         } catch (error) {
