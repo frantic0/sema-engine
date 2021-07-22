@@ -295,6 +295,7 @@
 		function eventListener(log){
 			let myConsole = document.getElementById('textArea-console')
 			myConsole.value = logger.rawLog + '\r\n';
+			myConsole.scrollTop = myConsole.scrollHeight;
 		}
 
 		logger.addEventListener("onLog", eventListener);
