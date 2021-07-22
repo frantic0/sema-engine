@@ -1,0 +1,39 @@
+:function:(x,y@{200}sin;);
+
+:mixfunc:(:x:,:y:@);
+
+
+
+
+importScripts("https://cdnjs.cloudflare.com/ajax/libs/aurora.js/0.4.2/aurora.min.js")
+
+____
+
+
+function loadSample(url, name) {
+	var asset = AV.Asset.fromURL(url);
+
+	var mysample;
+	asset.decodeToBuffer(function(buffer) {
+		// buffer is now a Float32Array containing the entire decoded audio file
+		mysample = buffer;
+		//send the buffer to the signal engine if required
+		sema.sendBuffer(name, mysample);
+		console.log("Sample loaded: " + url);
+	});
+}
+
+
+_________
+
+loadSample('http://127.0.0.1:8080/texture/fbcell2.wav', 'fbcell')
+loadSample('http://127.0.0.1:8080/texture/fence.wav', 'fence')
+
+loadSample('http://127.0.0.1:8080/texture/doep1.wav', 'doep1')
+
+loadSample('http://127.0.0.1:8080/texture/doep2.wav', 'doep2')
+
+loadSample('http://127.0.0.1:8080/texture/doep3.wav', 'doep3')
+
+loadSample('http://127.0.0.1:8080/texture/playground1.wav', 'pg1')
+loadSample('http://127.0.0.1:8080/texture/playground2.wav', 'pg2')
