@@ -9,7 +9,7 @@
 
 
 console.log(
-	"running %cMaximilian v2.4.0 (Wasm)",
+	"running %cMaximilian v2.4.1 (Wasm)",
 	"font-weight: bold; background: #000; color: #bada55"
 );
 

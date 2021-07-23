@@ -8,7 +8,9 @@ SRC=src/maximilian/src/maximilian.cpp
 SRC_EM=src/maximilian/src/maximilian.embind.cpp
 # SRC_LIBS=../../../src/libs/*.cpp
 # SRC_LIBS=../../src/libs/maxiSynths.cpp
-SRC_LIBS=src/maximilian/src/libs/maxiSynths.cpp src/maximilian/src/libs/maxiGrains.cpp src/maximilian/src/libs/maxiFFT.cpp src/maximilian/src/libs/fft.cpp src/maximilian/src/libs/maxiMFCC.cpp
+# SRC_LIBS=src/maximilian/src/libs/maxiSynths.cpp src/maximilian/src/libs/maxiGrains.cpp src/maximilian/src/libs/maxiFFT.cpp src/maximilian/src/libs/fft.cpp src/maximilian/src/libs/maxiMFCC.cpp
+SRC_COMMON_LIBS=src/maximilian/src/libs/PolyBLEP/PolyBLEP.cpp
+SRC_LIBS=src/maximilian/src/libs/maxiReverb.cpp src/maximilian/src/libs/maxiClock.cpp src/maximilian/src/libs/maxiFFT.cpp src/maximilian/src/libs/fft.cpp src/maximilian/src/libs/maxiMFCC.cpp
 C_SRC_LIBS=src/maximilian/src/libs/stb_vorbis.c
 
 BUILD_DIR=dist
@@ -56,8 +58,8 @@ CFLAGS=--bind -O3\
 
 ######## CHEERP BUILD VARIABLES AND FLAGS
 
-# CLANGBIN=/opt/cheerp/bin/clang++
-CLANGBIN=/Applications/cheerp/bin/clang++
+CLANGBIN=/opt/cheerp/bin/clang++
+# CLANGBIN=/Applications/cheerp/bin/clang++
 HEADERS=src/maximilian/src
 SRC_CHEERP=src/maximilian/js/purejs/maxi-purejs.cpp
 
@@ -92,10 +94,10 @@ ${BUILD_DIR}:
 
 full: directory
 	@echo "${YELLOW}\r\nmaximilian.transpile.js — Transpiling to pure JS\r\n ${RESET}"
-	$(CLANGBIN) $(CFLAGS-CHRP) -target cheerp -I$(HEADERS) -o $(OUTPUT-CHEERP) $(SRC_CHEERP) $(SRC)
+	$(CLANGBIN) $(CFLAGS-CHRP) -target cheerp -I$(HEADERS) -o $(OUTPUT-CHEERP) $(SRC_CHEERP) $(SRC) ${SRC_COMMON_LIBS}
 	cat src/maximilian/js/purejs/module-bindings.js >> dist/maximilian.transpile.js
 	@echo "${YELLOW}\r\nsema-engine.wasmmodule.js – Building WebAssembly (Wasm) for Web Audio API AudioWorklet\r\n ${RESET}"
-	$(EMSCR) $(CFLAGS) --post-js $(POST_JS) --post-js $(TRANSPILE) -o $(OUTPUT) $(SRC_EM) $(SRC) $(SRC_LIBS) $(C_SRC_LIBS)
+	$(EMSCR) $(CFLAGS) --post-js $(POST_JS) --post-js $(TRANSPILE) -o $(OUTPUT) $(SRC_EM) $(SRC) ${SRC_COMMON_LIBS} $(SRC_LIBS) $(C_SRC_LIBS)
 
 
 
