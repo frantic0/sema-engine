@@ -72,6 +72,13 @@
       width: auto;
     }
 
+    #console-header {
+      grid-row:7;
+      grid-column:3/3;
+      font-weight: bold;
+      width: auto;
+    }
+
     #editor-header-ge {
       grid-row:7;
       grid-column:2/2;
@@ -127,6 +134,11 @@
       resize: vertical;
     }
 
+		#textArea-console {
+      height:100%;
+      width: 100%;
+		}
+
 
     #container-eval-js{
       grid-row: 6 / 6;
@@ -145,7 +157,7 @@
 
     .container-ge {
       grid-row:8;
-      grid-column: 2/ 4;
+      grid-column: 2/ 2;
       position:relative;
       height:100%;
       width: 100%;
@@ -156,6 +168,27 @@
       /* resize: both; */
       /* margin-top:-5em; */
     }
+
+    .container-console {
+      grid-row:8;
+      grid-column: 3/ 4;
+      position:relative;
+      height:100%;
+      width: 100%;
+      border: 1px solid #ddd;
+      min-width: 20em;
+      /* max-width: 0.5fr; */
+      /* overflow:hidden; */
+      /* resize: both; */
+      /* margin-top:-5em; */
+    }
+
+		.console-container-ce {
+      width: 100%;
+      height: 100%;
+      position:absolute;
+		}
+
 
     .editor-container-ge {
       width: 100%;
@@ -176,6 +209,7 @@
   <link   rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.1/codemirror.min.css" integrity="sha512-MWdvo/Qqcf4pY1ecQUB1uBn0qLp19U/qJ1Rpp2BDZeuBA7YsFEwkvqR/+aG4BroPiAYDunKJ6X8R/Pmdt3p7oA==" crossorigin="anonymous" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.1/keymap/vim.min.js" integrity="sha512-g2nzBS/fBHxdSRXaDcYGHVg2Rjk7+3gITKVMv1q/ylh2izUiw1AZ50urelrhy7I6EYLQi5RM8FFj3rdATH5wIg==" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.1/mode/javascript/javascript.min.js" integrity="sha512-ssJuYJm7WuzXiDvMgmhFfPcXAM3QLILVaH8VhLDkauwZRTSlw7uxxUh2TXDau3y2eK0PsJfzL/q0lYsjTEO8sQ==" crossorigin="anonymous"></script>
+	<script async="" src="//localhost:35729/livereload.js?snipver=1" id="livereloadscript" crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -225,6 +259,12 @@
         <textarea id="textArea-grammar"></textarea>
       </div>
     </div>
+    <span id="console-header" class="editor-header">Console</span>
+    <div class="container-console">
+      <!-- <div class="console-container-c"> -->
+        <textarea id="textArea-console"></textarea>
+      <!-- </div> -->
+    </div>
   </div>
 
   <script type="module">
@@ -234,13 +274,15 @@
       compile,
       Learner,
       getBlock,
-      takeOverConsole
-    } from "./sema-engine.mjs";
+			Logger
+      // takeOverConsole
+    } from "../index.mjs";
 
     let engine,
         analyser = 0,
         dspCode,
         learner,
+				logger = new Logger(),
         inputStreamConnected = false;
         ;
 
@@ -250,10 +292,18 @@
     // var origin = 'https://frantic0.github.io/sema-engine';
     let origin = document.location.origin;
 
+		function eventListener(log){
+			let myConsole = document.getElementById('textArea-console')
+			myConsole.value = logger.rawLog + '\r\n';
+			myConsole.scrollTop = myConsole.scrollHeight;
+		}
+
+		logger.addEventListener("onLog", eventListener);
+
     $("playButton", "click", () => {
       if(!engine){
         try{
-          takeOverConsole();
+          logger.takeOverConsole();
           engine = new Engine();
           engine.init(origin);
         } catch (error) {
@@ -271,13 +321,13 @@
     $("loadSamplesButton", "click", () => {
       if(engine){
         try{
-          engine.loadSample("909.wav",       "/audio/909.wav");
-          engine.loadSample("909b.wav",      "/audio/909b.wav");
-          engine.loadSample("909closed.wav", "/audio/909closed.wav");
-          engine.loadSample("909open.wav",   "/audio/909closed.wav");
-          engine.loadSample("crebit2.ogg",   "/audio/crebit2.ogg");
-          engine.loadSample("kick1.wav",     "/audio/kick1.wav");
-          engine.loadSample("snare1.wav",    "/audio/snare1.wav");
+          engine.loadSample("909.wav",       "/test/audio/909.wav");
+          engine.loadSample("909b.wav",      "/test/audio/909b.wav");
+          engine.loadSample("909closed.wav", "/test/audio/909closed.wav");
+          engine.loadSample("909open.wav",   "/test/audio/909closed.wav");
+          engine.loadSample("crebit2.ogg",   "/test/audio/crebit2.ogg");
+          engine.loadSample("kick1.wav",     "/test/audio/kick1.wav");
+          engine.loadSample("snare1.wav",    "/test/audio/snare1.wav");
         } catch (error) {
           console.error("ERROR: Failed to compile and eval: ", error);
         }
@@ -451,11 +501,11 @@
       return editor;
     }
 
-    const editorLivecode = setupEditorWithContent("textArea-livecode", '/langs/default-9-lc.txt');
-    const editorGrammar =  setupEditorWithContent("textArea-grammar",  '/langs/default-grammar.txt');
-    const editorJS =       setupEditorWithContent("textArea-js",       '/js/default-3-js.txt');
-    // const editorLivecode = setupEditorWithContent("textArea-livecode", '/langs/rubber-duckling-lc-1.txt');
-    // const editorGrammar =  setupEditorWithContent("textArea-grammar",  '/langs/rubber-duckling-grammar.txt');
+    const editorLivecode = setupEditorWithContent("textArea-livecode", '/test/langs/default-5-lc.txt');
+    const editorGrammar =  setupEditorWithContent("textArea-grammar",  '/test/langs/default-grammar.txt');
+    const editorJS =       setupEditorWithContent("textArea-js",       '/test/js/default-3-js.txt');
+    // const editorLivecode = setupEditorWithContent("textArea-livecode", '/test/langs/rubber-duckling-lc-1.txt');
+    // const editorGrammar =  setupEditorWithContent("textArea-grammar",  '/test/langs/rubber-duckling-grammar.txt');
 
   </script>
 </body>

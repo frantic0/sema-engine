@@ -46,6 +46,12 @@ describe("test compile Default livecode source with Default grammar source", fun
 			done();
 		});
 
+
+
+		// TODO
+
+
+
     // fs.readFile("test/fixtures/lang/default-3-lc.txt", "utf8", (err, data) => {
 		// 	if (err) throw err;
 		// 	default_3_lc = data;

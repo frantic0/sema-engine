@@ -21,53 +21,53 @@ function genBlepOsc(waveform) {
 
 var jsFuncMap = {
 	saw: {
-		setup: (o, p) => `${o} = new Maximilian.maxiOsc();
+		setup: (o, p) => `${o} = new Module.maxiOsc();
                       ${o}.phaseReset(${p.length > 1 ? p[1].loop : 0.0});`,
 		loop: (o, p) => `${o}.saw(${p[0].loop})`,
 	},
 	sin: {
-		setup: (o, p) => `${o} = new Maximilian.maxiOsc();
+		setup: (o, p) => `${o} = new Module.maxiOsc();
                       ${o}.phaseReset(${p.length > 1 ? p[1].loop : 0.0});`,
 		loop: (o, p) => `${o}.sinewave(${p[0].loop})`,
 	},
 	tri: {
-		setup: (o, p) => `${o} = new Maximilian.maxiOsc();
+		setup: (o, p) => `${o} = new Module.maxiOsc();
                       ${o}.phaseReset(${p.length > 1 ? p[1].loop : 0.0});`,
 		loop: (o, p) => `${o}.triangle(${p[0].loop})`,
 	},
 	pha: {
-		setup: (o, p) => `${o} = new Maximilian.maxiOsc();
+		setup: (o, p) => `${o} = new Module.maxiOsc();
                       ${o}.phaseReset(${p.length > 1 ? p[1].loop : 0.0});`,
 		loop: (o, p) => `${o}.phasor(${p[0].loop})`,
 	},
 	ph2: {
-		setup: (o, p) => `${o} = new Maximilian.maxiOsc();
+		setup: (o, p) => `${o} = new Module.maxiOsc();
                       ${o}.phaseReset(${p.length > 3 ? p[3].loop : 0.0});`,
 		loop: (o, p) =>
 			`${o}.phasorBetween(${p[0].loop},${p[1].loop},${p[2].loop})`,
 	},
 	sqr: {
-		setup: (o, p) => `${o} = new Maximilian.maxiOsc();
+		setup: (o, p) => `${o} = new Module.maxiOsc();
                       ${o}.phaseReset(${p.length > 1 ? p[1].loop : 0.0});`,
 		loop: (o, p) => `${o}.square(${p[0].loop})`,
 	},
 	pul: {
-		setup: (o, p) => `${o} = new Maximilian.maxiOsc();
+		setup: (o, p) => `${o} = new Module.maxiOsc();
                       ${o}.phaseReset(${p.length > 2 ? p[2].loop : 0.0});`,
 		loop: (o, p) => `${o}.pulse(${p[0].loop},${p[1].loop})`,
 	},
 	imp: {
-		setup: (o, p) => `${o} = new Maximilian.maxiOsc();
+		setup: (o, p) => `${o} = new Module.maxiOsc();
                       ${o}.phaseReset(${p.length > 1 ? p[1].loop : 0.0});`,
 		loop: (o, p) => `${o}.impulse(${p[0].loop})`,
 	},
 	sawn: {
-		setup: (o, p) => `${o} = new Maximilian.maxiOsc();
+		setup: (o, p) => `${o} = new Module.maxiOsc();
                       ${o}.phaseReset(${p.length > 1 ? p[1].loop : 0.0});`,
 		loop: (o, p) => `${o}.sawn(${p[0].loop})`,
 	},
 	noiz: {
-		setup: (o, p) => `${o} = new Maximilian.maxiOsc()`,
+		setup: (o, p) => `${o} = new Module.maxiOsc()`,
 		loop: (o, p) => `${o}.noise()*${p[0].loop}`,
 	},
 	gt: {
@@ -107,7 +107,7 @@ var jsFuncMap = {
 		loop: (o, p) => `Math.abs(${p[0].loop})`,
 	},
 	env: {
-		setup: (o, p) => `${o} = new Maximilian.maxiEnv();
+		setup: (o, p) => `${o} = new Module.maxiEnv();
                       ${o}.setAttack(${p[1].loop});
                       ${o}.setDecay(${p[2].loop});
                       ${o}.setSustain(${p[3].loop});
@@ -141,77 +141,77 @@ var jsFuncMap = {
 	blin: {
 		setup: (o, p) => "",
 		loop: (o, p) =>
-			`Maximilian.maxiMap.linlin(${p[0].loop}, -1, 1, ${p[1].loop}, ${p[2].loop})`,
+			`Module.maxiMap.linlin(${p[0].loop}, -1, 1, ${p[1].loop}, ${p[2].loop})`,
 	},
 	ulin: {
 		setup: (o, p) => "",
 		loop: (o, p) =>
-			`Maximilian.maxiMap.linlin(${p[0].loop}, 0, 1, ${p[1].loop}, ${p[2].loop})`,
+			`Module.maxiMap.linlin(${p[0].loop}, 0, 1, ${p[1].loop}, ${p[2].loop})`,
 	},
 	bexp: {
 		setup: (o, p) => "",
 		loop: (o, p) =>
-			`Maximilian.maxiMap.linexp(${p[0].loop}, -1, 1, ${p[1].loop}, ${p[2].loop})`,
+			`Module.maxiMap.linexp(${p[0].loop}, -1, 1, ${p[1].loop}, ${p[2].loop})`,
 	},
 	uexp: {
 		setup: (o, p) => "",
 		loop: (o, p) =>
-			`Maximilian.maxiMap.linexp(${p[0].loop}, 0.0000001, 1, ${p[1].loop}, ${p[2].loop})`,
+			`Module.maxiMap.linexp(${p[0].loop}, 0.0000001, 1, ${p[1].loop}, ${p[2].loop})`,
 	},
 	linlin: {
 		setup: (o, p) => "",
 		loop: (o, p) =>
-			`Maximilian.maxiMap.linlin(${p[0].loop}, ${p[1].loop}, ${p[2].loop},${p[3].loop}, ${p[4].loop})`,
+			`Module.maxiMap.linlin(${p[0].loop}, ${p[1].loop}, ${p[2].loop},${p[3].loop}, ${p[4].loop})`,
 	},
 	linexp: {
 		setup: (o, p) => "",
 		loop: (o, p) =>
-			`Maximilian.maxiMap.linexp(${p[0].loop}, ${p[1].loop}, ${p[2].loop}, ${p[3].loop}, ${p[4].loop})`,
+			`Module.maxiMap.linexp(${p[0].loop}, ${p[1].loop}, ${p[2].loop}, ${p[3].loop}, ${p[4].loop})`,
 	},
 	dist: {
-		setup: (o, p) => `${o} = new Maximilian.maxiNonlinearity()`,
+		setup: (o, p) => `${o} = new Module.maxiNonlinearity()`,
 		loop: (o, p) => `${o}.atanDist(${p[0].loop},${p[1].loop})`,
 	},
 	softclip: {
-		setup: (o, p) => `${o} = new Maximilian.maxiNonlinearity()`,
+		setup: (o, p) => `${o} = new Module.maxiNonlinearity()`,
 		loop: (o, p) => `${o}.softclip(${p[0].loop})`,
 	},
 	hardclip: {
-		setup: (o, p) => `${o} = new Maximilian.maxiNonlinearity()`,
+		setup: (o, p) => `${o} = new Module.maxiNonlinearity()`,
 		loop: (o, p) => `${o}.hardclip(${p[0].loop})`,
 	},
 	asymclip: {
-		setup: (o, p) => `${o} = new Maximilian.maxiNonlinearity()`,
+		setup: (o, p) => `${o} = new Module.maxiNonlinearity()`,
 		loop: (o, p) => `${o}.asymclip(${p[0].loop},${p[1].loop},${p[2].loop})`,
 	},
 	flange: {
-		setup: (o, p) => `${o} = new Maximilian.maxiFlanger()`,
+		setup: (o, p) => `${o} = new Module.maxiFlanger()`,
 		loop: (o, p) =>
 			`${o}.flange(${p[0].loop},${p[1].loop},${p[2].loop},${p[3].loop},${p[4].loop})`,
 	},
 	chor: {
-		setup: (o, p) => `${o} = new Maximilian.maxiChorus()`,
+		setup: (o, p) => `${o} = new Module.maxiChorus()`,
 		loop: (o, p) =>
 			`${o}.chorus(${p[0].loop},${p[1].loop},${p[2].loop},${p[3].loop},${p[4].loop})`,
 	},
 	dl: {
-		setup: (o, p) => `${o} = new Maximilian.maxiDelayline()`,
+		setup: (o, p) => `${o} = new Module.maxiDelayline()`,
 		loop: (o, p) => `${o}.dl(${p[0].loop},${p[1].loop},${p[2].loop})`,
 	},
 	lpf: {
-		setup: (o, p) => `${o} = new Maximilian.maxiFilter()`,
+		setup: (o, p) => `${o} = new Module.maxiFilter()`,
 		loop: (o, p) => `${o}.lopass(${p[0].loop},${p[1].loop})`,
 	},
 	hpf: {
-		setup: (o, p) => `${o} = new Maximilian.maxiFilter()`,
+		setup: (o, p) => `${o} = new Module.maxiFilter()`,
 		loop: (o, p) => `${o}.hipass(${p[0].loop},${p[1].loop})`,
 	},
 	lpz: {
-		setup: (o, p) => `${o} = new Maximilian.maxiFilter()`,
+		setup: (o, p) => `${o} = new Module.maxiFilter()`,
 		loop: (o, p) => `${o}.lores(${p[0].loop},${p[1].loop},${p[2].loop})`,
 	},
 	hpz: {
-		setup: (o, p) => `${o} = new Maximilian.maxiFilter()`,
+		setup: (o, p) => `${o} = new Module.maxiFilter()`,
 		loop: (o, p) => `${o}.hires(${p[0].loop},${p[1].loop},${p[2].loop})`,
 	},
 
@@ -284,13 +284,13 @@ var jsFuncMap = {
 	// },
 
 	sah: {
-		setup: (o, p) => `${o} = new Maximilian.maxiSampleAndHold();`,
+		setup: (o, p) => `${o} = new Module.maxiSampleAndHold();`,
 		loop: (o, p) => `${o}.sah(${p[0].loop},${p[1].loop})`,
 	},
 	stretch: {
-		setup: (o, p) => `${o} = new Maximilian.maxiSample();
+		setup: (o, p) => `${o} = new Module.maxiSample();
                       ${o}.setSample(this.getSampleBuffer(${p[4].loop}));
-                      ${o}stretch = new Maximilian.maxiStretch();
+                      ${o}stretch = new Module.maxiStretch();
                       ${o}stretch.setSample(${o});`,
 		loop: (o, p) =>
 			`(${o}.isReady() ? ${o}stretch.play(${p[0].loop},${p[1].loop},${p[2].loop},${p[3].loop},0.0) : 0.0)`,
@@ -298,7 +298,7 @@ var jsFuncMap = {
 	// 'adc': {"setup":(o,p)=>"", "loop":(o,p)=>`inputs[${p[0].loop}]`},
 	adc: { setup: (o, p) => "", loop: (o, p) => `(inputs * ${p[0].loop})` },
 	sampler: {
-		setup: (o, p) => `${o} = new Maximilian.maxiSample();
+		setup: (o, p) => `${o} = new Module.maxiSample();
                       ${o}.setSample(this.getSampleBuffer(${
 			p[p.length - 1].loop
 		}));`,
@@ -326,12 +326,12 @@ var jsFuncMap = {
 		},
 	},
 	loop: {
-		setup: (o, p) => `${o} = new Maximilian.maxiSample();
+		setup: (o, p) => `${o} = new Module.maxiSample();
                       ${o}.setSample(this.getSampleBuffer(${p[1].loop}));`,
 		loop: (o, p) => `(${o}.isReady() ? ${o}.play(${p[0].loop}) : 0.0)`,
 	},
 	slice: {
-		setup: (o, p) => `${o} = new Maximilian.maxiSample();
+		setup: (o, p) => `${o} = new Module.maxiSample();
                       ${o}.setSample(this.getSampleBuffer(${p[2].loop}));`,
 		loop: (o, p) =>
 			`(${o}.isReady() ? ${o}.loopSetPosOnZX(${p[0].loop},${p[1].loop}) : 0.0)`,
@@ -345,105 +345,105 @@ var jsFuncMap = {
 		loop: (o, p) => `this.OSCTransducer(${p[0].loop},${p[1].loop})`,
 	},
 	sah: {
-		setup: (o, p) => `${o} = new Maximilian.maxiSampleAndHold();`,
+		setup: (o, p) => `${o} = new Module.maxiSampleAndHold();`,
 		loop: (o, p) => `${o}.sah(${p[0].loop},${p[1].loop})`,
 	},
 	stretch: {
-		setup: (o, p) => `${o} = new Maximilian.maxiSample();
+		setup: (o, p) => `${o} = new Module.maxiSample();
                       ${o}.setSample(this.getSampleBuffer(${p[4].loop}));
-                      ${o}stretch = new Maximilian.maxiStretch();
+                      ${o}stretch = new Module.maxiStretch();
                       ${o}stretch.setSample(${o});`,
 		loop: (o, p) =>
 			`(${o}.isReady() ? ${o}stretch.play(${p[0].loop},${p[1].loop},${p[2].loop},${p[3].loop},0.0) : 0.0)`,
 	},
 	bitToSig: {
 		setup: (o, p) => "",
-		loop: (o, p) => `Maximilian.maxiBits.toSignal(${p[0].loop})`,
+		loop: (o, p) => `Module.maxiBits.toSignal(${p[0].loop})`,
 	},
 	bitToTrigSig: {
 		setup: (o, p) => "",
-		loop: (o, p) => `Maximilian.maxiBits.toTrigSignal(${p[0].loop})`,
+		loop: (o, p) => `Module.maxiBits.toTrigSignal(${p[0].loop})`,
 	},
 	bitNeg: {
 		setup: (o, p) => "",
-		loop: (o, p) => `Maximilian.maxiBits.neg(${p[0].loop})`,
+		loop: (o, p) => `Module.maxiBits.neg(${p[0].loop})`,
 	},
 	bitInc: {
 		setup: (o, p) => "",
-		loop: (o, p) => `Maximilian.maxiBits.inc(${p[0].loop})`,
+		loop: (o, p) => `Module.maxiBits.inc(${p[0].loop})`,
 	},
 	bitDec: {
 		setup: (o, p) => "",
-		loop: (o, p) => `Maximilian.maxiBits.dec(${p[0].loop})`,
+		loop: (o, p) => `Module.maxiBits.dec(${p[0].loop})`,
 	},
 	bitAnd: {
 		setup: (o, p) => "",
-		loop: (o, p) => `Maximilian.maxiBits.land(${p[0].loop},${p[1].loop})`,
+		loop: (o, p) => `Module.maxiBits.land(${p[0].loop},${p[1].loop})`,
 	},
 	bitOr: {
 		setup: (o, p) => "",
-		loop: (o, p) => `Maximilian.maxiBits.lor(${p[0].loop},${p[1].loop})`,
+		loop: (o, p) => `Module.maxiBits.lor(${p[0].loop},${p[1].loop})`,
 	},
 	bitXor: {
 		setup: (o, p) => "",
-		loop: (o, p) => `Maximilian.maxiBits.lxor(${p[0].loop},${p[1].loop})`,
+		loop: (o, p) => `Module.maxiBits.lxor(${p[0].loop},${p[1].loop})`,
 	},
 	bitShl: {
 		setup: (o, p) => "",
-		loop: (o, p) => `Maximilian.maxiBits.shl(${p[0].loop},${p[1].loop})`,
+		loop: (o, p) => `Module.maxiBits.shl(${p[0].loop},${p[1].loop})`,
 	},
 	bitShr: {
 		setup: (o, p) => "",
-		loop: (o, p) => `Maximilian.maxiBits.shr(${p[0].loop},${p[1].loop})`,
+		loop: (o, p) => `Module.maxiBits.shr(${p[0].loop},${p[1].loop})`,
 	},
 	bitAt: {
 		setup: (o, p) => "",
-		loop: (o, p) => `Maximilian.maxiBits.at(${p[0].loop},${p[1].loop})`,
+		loop: (o, p) => `Module.maxiBits.at(${p[0].loop},${p[1].loop})`,
 	},
 	bitAdd: {
 		setup: (o, p) => "",
-		loop: (o, p) => `Maximilian.maxiBits.add(${p[0].loop},${p[1].loop})`,
+		loop: (o, p) => `Module.maxiBits.add(${p[0].loop},${p[1].loop})`,
 	},
 	bitSub: {
 		setup: (o, p) => "",
-		loop: (o, p) => `Maximilian.maxiBits.sub(${p[0].loop},${p[1].loop})`,
+		loop: (o, p) => `Module.maxiBits.sub(${p[0].loop},${p[1].loop})`,
 	},
 	bitMul: {
 		setup: (o, p) => "",
-		loop: (o, p) => `Maximilian.maxiBits.mul(${p[0].loop},${p[1].loop})`,
+		loop: (o, p) => `Module.maxiBits.mul(${p[0].loop},${p[1].loop})`,
 	},
 	bitEq: {
 		setup: (o, p) => "",
-		loop: (o, p) => `Maximilian.maxiBits.eq(${p[0].loop},${p[1].loop})`,
+		loop: (o, p) => `Module.maxiBits.eq(${p[0].loop},${p[1].loop})`,
 	},
 	bitGt: {
 		setup: (o, p) => "",
-		loop: (o, p) => `Maximilian.maxiBits.gt(${p[0].loop},${p[1].loop})`,
+		loop: (o, p) => `Module.maxiBits.gt(${p[0].loop},${p[1].loop})`,
 	},
 	bitGte: {
 		setup: (o, p) => "",
-		loop: (o, p) => `Maximilian.maxiBits.gte(${p[0].loop},${p[1].loop})`,
+		loop: (o, p) => `Module.maxiBits.gte(${p[0].loop},${p[1].loop})`,
 	},
 	bitLte: {
 		setup: (o, p) => "",
-		loop: (o, p) => `Maximilian.maxiBits.lte(${p[0].loop},${p[1].loop})`,
+		loop: (o, p) => `Module.maxiBits.lte(${p[0].loop},${p[1].loop})`,
 	},
 	bitLt: {
 		setup: (o, p) => "",
-		loop: (o, p) => `Maximilian.maxiBits.lt(${p[0].loop},${p[1].loop})`,
+		loop: (o, p) => `Module.maxiBits.lt(${p[0].loop},${p[1].loop})`,
 	},
 	setup: (o, p) => "",
 	bitDiv: {
-		loop: (o, p) => `Maximilian.maxiBits.div(${p[0].loop},${p[1].loop})`,
+		loop: (o, p) => `Module.maxiBits.div(${p[0].loop},${p[1].loop})`,
 	},
 	bitr: {
 		setup: (o, p) => "",
 		loop: (o, p) =>
-			`Maximilian.maxiBits.at(${p[0].loop},${p[1].loop},${p[2].loop})`,
+			`Module.maxiBits.at(${p[0].loop},${p[1].loop},${p[2].loop})`,
 	},
 	bitnoise: {
 		setup: (o, p) => "",
-		loop: (o, p) => `Maximilian.maxiBits.noise()`,
+		loop: (o, p) => `Module.maxiBits.noise()`,
 	},
 	btime: {
 		setup: (o, p) => ``,
@@ -451,7 +451,7 @@ var jsFuncMap = {
 	},
 	bitFromSig: {
 		setup: (o, p) => "",
-		loop: (o, p) => `Maximilian.maxiBits.fromSignal(${p[0].loop})`,
+		loop: (o, p) => `Module.maxiBits.fromSignal(${p[0].loop})`,
 	},
 	//basic clock functions
 	clp: {
@@ -470,11 +470,11 @@ var jsFuncMap = {
 		loop: (o, p) =>
 			`(()=>{this.setBPM(${p[0].loop}); this.setBeatsPerBar(${p[1].loop});})()`,
 	},
-	/*quantise code evaluations to the bar. 
+	/*quantise code evaluations to the bar.
 	values from maxiProcessor
 		this.codeQuantModes = {
 			QUANTISE_TO_BAR: 0,
-			DONTQUANTISE:1 
+			DONTQUANTISE:1
 		};
 */
 	quantise: {
@@ -485,26 +485,26 @@ var jsFuncMap = {
 
 
 	onzx: {
-		setup: (o, p) => `${o} = new Maximilian.maxiTrigger();`,
+		setup: (o, p) => `${o} = new Module.maxiTrigger();`,
 		loop: (o, p) => `${o}.onZX(${p[0].loop})`,
 	},
 	onchange: {
-		setup: (o, p) => `${o} = new Maximilian.maxiTrigger();`,
+		setup: (o, p) => `${o} = new Module.maxiTrigger();`,
 		loop: (o, p) => `${o}.onChanged(${p[0].loop},${p[1].loop})`,
 	},
 	count: {
-		setup: (o, p) => `${o} = new Maximilian.maxiCounter();`,
+		setup: (o, p) => `${o} = new Module.maxiCounter();`,
 		loop: (o, p) => `${o}.count(${p[0].loop},${p[1].loop})`,
 	},
 	idx: {
-		setup: (o, p) => `${o} = new Maximilian.maxiIndex();`,
+		setup: (o, p) => `${o} = new Module.maxiIndex();`,
 		loop: (o, p) => `${o}.pull(${p[0].loop},${p[1].loop},${p[2].loop})`,
 	},
 	svf: {
 		//set cutoff and resonance only when params change to save CPU
-		setup: (o, p) => `${o} = new Maximilian.maxiSVF();
-                      ${o}_p1 = new Maximilian.maxiTrigger();
-                      ${o}_p2 = new Maximilian.maxiTrigger();`,
+		setup: (o, p) => `${o} = new Module.maxiSVF();
+                      ${o}_p1 = new Module.maxiTrigger();
+                      ${o}_p2 = new Module.maxiTrigger();`,
 		loop: (o, p) => `( () => { ${o}_cutoff = ${p[1].loop};
                                 if (${o}_p1.onChanged(${o}_cutoff, 1e-5)) {${o}.setCutoff(${o}_cutoff)};
                                 ${o}_res = ${p[2].loop};
@@ -521,7 +521,7 @@ var jsFuncMap = {
 	},
 
 	rsq: {
-		setup: (o, p) => `${o} = new Maximilian.maxiRatioSeq();`,
+		setup: (o, p) => `${o} = new Module.maxiRatioSeq();`,
 		loop: (o, p) => {
 			return p.length == 2
 				? `${o}.playTrig(${p[0].loop},${p[1].loop})`
@@ -529,16 +529,16 @@ var jsFuncMap = {
 		},
 	},
 	o303: {
-		setup: (o, p) => `${o} = new Open303.Open303();
+		setup: (o, p) => `${o} = new Module.Open303();
                       ${o}.setSampleRate(sampleRate);
-                      ${o}_tnote = new Maximilian.maxiTrigger();
-                      ${o}_twf = new Maximilian.maxiTrigger();
-                      ${o}_tcut = new Maximilian.maxiTrigger();
-                      ${o}_tres = new Maximilian.maxiTrigger();
-                      ${o}_tenvm = new Maximilian.maxiTrigger();
-                      ${o}_tdec = new Maximilian.maxiTrigger();
-                      ${o}_tnoteoff = new Maximilian.maxiTrigger();
-                      ${o}_tatt = new Maximilian.maxiTrigger();`,
+                      ${o}_tnote = new Module.maxiTrigger();
+                      ${o}_twf = new Module.maxiTrigger();
+                      ${o}_tcut = new Module.maxiTrigger();
+                      ${o}_tres = new Module.maxiTrigger();
+                      ${o}_tenvm = new Module.maxiTrigger();
+                      ${o}_tdec = new Module.maxiTrigger();
+                      ${o}_tnoteoff = new Module.maxiTrigger();
+                      ${o}_tatt = new Module.maxiTrigger();`,
 		loop: (o, p) => `(()=>{
 			let newNote = ${o}_tnote.onZX(${p[0].loop});
 			let accent = ${p[3].loop};
@@ -561,13 +561,13 @@ var jsFuncMap = {
 			return ${o}.play();})()`,
 	},
 	freeverb: {
-		setup: (o, p) => `${o} = new Maximilian.maxiFreeVerb();`,
+		setup: (o, p) => `${o} = new Module.maxiFreeVerb();`,
 		loop: (o, p) => `${o}.play(${p[0].loop},${p[1].loop},${p[2].loop})`,
 	},
 	line: {
 		//creates a triggered line from 0-1 - use other functions to shape the line
 		setup: (o, p) =>
-			`${o} = new Maximilian.maxiLine(); ${o}.prepare(0,1,${p[1].loop}, false); ${o}.triggerEnable(1);`,
+			`${o} = new Module.maxiLine(); ${o}.prepare(0,1,${p[1].loop}, false); ${o}.triggerEnable(1);`,
 		loop: (o, p) => `${o}.play(${p[0].loop})`,
 	},
 	const: {
@@ -757,7 +757,7 @@ export default class ASTreeToJavascript {
         //a list can be static and/or dynamic
         //create a vector for the list
         let objName = "q.b" + blockIdx + "l" + ASTreeToJavascript.getNextID();
-				// ccode.setup += `${objName} = new Maximilian.VectorDouble();`;
+				// ccode.setup += `${objName} = new Module.VectorDouble();`;
         // ccode.setup += `${objName}.resize(${el.length},0);`;
 				ccode.setup += `${objName} = new Float64Array(${el.length});`;
 

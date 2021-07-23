@@ -1,53 +1,22 @@
-import Maximilian from './sema-engine.wasmmodule.js';
+console.log(
+	"running %cMaximilian v2.5.0 (Wasm)",
+	"font-weight: bold; color: #bada55"
+	// "font-weight: bold; background: #000; color: #bada55"
+);
 
-// NOTE: dynamically loads from the adjacent ringBuf.js file
-import RingBuffer from "./ringbuf.js"; //thanks padenot
+var cl, ci, cw, ce;
 
-import Open303 from './open303.wasmmodule.js';
-import { SABInputTransducer, SABOutputTransducer } from './transducers.js';
-
-
-// class pvshift {
-//   constructor() {
-//     this.fft = new Maximilian.maxiFFT();
-//     this.fft.setup(1024, 256, 1024);
-//     this.ifft = new Maximilian.maxiIFFT();
-//     this.ifft.setup(1024, 256, 1024);
-//     this.mags = new Maximilian.VectorFloat();
-//     this.phases = new Maximilian.VectorFloat();
-//     this.phases.resize(512, 0);
-//   }
-//
-//   play(sig, shift) {
-//     if (this.fft.process(sig, Maximilian.maxiFFTModes.WITH_POLAR_CONVERSION)) {
-//       this.mags = this.fft.getMagnitudes();
-//       this.phases = this.fft.getPhases();
-//       //shift bins up
-//       for (let i = 511; i > 0; i--) {
-//         if (i > shift) {
-//           this.mags.set(i, this.mags.get(i - shift));
-//           this.phases.set(i, this.phases.get(i - shift));
-//         } else {
-//           this.mags.set(i, 0);
-//           this.phases.set(i, 0);
-//         }
-//       }
-//     }
-//     sig = this.ifft.process(this.mags, this.phases, Maximilian.maxiIFFTModes.SPECTRUM);
-//     return sig;
-//   }
-// }
 
 class fft {
 	constructor(bins, hopPercentage) {
-		this.fft = new Maximilian.maxiFFTAdaptor();
+		this.fft = new Module.maxiFFTAdaptor();
 		this.fft.setup(bins * 2, Math.floor(bins * 2 * hopPercentage), bins * 2);
 		this.mags = this.fft.getMagnitudesAsJSArray();
 		this.phases = this.fft.getPhasesAsJSArray();
 	}
 	play(sig) {
 		let newVal = 0;
-		if (this.fft.process(sig, Maximilian.maxiFFTModes.WITH_POLAR_CONVERSION)) {
+		if (this.fft.process(sig, Module.maxiFFTModes.WITH_POLAR_CONVERSION)) {
 			newVal = 1;
 			this.mags = this.fft.getMagnitudesAsJSArray();
 			this.phases = this.fft.getPhasesAsJSArray();
@@ -59,26 +28,26 @@ class fft {
 
 class ifft {
 	constructor(bins, hopPercentage) {
-		this.ifft = new Maximilian.maxiIFFTAdaptor();
+		this.ifft = new Module.maxiIFFTAdaptor();
 		this.ifft.setup(bins * 2, Math.floor(bins * 2 * hopPercentage), bins * 2);
 	}
 	play(trig, mags, phases) {
-		return this.ifft.process(trig, mags, phases, Maximilian.maxiIFFTModes.SPECTRUM);
+		return this.ifft.process(trig, mags, phases, Module.maxiIFFTModes.SPECTRUM);
 	}
 }
 
 class mfcc {
 	constructor(fftsize, hopsize, numCoeffs) {
-		this.fft = new Maximilian.maxiFFTAdaptor();
+		this.fft = new Module.maxiFFTAdaptor();
 		this.fft.setup(fftsize, hopsize, fftsize);
-		this.mfcc = new Maximilian.maxiMFCCAdaptor();
+		this.mfcc = new Module.maxiMFCCAdaptor();
 		this.mfcc.setup(fftsize / 2, 40, numCoeffs, 20, 20000);
 		this.coeffs = new Float64Array(numCoeffs);
 	}
 
 	play(sig) {
 		let newVal = 0;
-		if (this.fft.process(sig, Maximilian.maxiFFTModes.WITH_POLAR_CONVERSION)) {
+		if (this.fft.process(sig, Module.maxiFFTModes.WITH_POLAR_CONVERSION)) {
 			newVal = 1;
 			this.coeffs = this.mfcc.mfcc(this.fft.getMagnitudesAsJSArray());
 		}
@@ -86,12 +55,9 @@ class mfcc {
 	}
 }
 
-
-
-
 class poll {
 	constructor() {
-		this.clock = new Maximilian.maxiOsc();
+		this.clock = new Module.maxiOsc();
 	}
 
 	play(val) {
@@ -99,7 +65,7 @@ class poll {
 			console.log(val);
 		}
 	}
-};
+}
 
 function mtof(midinote) {
 	return Math.pow(2, (midinote - 69) / 12) * 440.0;
@@ -109,7 +75,6 @@ var inputSABs = {};
 
 var outputSABs = {};
 
-
 /**
  * The main Maxi Audio wrapper with a WASM-powered AudioWorkletProcessor.
  *
@@ -117,7 +82,6 @@ var outputSABs = {};
  * @extends AudioWorkletProcessor
  */
 class MaxiProcessor extends AudioWorkletProcessor {
-
 	/**
 	 * @getter
 	 */
@@ -129,7 +93,7 @@ class MaxiProcessor extends AudioWorkletProcessor {
 				defaultValue: 0.5,
 				minValue: 0.0000009,
 				maxValue: 1.0,
-			}
+			},
 		];
 	}
 
@@ -137,12 +101,11 @@ class MaxiProcessor extends AudioWorkletProcessor {
 	 * @constructor
 	 */
 	constructor() {
-
 		super();
 
 		//indicate audio settings in WASM and JS domains
-		Maximilian.maxiSettings.setup(sampleRate, 1, 512);
-		Maximilian.maxiJSSettings.setup(sampleRate, 1, 512);
+		Module.maxiSettings.setup(sampleRate, 1, 512);
+		// Module.maxiJSSettings.setup(sampleRate, 1, 512);
 		//we don't know the number of channels at this stage, so reserve lots for the DAC
 		this.DAC = [];
 		this.DACInitialised = false;
@@ -155,7 +118,7 @@ class MaxiProcessor extends AudioWorkletProcessor {
 		this.signals = [this.silence, this.silence];
 		this.currentSignalFunction = 0;
 
-		this.xfadeControl = new Maximilian.maxiLine();
+		this.xfadeControl = new Module.maxiLine();
 
 		this.mediaStreamConnected = false;
 
@@ -171,7 +134,7 @@ class MaxiProcessor extends AudioWorkletProcessor {
 
 		this.transducers = [];
 
-		this.netClock = new Maximilian.maxiAsyncKuramotoOscillator(3); //TODO: this should be the same as numpeers
+		this.netClock = new Module.maxiAsyncKuramotoOscillator(3); //TODO: this should be the same as numpeers
 		this.kuraPhase = -1;
 		this.kuraPhaseIdx = 1;
 
@@ -184,15 +147,17 @@ class MaxiProcessor extends AudioWorkletProcessor {
 
 		this.codeQuantModes = {
 			QUANTISE_TO_BAR: 0,
-			DONTQUANTISE: 1
+			DONTQUANTISE: 1,
 		};
 		this.codeQuantMode = this.codeQuantModes.DONTQUANTISE;
 
 		this.port.onmessage = this.onMessageHandler;
 
+		this.takeOverConsole();
+
 		// CLOCK VARIABLES
 
-		// this.clock = new Maximilian.maxiOsc();
+		// this.clock = new Module.maxiOsc();
 		// this.tempo = 120.0; // tempo (in beats per minute);
 		// this.secondsPerBeat = 60.0 / this.tempo;
 		// this.counterTimeValue = this.secondsPerBeat / 4; //___16th note
@@ -204,18 +169,64 @@ class MaxiProcessor extends AudioWorkletProcessor {
 
 		this.clockUpdate();
 
-		this.bitTime = Maximilian.maxiBits.sig(0); //this needs to be decoupled from the audio engine? or not... maybe a 'permenant block' with each grammar?
+		this.bitTime = Module.maxiBits.sig(0); //this needs to be decoupled from the audio engine? or not... maybe a 'permenant block' with each grammar?
 		this.dt = 0;
 
 		this.clearBufferModes = {
 			INACTIVE: 0,
-			CLEARING_BUFFER: 1
+			CLEARING_BUFFER: 1,
 		};
 		this.clearBufferMode = this.clearBufferModes.INACTIVE;
 		this.clearBufferCount = 10;
 
 		console.info(`Sample rate: ${sampleRate}`); // moving this to end of ctor for console feedback on successful processor initialisation
 	}
+
+	takeOverConsole(){
+		if (console) {
+			if (console.log) cl = console.log;
+			if (console.log) ci = console.info;
+			if (console.log) cw = console.warn;
+			if (console.log) ce = console.error;
+			if (cl && ci && cw && ce) {
+				cw("taking over PROCESSOR console");
+				console.log = function () {
+					this.port.postMessage({
+						func: "logs",
+						payload: [...arguments],
+						type: "[PROCESSOR]",
+					});
+					cl.apply(this, arguments);
+				}.bind(this);
+				console.info = function (text) {
+					this.port.postMessage({
+						func: "logs",
+						payload: [...arguments],
+						type: "[PROCESSOR]",
+					});
+					ci.apply(this, arguments);
+				}.bind(this);
+				console.warn = function (text) {
+					this.port.postMessage({
+						func: "logs",
+						payload: [...arguments],
+						type: "[PROCESSOR]",
+					});
+					cw.apply(this, arguments);
+				}.bind(this);
+				console.error = function (text) {
+					this.port.postMessage({
+						func: "logs",
+						payload: [...arguments],
+						type: "[PROCESSOR]",
+					});
+					ce.apply(this, arguments);
+				}.bind(this);
+				ce("PROCESSOR console taken over");
+			}
+		}
+	}
+
 
 	/**
 	 *
@@ -270,7 +281,7 @@ class MaxiProcessor extends AudioWorkletProcessor {
 			sample = this.sampleVectorBuffers[bufferName];
 		} else {
 			// this error will be caught on the this.eval() function catch, line 488
-      throw new Error(`${bufferName} doesn't exist yet`);
+			throw new Error(`${bufferName} doesn't exist yet`);
 		}
 		return sample;
 	};
@@ -457,16 +468,15 @@ class MaxiProcessor extends AudioWorkletProcessor {
 			// setup function with the  types
 			this._q[this.nextSignalFunction] = setupFunction();
 			//allow feedback between evals
-			this._mems[this.nextSignalFunction] = this._mems[
-				this.currentSignalFunction
-			];
+			this._mems[this.nextSignalFunction] =
+				this._mems[this.currentSignalFunction];
 			// output[SPECTROGAMCHANNEL][i] = specgramValue;
 			// then use channelsplitter
 			this.signals[this.nextSignalFunction] = loopFunction;
 
 			this._cleanup[this.nextSignalFunction] = 0;
 
-			let xfadeBegin = Maximilian.maxiMap.linlin(
+			let xfadeBegin = Module.maxiMap.linlin(
 				1.0 - this.nextSignalFunction,
 				0,
 				1,
@@ -474,7 +484,7 @@ class MaxiProcessor extends AudioWorkletProcessor {
 				1
 			);
 
-			let xfadeEnd = Maximilian.maxiMap.linlin(
+			let xfadeEnd = Module.maxiMap.linlin(
 				this.nextSignalFunction,
 				0,
 				1,
@@ -485,34 +495,29 @@ class MaxiProcessor extends AudioWorkletProcessor {
 			this.xfadeControl.prepare(xfadeBegin, xfadeEnd, 2, true); // short xfade across signals
 			this.xfadeControl.triggerEnable(true); //enable the trigger straight away
 			this.codeSwapState = this.codeSwapStates.QUEUD;
-
 		} catch (err) {
-      // Propagate error to the AWN scope
-  		this.port.postMessage(err); //ready to suspend
+			// Propagate error to the AWN scope
+			this.port.postMessage(err); //ready to suspend
 		}
 	};
 
 	hush = () => {
-// insert a couple of buffers of silence into the webaudio buffer,  before telling the audio engine that it's ready to suspend
+		// insert a couple of buffers of silence into the webaudio buffer,  before telling the audio engine that it's ready to suspend
 		try {
-
 			this.clearBufferMode = this.clearBufferModes.CLEARING_BUFFER;
 			this.clearBufferCount = 3;
-
 		} catch (err) {
-			console.log(err)
+			console.log(err);
 		}
-	}
+	};
 
 	unhush = () => {
-
 		try {
 			this.clearBufferMode = this.clearBufferModes.INACTIVE;
-
 		} catch (err) {
-			console.log(err)
+			console.log(err);
 		}
-	}
+	};
 
 	/**
 	 * @onMessageHandler
@@ -546,7 +551,7 @@ class MaxiProcessor extends AudioWorkletProcessor {
 	};
 
 	/**
-	 * Initialises all DAC channels to zero and settings for Maximilian
+	 * Initialises all DAC channels to zero and settings for Module
 	 * @param {*} sampleRate
 	 * @param {*} channels
 	 * @param {*} bufferSize
@@ -556,8 +561,8 @@ class MaxiProcessor extends AudioWorkletProcessor {
 
 		console.info(`DAC: ${channels} channels`);
 
-		Maximilian.maxiJSSettings.setup(sampleRate, channels, bufferSize);
-		Maximilian.maxiSettings.setup(sampleRate, channels, bufferSize);
+		// Module.maxiJSSettings.setup(sampleRate, channels, bufferSize);
+		Module.maxiSettings.setup(sampleRate, channels, bufferSize);
 
 		this.DACInitialised = true;
 	};
@@ -569,7 +574,6 @@ class MaxiProcessor extends AudioWorkletProcessor {
 	 * @param {*} parameters
 	 */
 	process(inputs, outputs, parameters) {
-
 		if (!this.DACInitialised) {
 			this.initialiseDAC(sampleRate, outputs[0].length, 512);
 		}
@@ -579,7 +583,6 @@ class MaxiProcessor extends AudioWorkletProcessor {
 			let channelCount = output.length;
 
 			for (let i = 0; i < output[0].length; ++i) {
-
 				this.updateSABInputs();
 
 				for (let channel = 0; channel < channelCount; channel++) {
@@ -588,7 +591,7 @@ class MaxiProcessor extends AudioWorkletProcessor {
 
 				//this needs decoupling?
 				// this is a clock for the nibble lang
-				this.bitTime = Maximilian.maxiBits.inc(this.bitTime);
+				this.bitTime = Module.maxiBits.inc(this.bitTime);
 
 				//leave this here - we'll bring it back in one day?
 				//net clocks
@@ -616,7 +619,7 @@ class MaxiProcessor extends AudioWorkletProcessor {
 				//   this.port.postMessage({ phase: phase, c: "phase" });
 				// }
 
-				this.bitclock = Maximilian.maxiBits.sig(
+				this.bitclock = Module.maxiBits.sig(
 					Math.floor(this.clockPhase(1, 0) * 1023.999999999)
 				);
 
@@ -627,9 +630,11 @@ class MaxiProcessor extends AudioWorkletProcessor {
 
 				if (this.codeSwapState == this.codeSwapStates.QUEUD) {
 					//fade in when a new bar happens
-					if ((this.codeQuantMode == this.codeQuantModes.QUANTISE_TO_BAR && barTrig)
-						||
-						(this.codeQuantMode == this.codeQuantModes.DONTQUANTISE)) {
+					if (
+						(this.codeQuantMode == this.codeQuantModes.QUANTISE_TO_BAR &&
+							barTrig) ||
+						this.codeQuantMode == this.codeQuantModes.DONTQUANTISE
+					) {
 						this.codeSwapState = this.codeSwapStates.XFADING;
 						this.currentSignalFunction = 1 - this.currentSignalFunction;
 						//console.log("xfade start", this.currentSignalFunction);
@@ -638,7 +643,6 @@ class MaxiProcessor extends AudioWorkletProcessor {
 
 				if (this.codeSwapState == this.codeSwapStates.XFADING) {
 					try {
-
 						this.signals[0](
 							this._q[0],
 							inputs[0][0] ? inputs[0][0][i] : null,
@@ -650,7 +654,6 @@ class MaxiProcessor extends AudioWorkletProcessor {
 							inputs[0][0] ? inputs[0][0][i] : null,
 							this._mems[1]
 						);
-
 					} catch (err) {
 						console.log("EVAL ERROR – XFADING", err);
 						console.log("signals: ", this.signals);
@@ -692,33 +695,29 @@ class MaxiProcessor extends AudioWorkletProcessor {
 
 				if (parameters.gain.length === 1) {
 					for (let channel = 0; channel < channelCount; channel++) {
-						output[channel][i] = this.DAC[channel] * Math.pow(parameters.gain[0], 2);
+						output[channel][i] =
+							this.DAC[channel] * Math.pow(parameters.gain[0], 2);
 					}
-				}
-				else {
+				} else {
 					for (let channel = 0; channel < channelCount; channel++) {
-						output[channel][i] = this.DAC[channel] * Math.pow(parameters.gain[i], 2);
+						output[channel][i] =
+							this.DAC[channel] * Math.pow(parameters.gain[i], 2);
 					}
 				}
 			}
 
-
 			if (this.clearBufferMode == this.clearBufferModes.CLEARING_BUFFER) {
 				this.clearBufferCount--;
 				for (let i = 0; i < output[0].length; ++i) {
-
 					for (let channel = 0; channel < channelCount; channel++) {
 						this.DAC[channel] = 0.0;
 					}
 				}
 				if (this.clearBufferCount == 0) {
 					//this.clearBufferMode == this.clearBufferModes.INACTIVE;
-					this.port.postMessage({rq:'rts'}); //ready to suspend
+					this.port.postMessage({ rq: "rts" }); //ready to suspend
 				}
-
 			}
-
-
 		}
 
 		//remove old algo and data?
@@ -742,6 +741,21 @@ class MaxiProcessor extends AudioWorkletProcessor {
 		return true;
 	}
 
+<<<<<<< HEAD
 };
+=======
+	/**
+	 *
+	 * @param {*} audioFloat32ArrayBuffer
+	 */
+	translateFloat32ArrayToBuffer(audioFloat32ArrayBuffer) {
+		var maxiSampleBufferData = new Module.VectorDouble();
+		for (var i = 0; i < audioFloat32ArrayBuffer.length; i++) {
+			maxiSampleBufferData.push_back(audioFloat32ArrayBuffer[i]);
+		}
+		return maxiSampleBufferData;
+	}
+}
+>>>>>>> 10a571d22e28a8ef006a93fa5bfb0f9f09d077a2
 
 registerProcessor("maxi-processor", MaxiProcessor);

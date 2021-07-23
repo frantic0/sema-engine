@@ -2,13 +2,15 @@ import resolve from "@rollup/plugin-node-resolve"; // allows us to load third-pa
 import { terser } from "rollup-plugin-terser";
 import commonjs from "@rollup/plugin-commonjs"; // converts CommonJS modules to ES6, which stops them from breaking Rollup
 import pkg from "./package.json";
-import copy from "rollup-plugin-copy";
-import serve from "rollup-plugin-serve";
+// import copy from "rollup-plugin-copy";
+// import serve from "rollup-plugin-serve";
+// serve does not support proxy, to use livereload.js wih CORS
+// https://github.com/ionic-team/ionic-cli/issues/89
+// https://github.com/thgh/rollup-plugin-serve/pull/40
+import serve from "rollup-plugin-serve-proxy";
 import livereload from "rollup-plugin-livereload";
 import workerLoader from "rollup-plugin-web-worker-loader";
 import sourcemaps from "rollup-plugin-sourcemaps";
-// import nodePolyfills from "rollup-plugin-node-polyfills";
-// import eslint from "@rollup/plugin-eslint";
 
 const isDevelopment = !process.env.BUILD;
 
@@ -51,7 +53,7 @@ export default [
 				// sourcemap: isDevelopment ? true : "inline",
 			},
 			{
-				file: "dist/sema-engine.min.js",
+				file: "index.min.js",
 				format: "iife",
 				name: "version",
 				sourcemap: true,
@@ -75,50 +77,19 @@ export default [
 						// 	}, // not returning anything, so doesn't affect bundle
 						// },
 						// terser(),
-						copy({
-							targets: [
-								{
-									src: "src/engine/maxi-processor.js",
-									dest: "dist",
-								},
-								// {
-								// 	src: "src/engine/sema-engine.wasmmodule.js",
-								// 	dest: "dist",
-								// },
-								{
-									src: "src/engine/open303.wasmmodule.js",
-									dest: "dist",
-								},
-								{
-									// ringbuf is imported by both the Engine (AW node) and maxi-processor (AWP) so needs to be both bundled AND copied!
-									src: "src/common/ringbuf.js",
-									dest: ["dist"],
-								},
-								{
-									// transducers is imported by Engine maxi-processor (AWP) so needs to be both bundled AND copied!
-									src: "src/engine/transducers.js",
-									dest: ["dist"],
-								},
-								{
-									src: "assets/*",
-									dest: "dist",
-								},
-								{
-									// lalolib is imported dynamically (importScripts) by the ml.worker, needs to be served in 'dist'
-									src: "src/learning/lalolib.js",
-									dest: "dist",
-								},
-								{
-									// svd is imported dynamically (importScripts) by the ml.worker, needs to be served in 'dist'
-									src: "src/learning/svd.js",
-									dest: ["dist"],
-								},
-							],
-						}),
+						// copy({
+						// 	targets: [
+						// 		{
+						// 			src: "assets/*",
+						// 			dest: "dist",
+						// 		},
+						// 	],
+						// }),
 						serve({
-							open: false, // Launch in browser (default: false)
+							open: true, // Launch in browser (default: false)
+							openPage: "/test/index.html",
 							verbose: true, // Show server address in console (default: true)
-							contentBase: "dist", // Folder to serve files from
+							contentBase: "", // Folder to serve files from
 							historyApiFallback: false, // Set to true to return index.html (200) instead of error page (404)
 							historyApiFallback: "/200.html", // Path to fallback page
 							host: "localhost", // Options used in setting up server
@@ -128,9 +99,15 @@ export default [
 								"application/javascript": ["js"],
 								"application/wasm": ["wasm"],
 							},
+							headers: {
+								"Cross-Origin-Opener-Policy": "same-origin",
+								"Cross-Origin-Embedder-Policy": "require-corp",
+								"Cross-Origin-Resource-Policy": "cross-origin",
+								"Access-Control-Allow-Origin": "*",
+							},
 						}),
 						livereload({
-							watch: "dist",
+							watch: "",
 							verbose: true,
 						}),
 				  ]
@@ -147,83 +124,23 @@ export default [
 						// },
 						sourcemaps(),
 						terser(),
-						copy({
-							targets: [
-								{
-									src: "assets/package.json",
-									dest: "dist",
-								},
-								{
-									src: "README.md",
-									dest: "dist",
-								},
-								{
-									src: "src/engine/maxi-processor.js",
-									dest: "dist",
-								},
-								// {
-								// 	src: "assets/sema-engine.wasmmodule.js",
-								// 	dest: "dist",
-								// },
-								{
-									src: "assets/open303.wasmmodule.js",
-									dest: "dist",
-								},
-								{
-									// transducers is imported by Engine maxi-processor (AWP) so needs to be both bundled AND copied!
-									src: "src/engine/transducers.js",
-									dest: ["dist"],
-								},
-								{
-									// ringbuf is imported by both the Engine (AW node) and maxi-processor (AWP) so needs to be both bundled AND copied!
-									src: "assets/ringbuf.js",
-									dest: ["dist"],
-								},
-								{
-									// ringbuf is imported by both the Engine (AW node) and maxi-processor (AWP) so needs to be both bundled AND copied!
-									src: "assets/mlworkerscripts.js",
-									dest: ["dist"],
-								},
-								{
-									// lalolib is imported dynamically (importScripts) by the ml.worker, needs to be served in 'dist'
-									src: "assets/lalolib.js",
-									dest: "dist",
-								},
-								{
-									// svd is imported dynamically (importScripts) by the ml.worker, needs to be served in 'dist'
-									src: "assets/svd.js",
-									dest: ["dist"],
-								},
-							],
-						}),
+						// copy({
+						// 	targets: [
+						// 		{
+						// 			src: "assets/package.json",
+						// 			dest: "dist",
+						// 		},
+						// 		{
+						// 			src: "README.md",
+						// 			dest: "dist",
+						// 		},
+						// 	],
+						// }),
 				  ]),
 			// eslint({
 			// 	/* your options */
 			// }),
 		],
 	},
-
-	// {
-	// 	input: "src/engine/maxi-processor.js",
-	// external: ["nearley"],
-	// 	output: [
-	// 		{ file: "dist/sema-engine.processor.js", format: "es", sourcemap: true },
-	// 	],
-	// },
-
-	// CommonJS (for Node) and ES module (for bundlers) build.
-	// (We could have three entries in the configuration array
-	// instead of two, but it's quicker to generate multiple
-	// builds from a single configuration where possible, using
-	// an array for the `output` option, where we can specify
-	// `file` and `format` for each target)
-	// {
-	// 	input: "src/index.js",
-	// 	// external: ["nearley"],
-	// 	output: [
-	// 		{ file: pkg.main, format: "cjs" },
-	// 		{ file: pkg.module, format: "es" },
-	// 	],
-	// },
 ];
 

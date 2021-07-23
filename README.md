@@ -1,7 +1,7 @@
 # sema-engine
 
 ![Node.js CI](https://github.com/frantic0/sema-engine/workflows/Node.js%20CI/badge.svg)
-![version](https://img.shields.io/badge/version-0.0.62-red)
+![version](https://img.shields.io/badge/version-0.1.4-red)
 [![stability-experimental](https://img.shields.io/badge/stability-experimental-orange.svg)](https://github.com/emersion/stability-badges#experimental)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-yellow.svg)](https://github.com/frantic0/sema-engine/blob/main)
 [![Website](https://img.shields.io/website?url=https%3A%2F%2Fsema.codes)](https://frantic0.github.io/sema-engine/)
@@ -30,7 +30,7 @@ The *sema-engine* is published in the Node Package Manager (NPM) registry. If yo
 npm install sema-engine
 ```
 
-For an advanced use, check how *sema-engine* is integrated in [Sema](https://github.com/mimic-sussex/sema), a full-fledged application from which *sema-engine* was extracted.
+For an advanced use, check how *sema-engine* integrates with [Sema](https://github.com/mimic-sussex/sema), a full-fledged application from which *sema-engine* was extracted.
 
 
 You can use also use the *sema-engine* library modules in an a HTML file using inline `<script>` tags (check the published [example](https://frantic0.github.io/sema-engine/) which is output by the development build).
@@ -43,11 +43,11 @@ You can use also use the *sema-engine* library modules in an a HTML file using i
       compile,
       Learner,
       getBlock
-    } from "./sema-engine.mjs";
+    } from "../index.mjs";
 
 </script>
 ```
-Note the that the script tag for the main module `sema-engine.mjs` has `type = module`.
+Note the that the script tag for the sema-engine module with `index.mjs` has `type = module`.
 
 When initialising *sema-engine*, you need to pass the `origin` URL which points to where package dependencies – e.g. maxi-processor.js and maximilian.wasmmodule.js (check the `dist/` folder) – should be served from.
 
@@ -131,34 +131,34 @@ For the JS code, we provide `getBlock`, an utility function that pulls code from
 
 ## Prerequisites
 
-The emscripten SDK is required, https://emscripten.org/docs/getting_started/downloads.html
+If you would like to make contributions to the sema-engine custom WAAPI audio worklet processor, there are two compilers required to build it:
 
+* Emscripten SDK https://emscripten.org/docs/getting_started/downloads.html
+
+* Cheerp compiler https://leaningtech.com/cheerp/
+
+Check the Makefile to better understand the compilation workflow.
 
 ## Build
 
 If you are cloning this library for the first time:
 
-1. Initialise the Maximilian submodule
+1. Initialise the Maximilian and the Open303 submodules
 ```
 git submodule update --init --recursive
 ```
 
-2. Install dependencies
-```
-npm i
-```
-
-3. Build the Maximilian native JS and WebAssembly modules
+2. Build the WAAPI Audio Worklet processor with Maximilian Pure JS, WebAssembly modules, using CHEERP and Emscripten. Build the sema-engine library into UMD and ES modules.
 ```
 make
 ```
 
-4. Build the sema-engine library into UMD and ES modules
+3. Build the sema-engine library into UMD and ES modules, after changes to any source file
 ```
 npm run build
 ```
 
-5. Test the sema-engine library in a local example
+5. Test the sema-engine library in a [local example](https://github.com/frantic0/sema-engine/blob/main/test/index.html)
 ```
 npm run dev
 ```
@@ -184,7 +184,7 @@ The *sema-engine* has small API surface that you can find more about on this pro
 
 ## Contributing
 
-Pull requests are welcome, please observe the [Contributing](https://github.com/frantic0/sema-engine/blob/main/CONTRIBUTING.md) guidelines.
+Pull requests are welcome! Fork the the project and submit PRs to the *develop* branch. Please observe the [Contributing](https://github.com/frantic0/sema-engine/blob/main/CONTRIBUTING.md) guidelines for other ways to contribute (issues, documentation, styles, etc).
 
 ## Related Publications
 
@@ -192,5 +192,4 @@ Bernardo, F., Kiefer, C., Magnusson, T. (2020). A Signal Engine for a Live Code 
 
 ## Funding
 
-This project has received funding from the UKRI/AHRC research grant [MIMIC: Musically Intelligent Machines Interacting Creatively (Ref: AH/R002657/1)](https://gtr.ukri.org/projects?ref=AH%2FR002657%2F1)
-
+This project has received funding from two UKRI/AHRC research grants [MIMIC: Musically Intelligent Machines Interacting Creatively (Ref: AH/R002657/1)](https://gtr.ukri.org/projects?ref=AH%2FR002657%2F1) and [Innovating Sema (Ref: AH/V005154/1)](https://gtr.ukri.org/projects?ref=AH/V005154/1).

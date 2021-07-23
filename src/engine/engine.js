@@ -2,13 +2,9 @@
 // which is different from maxi-processor that
 // dynamically loads from the adjacent ringBuf.js file
 import { RingBuffer } from 'ringbuf.js'; //thanks padenot
-
-import {
-  loadSampleToArray
-} from './maximilian.util.js';
-
+import { loadSampleToArray } from './maximilian.util.js';
+import { Logger } from "../common/logger.js";
 import Dispatcher from '../common/dispatcher.js';
-import { expect } from 'chai';
 // import { isThisTypeNode } from 'typescript';
 // import {
 //   kuramotoNetClock
@@ -27,7 +23,7 @@ import { expect } from 'chai';
 class CustomMaxiNode extends AudioWorkletNode {
   constructor(audioContext, processorName) {
     // super(audioContext, processorName);
-    console.log();
+    // console.log();
     let options = {
       numberOfInputs: 1,
       numberOfOutputs: 1,
@@ -73,6 +69,7 @@ export class Engine {
 
 		// Event emitter that should be subscribed by SAB receivers
 		this.dispatcher = new Dispatcher();
+		this.logger = new Logger();
 
 		this.samplesLoaded = false;
     this.isHushed = false;
@@ -272,6 +269,8 @@ export class Engine {
           return analyserFrameId;
         };
 
+				console.info("Created analyser");
+
         analyserPollingLoop();
 
 			// Other if AudioContext is NOT created yet (after app load, before splashScreen click)
@@ -331,18 +330,23 @@ export class Engine {
             // create audio context with latency optimally configured for playback
             latencyHint: "playback",
             // latencyHint: 32/44100,  //this doesn't work below 512 on chrome (?)
-            // sampleRate: 44100
+            // sampleRate: 48000
           });
         }
 
         isWorkletProcessorLoaded = await this.loadWorkletProcessorCode();
+				console.log("Processor loaded")
       }
       catch(err){
         return false;
       }
 
 			if (isWorkletProcessorLoaded) {
+
 				this.connectWorkletNode();
+
+
+
 				return true;
 			} else return false;
 
@@ -568,7 +572,14 @@ export class Engine {
 	async loadWorkletProcessorCode() {
 		if (this.audioContext !== undefined) {
 			try {
-				await this.audioContext.audioWorklet.addModule(this.audioWorkletUrl);
+				await this.audioContext.audioWorklet.addModule(this.audioWorkletUrl)
+					.then(
+						console.info(
+							"running %csema-engine v0.1.0",
+							"font-weight: bold; color: #ffb7c5"
+							// "font-weight: bold; background: #000; color: #bada55"
+						)
+				);
 			} catch (err) {
 				console.error(
 					"ERROR:Engine:loadWorkletProcessorCode: AudioWorklet not supported in this browser: ",
@@ -643,8 +654,12 @@ export class Engine {
 	 * @param {*} event
 	 */
 	onProcessorMessageHandler(event) {
+
 		if (event && event.data) {
-			if (event.data.rq && event.data.rq === "send") {
+			if (event.data.func === 'logs') {
+				this.logger.push(event.data); //recieve data from the worker.js and push it to the logger.
+			}
+			else if (event.data.rq && event.data.rq === "send") {
 				switch (event.data.ttype) {
 					case "ML":
 						// this.messaging.publish("model-input-data", {
@@ -697,6 +712,7 @@ export class Engine {
         // TODO use a logger to inject error
         console.error(`On Processor Message ${event.data}`);
       }
+
 		}
 	}
 
