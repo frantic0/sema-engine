@@ -408,6 +408,12 @@
   		//this.dispatcher.dispatch("onConsoleLogsUpdate", {test:10});
   	}
 
+  	//clears all logs
+  	clear(){
+  		this.log = [];
+  		this.rawLog = "";
+  	}
+
   	//console.log = overrideConsoleLog();
 
   	takeOverConsole() {
