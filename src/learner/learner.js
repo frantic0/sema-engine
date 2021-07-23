@@ -154,13 +154,6 @@ export class Learner {
 		// clearTimeout(timeout);
 	};
 
-	// onMessageHandler = (e) => {
-	// 	this.dispatcher.dispatch("onSharedBuffer", e.data);
-	// 	// console.info("sending shared buffer");
-	// 	// console.log(e);
-	// };
-
-
 	/**
 	 *
 	 */

@@ -145,4 +145,4 @@ full: directory
 
 clean:
 	@echo "Cleaning up"
-	rm -f maxi-processor.js index.* node_modules
+	rm -rf maxi-processor.js index.* node_modules

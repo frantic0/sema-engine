@@ -92,7 +92,8 @@ export class Logger {
 						type: "[MAIN]",
 					});
 					ce.apply(this, arguments);
-				};
+				}.bind(this);
+
 				ce("MAIN console taken over");
 			}
 		}

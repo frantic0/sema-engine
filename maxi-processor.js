@@ -8473,6 +8473,7 @@ console.log(
 	// "font-weight: bold; background: #000; color: #bada55"
 );
 
+var cl, ci, cw, ce;
 
 
 class fft {
@@ -8621,6 +8622,8 @@ class MaxiProcessor extends AudioWorkletProcessor {
 
 		this.port.onmessage = this.onMessageHandler;
 
+		this.takeOverConsole();
+
 		// CLOCK VARIABLES
 
 		// this.clock = new Module.maxiOsc();
@@ -8647,6 +8650,52 @@ class MaxiProcessor extends AudioWorkletProcessor {
 
 		console.info(`Sample rate: ${sampleRate}`); // moving this to end of ctor for console feedback on successful processor initialisation
 	}
+
+	takeOverConsole(){
+		if (console) {
+			if (console.log) cl = console.log;
+			if (console.log) ci = console.info;
+			if (console.log) cw = console.warn;
+			if (console.log) ce = console.error;
+			if (cl && ci && cw && ce) {
+				cw("taking over PROCESSOR console");
+				console.log = function () {
+					this.port.postMessage({
+						func: "logs",
+						payload: [...arguments],
+						type: "[PROCESSOR]",
+					});
+					cl.apply(this, arguments);
+				}.bind(this);
+				console.info = function (text) {
+					this.port.postMessage({
+						func: "logs",
+						payload: [...arguments],
+						type: "[PROCESSOR]",
+					});
+					ci.apply(this, arguments);
+				}.bind(this);
+				console.warn = function (text) {
+					this.port.postMessage({
+						func: "logs",
+						payload: [...arguments],
+						type: "[PROCESSOR]",
+					});
+					cw.apply(this, arguments);
+				}.bind(this);
+				console.error = function (text) {
+					this.port.postMessage({
+						func: "logs",
+						payload: [...arguments],
+						type: "[PROCESSOR]",
+					});
+					ce.apply(this, arguments);
+				}.bind(this);
+				ce("PROCESSOR console taken over");
+			}
+		}
+	}
+
 
 	/**
 	 *

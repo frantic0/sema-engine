@@ -2,11 +2,8 @@
 // which is different from maxi-processor that
 // dynamically loads from the adjacent ringBuf.js file
 import { RingBuffer } from 'ringbuf.js'; //thanks padenot
-
-import {
-  loadSampleToArray
-} from './maximilian.util.js';
-
+import { loadSampleToArray } from './maximilian.util.js';
+import { Logger } from "../common/logger.js";
 import Dispatcher from '../common/dispatcher.js';
 // import { isThisTypeNode } from 'typescript';
 // import {
@@ -72,6 +69,7 @@ export class Engine {
 
 		// Event emitter that should be subscribed by SAB receivers
 		this.dispatcher = new Dispatcher();
+		this.logger = new Logger();
 
 		this.samplesLoaded = false;
     this.isHushed = false;
@@ -271,6 +269,8 @@ export class Engine {
           return analyserFrameId;
         };
 
+				console.info("Created analyser");
+
         analyserPollingLoop();
 
 			// Other if AudioContext is NOT created yet (after app load, before splashScreen click)
@@ -335,6 +335,7 @@ export class Engine {
         }
 
         isWorkletProcessorLoaded = await this.loadWorkletProcessorCode();
+				console.log("Processor loaded")
       }
       catch(err){
         return false;
@@ -653,8 +654,12 @@ export class Engine {
 	 * @param {*} event
 	 */
 	onProcessorMessageHandler(event) {
+
 		if (event && event.data) {
-			if (event.data.rq && event.data.rq === "send") {
+			if (event.data.func === 'logs') {
+				this.logger.push(event.data); //recieve data from the worker.js and push it to the logger.
+			}
+			else if (event.data.rq && event.data.rq === "send") {
 				switch (event.data.ttype) {
 					case "ML":
 						// this.messaging.publish("model-input-data", {
@@ -707,6 +712,7 @@ export class Engine {
         // TODO use a logger to inject error
         console.error(`On Processor Message ${event.data}`);
       }
+
 		}
 	}
 
