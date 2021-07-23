@@ -3158,6 +3158,20 @@
 
   var vars = {};
 
+  function genBlepOsc(waveform) {
+  	return {
+  		setup: (o, p) => `${o} = new Maximilian.maxiPolyBLEP();
+											${o}.setWaveform(${waveform});
+											`,
+  		loop: (o, p) => {
+  			if (p.length==1) {
+  				return `${o}.play(${p[0].loop})`
+  			}else {
+  				return `(()=>{${o}.setPulseWidth(${p[1].loop}); return ${o}.play(${p[0].loop});})()`
+  			}
+  		}
+  	}
+  }
   var jsFuncMap = {
   	saw: {
   		setup: (o, p) => `${o} = new Module.maxiOsc();
@@ -3442,13 +3456,26 @@
 			p[p.length - 1].loop
 		}));`,
   		loop: (o, p) => {
-  			let playArgs = `${p[0].loop}`;
-  			if (p.length == 3) {
-  				playArgs += `,${p[1].loop}`;
-  			} else if (p.length == 4) {
-  				playArgs += `,${p[1].loop},${p[2].loop}`;
+  			// let playArgs = `${p[0].loop}`;
+  			// if (p.length == 3) {
+  			// 	playArgs += `,${p[1].loop}`;
+  			// } else if (p.length == 4) {
+  			// 	playArgs += `,${p[1].loop},${p[2].loop}`;
+  			// }
+  			// return `(${o}.isReady() ? ${o}.playOnZX(${playArgs}) : 0.0)`;
+  			let playFunction="";
+  			switch(p.length) {
+  				case 2:
+  					playFunction = `playOnZX(${p[0].loop})`;
+  					break;
+  				case 3:
+  					playFunction = `playOnZXAtSpeed(${p[0].loop},${p[1].loop})`;
+  					break;
+  				case 4:
+  					playFunction = `playOnZXAtSpeedFromOffset(${p[0].loop},${p[1].loop},${p[2].loop})`;
+  					break;				
   			}
-  			return `(${o}.isReady() ? ${o}.playOnZX(${playArgs}) : 0.0)`;
+  			return `(${o}.isReady() ? ${o}.${playFunction} : 0.0)`;
   		},
   	},
   	loop: {
@@ -3727,6 +3754,33 @@
   			`${o} = new mfcc(${p[1].loop}, ${p[2].loop}, ${p[3].loop})`,
   		loop: (o, p) => `${o}.play(${p[0].loop})`,
   	},
+
+  	//polybleps
+  	sinb: genBlepOsc(0),
+  	cosb: genBlepOsc(1),
+  	trib: genBlepOsc(2),
+  	sqrb: genBlepOsc(3),
+  	rectb: genBlepOsc(4),
+  	sawb: genBlepOsc(5),
+  	rampb: genBlepOsc(6),
+  	modtrib: genBlepOsc(7),
+  	modsqrb: genBlepOsc(8),
+  	hrecsinb: genBlepOsc(9),
+  	frecsinb: genBlepOsc(10),
+  	tripulb: genBlepOsc(11),
+  	trapb: genBlepOsc(12),
+  	vtrapb: genBlepOsc(13),
+  	//blep with modulatable waveform
+  	polyblep:{
+  		setup: (o, p) => `${o} = new Maximilian.maxiPolyBLEP();`,
+  		loop: (o, p) => {
+  			if (p.length==2) {
+  				return `(()=>{${o}.setWaveform(${p[1].loop}); return ${o}.play(${p[0].loop});})()`;
+  			}else {
+  				return `(()=>{${o}.setPulseWidth(${p[2].loop}); ${o}.setWaveform(${p[1].loop});  return ${o}.play(${p[0].loop});})()`;
+  			}
+  		}
+  	},
   };
 
   // if (${o}_twf.onChanged(${p[2].loop}, 1e-5)) {${o}.setWaveform(${p[2].loop})};
@@ -3912,8 +3966,8 @@
   		code.setup = `() => {let q=this.newq(); ${code.setup}; return q;}`;
       code.loop = `(q, inputs, mem) => {${code.loop}}`;
       // console.log("DEBUG:treeToCode");
-  		// console.log(code.setup);
-  		// console.log(code.loop);
+  		console.log(code.setup);
+  		console.log(code.loop); 
       return code;
     }
   }

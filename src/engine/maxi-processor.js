@@ -435,7 +435,8 @@ class MaxiProcessor extends AudioWorkletProcessor {
 	 */
 	addSampleBuffer = (name, buf) => {
 		// console.log(`loading sample '${name}'`);
-		this.sampleVectorBuffers[name] = this.translateFloat32ArrayToBuffer(buf);
+		// this.sampleVectorBuffers[name] = this.translateFloat32ArrayToBuffer(buf);
+		this.sampleVectorBuffers[name] = new Float64Array(buf);
 	};
 
 	/**
@@ -740,17 +741,6 @@ class MaxiProcessor extends AudioWorkletProcessor {
 		return true;
 	}
 
-	/**
-	 *
-	 * @param {*} audioFloat32ArrayBuffer
-	 */
-	translateFloat32ArrayToBuffer(audioFloat32ArrayBuffer) {
-		var maxiSampleBufferData = new Module.VectorDouble();
-		for (var i = 0; i < audioFloat32ArrayBuffer.length; i++) {
-			maxiSampleBufferData.push_back(audioFloat32ArrayBuffer[i]);
-		}
-		return maxiSampleBufferData;
-	}
-}
+};
 
 registerProcessor("maxi-processor", MaxiProcessor);
