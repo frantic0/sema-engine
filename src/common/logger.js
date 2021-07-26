@@ -14,6 +14,7 @@ export class Logger {
 
 		this.log = [];
 		this.rawLog = ""; //raw log of string data
+		this.types = {main: "[MAIN]", processor:"[PROCESSOR]", learner:"[LEARNER]"}
 
 		this.dispatcher = new Dispatcher();
 	}
@@ -66,7 +67,8 @@ export class Logger {
 					this.push({
 						func: "logs",
 						payload: [...arguments],
-						type: "[MAIN]",
+						type: "log",
+						source: this.types.main,
 					});
 					cl.apply(this, arguments);
 				}.bind(this);
@@ -75,7 +77,8 @@ export class Logger {
 					this.push({
 						func: "logs",
 						payload: [...arguments],
-						type: "[MAIN]",
+						type: "info",
+						source: this.types.main,
 					});
 					ci.apply(this, arguments);
 				}.bind(this);
@@ -85,7 +88,8 @@ export class Logger {
 					this.push({
 						func: "logs",
 						payload: [...arguments],
-						type: "[MAIN]",
+						type: "warn",
+						source: this.types.main,
 					});
 					cw.apply(this, arguments);
 				}.bind(this);
@@ -95,7 +99,8 @@ export class Logger {
 					this.push({
 						func: "logs",
 						payload: [...arguments],
-						type: "[MAIN]",
+						type: "error",
+						source: this.types.main,
 					});
 					ce.apply(this, arguments);
 				}.bind(this);

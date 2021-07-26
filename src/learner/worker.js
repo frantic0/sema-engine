@@ -19,7 +19,8 @@ if (self.console) {
 			self.postMessage({
 				func: "logs",
 				payload: [...arguments],
-				type: "[LEARNER WORKER]",
+				type: "log",
+				source: "[LEARNER]",
 			});
 			cl.apply(this, arguments);
 		};
@@ -27,7 +28,8 @@ if (self.console) {
 			self.postMessage({
 				func: "logs",
 				payload: [...arguments],
-				type: "[LEARNER WORKER]",
+				type: "info",
+				source: "[LEARNER]",
 			});
 			ci.apply(this, arguments);
 		};
@@ -35,7 +37,8 @@ if (self.console) {
 			self.postMessage({
 				func: "logs",
 				payload: [...arguments],
-				type: "[LEARNER WORKER]",
+				type: "warn",
+				source: "[LEARNER]",
 			});
 			cw.apply(this, arguments);
 		};
@@ -43,7 +46,8 @@ if (self.console) {
 			self.postMessage({
 				func: "logs",
 				payload: [...arguments],
-				type: "[LEARNER WORKER]",
+				type: "error",
+				source: "[LEARNER]",
 			});
 			ce.apply(this, arguments);
 		};
