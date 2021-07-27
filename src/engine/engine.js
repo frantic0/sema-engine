@@ -139,17 +139,15 @@ export class Engine {
 		let ringbuf = new RingBuffer(sab, Float64Array);
 
 		this.audioWorkletNode.port.postMessage({
-			func: "sab",
-			value: sab,
+			sab: sab,
 			ttype: ttype,
 			channelID: channelId,
 			blocksize: blocksize,
 		});
 
 		this.sharedArrayBuffers[channelId] = {
-			sab: sab, // TODO: this is redundant, you can access the sab from the rb,
-			// TODO change hashmap name it is confusing and induces error
 			rb: ringbuf,
+			blocksize: blocksize
 		};
 
 		return sab;
@@ -161,21 +159,19 @@ export class Engine {
 	 */
 	addSharedBuffer(e) {
 		if (e) {
-			if (e.value && e.value instanceof SharedArrayBuffer) {
+			if (e.sab && e.sab instanceof SharedArrayBuffer) {
 				try {
-					let ringbuf = new RingBuffer(e.value, Float64Array);
+					let ringbuf = new RingBuffer(e.sab, Float64Array);
 					this.audioWorkletNode.port.postMessage({
-						func: "sab",
-						value: e.value,
+						sab: e.sab,
 						ttype: e.ttype,
 						channelID: e.channelID,
 						blocksize: e.blocksize,
 					});
 
 					this.sharedArrayBuffers[e.channelID] = {
-						sab: e.value, // TODO this is redundant, you can access the sab from the rb,
-						// TODO also change hashmap name it is confusing and induces error
 						rb: ringbuf,
+						blocksize: blocksize
 					};
 				} catch (err) {
 					console.error("Error pushing SharedBuffer to engine");
@@ -676,11 +672,12 @@ export class Engine {
 						);
 						break;
 				}
-			} else if (event.data.rq && event.data.rq === "buf") {
+			// } else if (event.data.rq && event.data.rq === "buf") {
+			} else if (event.data.sab) {
 				switch (event.data.ttype) {
 					case "ML":
 						this.dispatcher.dispatch("onSharedBuffer", {
-							sab: event.data.value,
+							sab: event.data.sab,
 							channelID: event.data.channelID, //channel ID
 							blocksize: event.data.blocksize,
 						});
@@ -692,11 +689,9 @@ export class Engine {
 						// 	blocksize: event.data.blocksize,
 						// });
 
-						let ringbuf = new RingBuffer(event.data.value, Float64Array);
+						let ringbuf = new RingBuffer(event.data.sab, Float64Array);
 
 						this.sharedArrayBuffers[event.data.channelID] = {
-							sab: event.data.value, // TODO: this is redundant, you can access the sab from the rb,
-							// TODO change hashmap name it is confusing and induces error
 							rb: ringbuf,
 							ttype: event.data.ttype,
 							channelID: event.data.channelID, //channel ID

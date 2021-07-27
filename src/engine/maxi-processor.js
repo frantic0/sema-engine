@@ -4,8 +4,11 @@ console.log(
 	// "font-weight: bold; background: #000; color: #bada55"
 );
 
+/**
+ * Audio Worklet Processor Scope Global Variables for consoleTakeOver()
+ * ! * DO NOT REMOVE
+ */
 var cl, ci, cw, ce;
-
 
 class fft {
 	constructor(bins, hopPercentage) {
@@ -434,8 +437,6 @@ class MaxiProcessor extends AudioWorkletProcessor {
 	 * @param {*} buf
 	 */
 	addSampleBuffer = (name, buf) => {
-		// console.log(`loading sample '${name}'`);
-		// this.sampleVectorBuffers[name] = this.translateFloat32ArrayToBuffer(buf);
 		this.sampleVectorBuffers[name] = new Float64Array(buf);
 	};
 
@@ -449,7 +450,7 @@ class MaxiProcessor extends AudioWorkletProcessor {
 		let sab = data.value;
 		let rb = new RingBuffer(sab, Float64Array);
 		inputSABs[data.channelID] = {
-			sab,
+			// sab,
 			rb,
 			blocksize: data.blocksize,
 			value: data.blocksize > 1 ? new Float64Array(data.blocksize) : 0,
@@ -527,17 +528,12 @@ class MaxiProcessor extends AudioWorkletProcessor {
 	onMessageHandler = (event) => {
 		if (event.data.address) {
 			this.OSCMessages[event.data.address] = event.data.args;
-		} else if (event.data.func) {
-			if (event.data.func === "sendbuf") {
-				this.addSampleBuffer(event.data.name, event.data.data);
-			} else if (event.data.func === "sab") {
-				this.addSharedArrayBuffer(event.data);
-			}
+		} else if (event.data.sab) {
+			this.addSharedArrayBuffer(event.data.sab);
 		} else if (event.data.sample) {
 			let sampleKey = event.data.sample.substr(0, event.data.sample.length - 4);
-
 			this.addSampleBuffer(sampleKey, event.data.buffer);
-		} else if ("phase" in event.data) {
+		}	else if (event.data.phase) {
 			this.netClock.setPhase(event.data.phase, event.data.i);
 			// this.kuraPhase = event.data.phase;
 			// this.kuraPhaseIdx = event.data.i;

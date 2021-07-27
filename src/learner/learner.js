@@ -115,10 +115,10 @@ export class Learner {
 					// console.log(data);
 				},
         // DEPRECATED
-        data: () => {
-					// Publish data to audio engine
-					// messaging.publish("model-output-data", data);
-				},
+        // data: () => {
+				// 	// Publish data to audio engine
+				// 	// messaging.publish("model-output-data", data);
+				// },
 				pbcopy: (data) => {
 					copyToPasteBuffer(data.msg);
 					// let copyField=document.getElementById("hiddenCopyField");
@@ -155,14 +155,12 @@ export class Learner {
 	};
 
 	/**
-	 *
+	 * Learner eval
+	 * @param {*} expression
 	 */
 	eval(expression) {
 		if (this.worker && expression)
 			this.worker.postMessage({ eval: expression });
-		//console.log("DEBUG:ModelEditor:evalModelEditorExpression: " + code);
-		// window.localStorage.setItem("modelEditorValue", codeMirror.getValue());
-		// addToHistory("model-history-", modelCode);
 	}
 
 	/**

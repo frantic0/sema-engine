@@ -120,7 +120,7 @@ export const loadSampleToArray = (audioContext, sampleObjectName, url, audioWork
           if (data !== undefined && audioWorkletNode !== undefined) {
             // console.log('f32array: ' + float32Array);
             audioWorkletNode.port.postMessage({
-              "sample":sampleObjectName,
+              "sample": sampleObjectName,
               "buffer": float32ArrayBuffer,
             });
           }

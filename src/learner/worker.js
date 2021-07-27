@@ -5,7 +5,10 @@ self.RingBuffer = RingBuffer;
 
 var outputSABs = {};
 
-// var console = self.console;
+/**
+ * Worker Scope Global Variables for consoleTakeOver()
+ * ! * DO NOT REMOVE
+ */
 var cl, ci, cw, ce;
 
 if (self.console) {
@@ -52,7 +55,7 @@ if (self.console) {
 }
 
 
-class MLSABOutputTransducer {
+class Output {
 	constructor(ttype, channel, blocksize) {
 		this.channel = channel;
 		this.blocksize = blocksize;
@@ -67,14 +70,12 @@ class MLSABOutputTransducer {
 
 			outputSABs[channel] = {
 				rb: this.ringbuf,
-				sab: this.sab,
 				created: Date.now(),
 				blocksize: blocksize,
 			};
 
 			postMessage({
-				func: "sab",
-				value: this.sab,
+				sab: this.sab,
 				ttype: ttype,
 				channelID: channel,
 				blocksize: blocksize,
@@ -101,8 +102,8 @@ class MLSABOutputTransducer {
 	}
 }
 
-self.createOutputChannel = ( id, blocksize ) => {
-  return new MLSABOutputTransducer('ML', id, blocksize);
+self.createOutput = ( id, blocksize ) => {
+  return new Output('ML', id, blocksize);
 };
 
 /**
@@ -119,12 +120,9 @@ self.input = ( value, channel ) => {}
  * @param {*} channel
  */
 self.output = ( value, channel ) => {
-  postMessage( {
-                  func: 'data',
-                  val: value,
-                  ch: channel
-                }
-  );
+  postMessage({ func: 'data',
+                val: value,
+                ch: channel });
 }
 
 self.loadResponders = {};
@@ -297,7 +295,7 @@ onmessage = m => {
     let sab = m.data.sab;
     let rb = new RingBuffer(sab, Float64Array);
     inputSABs[m.data.channelID] = {
-      sab,
+      // sab,
       rb,
       blocksize: m.data.blocksize
     };
