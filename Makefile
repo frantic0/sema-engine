@@ -61,8 +61,8 @@ CFLAGS=--bind -O3\
 ######## CHEERP BUILD VARIABLES AND FLAGS
 
 
-CLANGBIN=/opt/cheerp/bin/clang++
-#CLANGBIN=/Applications/cheerp/bin/clang++
+# CLANGBIN=/opt/cheerp/bin/clang++
+CLANGBIN=/Applications/cheerp/bin/clang++
 HEADERS=src/maximilian/src
 SRC_CHEERP=src/maximilian/js/purejs/maxi-purejs.cpp
 

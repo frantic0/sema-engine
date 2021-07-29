@@ -1,5 +1,5 @@
 
-(function(l, r) { if (!l || l.getElementById('livereloadscript')) return; r = l.createElement('script'); r.async = 1; r.src = '//' + (self.location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1'; r.id = 'livereloadscript'; r.crossOrigin='anonymous'; l.getElementsByTagName('head')[0].appendChild(r) })(self.document);
+(function(l, r) { if (!l || l.getElementById('livereloadscript')) return; r = l.createElement('script'); r.async = 1; r.src = '//' + (self.location.host || 'localhost').split(':')[0] + ':35730/livereload.js?snipver=1'; r.id = 'livereloadscript'; r.crossOrigin='anonymous'; l.getElementsByTagName('head')[0].appendChild(r) })(self.document);
 // Send audio interleaved audio frames between threads, wait-free.
 
 // A Single Producer - Single Consumer thread-safe wait-free ring buffer.
@@ -397,7 +397,7 @@ class Logger {
 	push(data) {
 		this.log.push(data);
 		this.rawLog =
-		this.rawLog + "\n" + data.type + " " + [...data.payload].join();
+		this.rawLog + "\n" + data.origin + " " + [...data.payload].join();
 		this.dispatcher.dispatch("onLog");
 		//console.log("getting dispatched", this.rawLog);
 		//this.dispatcher.dispatch("onConsoleLogsUpdate", {test:10});

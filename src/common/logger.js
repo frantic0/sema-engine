@@ -37,7 +37,7 @@ export class Logger {
 	push(data) {
 		this.log.push(data);
 		this.rawLog =
-		this.rawLog + "\n" + data.type + " " + [...data.payload].join();
+		this.rawLog + "\n" + data.origin + " " + [...data.payload].join();
 		this.dispatcher.dispatch("onLog");
 		//console.log("getting dispatched", this.rawLog);
 		//this.dispatcher.dispatch("onConsoleLogsUpdate", {test:10});
