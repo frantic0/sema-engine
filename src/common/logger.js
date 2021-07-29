@@ -14,6 +14,7 @@ export class Logger {
 
 		this.log = [];
 		this.rawLog = ""; //raw log of string data
+		this.originTypes = {main: "[MAIN]", processor:"[PROCESSOR]", learner:"[LEARNER]"}
 
 		this.dispatcher = new Dispatcher();
 	}
@@ -66,7 +67,8 @@ export class Logger {
 					this.push({
 						func: "logs",
 						payload: [...arguments],
-						type: "[MAIN]",
+						logLevel: "log",
+						origin: this.originTypes.main,
 					});
 					cl.apply(this, arguments);
 				}.bind(this);
@@ -75,7 +77,8 @@ export class Logger {
 					this.push({
 						func: "logs",
 						payload: [...arguments],
-						type: "[MAIN]",
+						logLevel: "info",
+						origin: this.originTypes.main,
 					});
 					ci.apply(this, arguments);
 				}.bind(this);
@@ -85,7 +88,8 @@ export class Logger {
 					this.push({
 						func: "logs",
 						payload: [...arguments],
-						type: "[MAIN]",
+						logLevel: "warn",
+						origin: this.originTypes.main,
 					});
 					cw.apply(this, arguments);
 				}.bind(this);
@@ -95,7 +99,8 @@ export class Logger {
 					this.push({
 						func: "logs",
 						payload: [...arguments],
-						type: "[MAIN]",
+						logLevel: "error",
+						origin: this.originTypes.main,
 					});
 					ce.apply(this, arguments);
 				}.bind(this);
