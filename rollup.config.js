@@ -90,7 +90,7 @@ export default [
 							openPage: "/test/index.html",
 							verbose: true, // Show server address in console (default: true)
 							contentBase: "", // Folder to serve files from
-							historyApiFallback: false, // Set to true to return index.html (200) instead of error page (404)
+							// historyApiFallback: false, // Set to true to return index.html (200) instead of error page (404)
 							historyApiFallback: "/200.html", // Path to fallback page
 							host: "localhost", // Options used in setting up server
 							port: 9002, // Use this port in you VSCode

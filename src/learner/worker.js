@@ -17,7 +17,7 @@ if (self.console) {
 	if (self.console.log) cw = console.warn;
 	if (self.console.log) ce = console.error;
 	if(cl && ci && cw && ce){
-		cw("taking over console");
+		// cw("taking over console");
 		console.log = function () {
 			self.postMessage({
 				func: "logs",
@@ -50,7 +50,7 @@ if (self.console) {
 			});
 			ce.apply(this, arguments);
 		};
-		ce("console taken over");
+		// ce("console taken over");
 	}
 }
 

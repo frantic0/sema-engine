@@ -320,7 +320,7 @@ var jsFuncMap = {
 					break;
 				case 4:
 					playFunction = `playOnZXAtSpeedFromOffset(${p[0].loop},${p[1].loop},${p[2].loop})`;
-					break;				
+					break;
 			}
 			return `(${o}.isReady() ? ${o}.${playFunction} : 0.0)`;
 		},
@@ -814,8 +814,8 @@ export default class ASTreeToJavascript {
 		code.setup = `() => {let q=this.newq(); ${code.setup}; return q;}`;
     code.loop = `(q, inputs, mem) => {${code.loop}}`
     // console.log("DEBUG:treeToCode");
-		console.log(code.setup);
-		console.log(code.loop); 
+		// console.log(code.setup);
+		// console.log(code.loop);
     return code;
   }
 }

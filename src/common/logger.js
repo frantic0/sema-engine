@@ -54,7 +54,7 @@ export class Logger {
 			if (window.console.warn) cw = console.warn;
 			if (window.console.error) ce = console.error;
 			if (cl && ci && cw && ce) {
-				cw("taking over MAIN console");
+				// cw("taking over MAIN console");
 
 				console.log = function (text) {
 					this.push({
@@ -94,7 +94,7 @@ export class Logger {
 					ce.apply(this, arguments);
 				}.bind(this);
 
-				ce("MAIN console taken over");
+				// ce("MAIN console taken over");
 			}
 		}
 	}

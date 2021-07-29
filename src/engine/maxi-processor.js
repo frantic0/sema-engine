@@ -192,7 +192,7 @@ class MaxiProcessor extends AudioWorkletProcessor {
 			if (console.log) cw = console.warn;
 			if (console.log) ce = console.error;
 			if (cl && ci && cw && ce) {
-				cw("taking over PROCESSOR console");
+				// cw("taking over PROCESSOR console");
 				console.log = function () {
 					this.port.postMessage({
 						func: "logs",
@@ -225,7 +225,7 @@ class MaxiProcessor extends AudioWorkletProcessor {
 					});
 					ce.apply(this, arguments);
 				}.bind(this);
-				ce("PROCESSOR console taken over");
+				// ce("PROCESSOR console taken over");
 			}
 		}
 	}
