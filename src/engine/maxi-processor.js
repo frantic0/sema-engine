@@ -194,8 +194,8 @@ class MaxiProcessor extends AudioWorkletProcessor {
 					this.port.postMessage({
 						func: "logs",
 						payload: [...arguments],
-						type: "log",
-						source: "[PROCESSOR]",
+						logLevel: "log",
+						origin: "[PROCESSOR]",
 					});
 					cl.apply(this, arguments);
 				}.bind(this);
@@ -203,8 +203,8 @@ class MaxiProcessor extends AudioWorkletProcessor {
 					this.port.postMessage({
 						func: "logs",
 						payload: [...arguments],
-						type: "info",
-						source: "[PROCESSOR]",
+						logLevel: "info",
+						origin: "[PROCESSOR]",
 					});
 					ci.apply(this, arguments);
 				}.bind(this);
@@ -212,8 +212,8 @@ class MaxiProcessor extends AudioWorkletProcessor {
 					this.port.postMessage({
 						func: "logs",
 						payload: [...arguments],
-						type: "warn",
-						source: "[PROCESSOR]",
+						logLevel: "warn",
+						origin: "[PROCESSOR]",
 					});
 					cw.apply(this, arguments);
 				}.bind(this);
@@ -221,8 +221,8 @@ class MaxiProcessor extends AudioWorkletProcessor {
 					this.port.postMessage({
 						func: "logs",
 						payload: [...arguments],
-						type: "error",
-						source: "[PROCESSOR]",
+						logLevel: "error",
+						origin: "[PROCESSOR]",
 					});
 					ce.apply(this, arguments);
 				}.bind(this);
