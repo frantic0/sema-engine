@@ -43,14 +43,14 @@ export class SABOutputTransducer {
 
       outputSABs[channel] = {
 				rb: this.ringbuf,
-				sab: this.sab,
+				// sab: this.sab,
 				created: now,
 				blocksize: blocksize,
 			};
 
 			this.port.postMessage({
 				rq: "buf",
-				value: this.sab,
+				sab: this.sab,
 				ttype: ttype,
 				channelID: channel,
 				blocksize: blocksize,

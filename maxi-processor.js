@@ -8262,14 +8262,14 @@ export class SABOutputTransducer {
 
       outputSABs[channel] = {
 				rb: this.ringbuf,
-				sab: this.sab,
+				// sab: this.sab,
 				created: now,
 				blocksize: blocksize,
 			};
 
 			this.port.postMessage({
 				rq: "buf",
-				value: this.sab,
+				sab: this.sab,
 				ttype: ttype,
 				channelID: channel,
 				blocksize: blocksize,
@@ -8892,9 +8892,10 @@ class MaxiProcessor extends AudioWorkletProcessor {
 	 * @param {*} id
 	 */
 	getSABValue = (id) => {
+
 		let res = 0;
-		let sab = inputSABs[id];
-		if (sab) {
+		let obj = inputSABs[id];
+		if (obj) {
 			res = sab.value;
 		}
 		return res;
@@ -8921,13 +8922,11 @@ class MaxiProcessor extends AudioWorkletProcessor {
 	 * @param {*} buf
 	 */
 	addSharedArrayBuffer = (data) => {
-		console.info("buffer received");
-		console.info(data);
 		if(data)
 			try {
 				let rb = new RingBuffer(data.sab, Float64Array);
 				inputSABs[data.channelID] = {
-					sab: data.sab,
+					// sab: data.sab,
 					rb,
 					blocksize: data.blocksize,
 					value: data.blocksize > 1 ? new Float64Array(data.blocksize) : 0,
@@ -9006,29 +9005,38 @@ class MaxiProcessor extends AudioWorkletProcessor {
 	 * @param {*} event
 	 */
 	onMessageHandler = (event) => {
-		if (event.data.address) {
-			this.OSCMessages[event.data.address] = event.data.args;
-		} else if (event.data.func) {
-			if (event.data.func === "sendbuf") {
-				this.addSampleBuffer(event.data.name, event.data.data);
-			} else if (event.data.func === "sab") {
-				this.addSharedArrayBuffer(event.data);
-			}
-		} else if (event.data.sample) {
-			let sampleKey = event.data.sample.substr(0, event.data.sample.length - 4);
 
-			this.addSampleBuffer(sampleKey, event.data.buffer);
-		} else if ("phase" in event.data) {
-			this.netClock.setPhase(event.data.phase, event.data.i);
-			// this.kuraPhase = event.data.phase;
-			// this.kuraPhaseIdx = event.data.i;
-		} else if (event.data.eval) {
-			this.eval(event.data);
-		} else if (event.data.hush) {
-			this.hush();
-		} else if (event.data.unhush) {
-			this.unhush();
+		if(event && event.data){
+			try {
+				if (event.data.sample) {
+					let sampleKey = event.data.sample.substr(0, event.data.sample.length - 4);
+					this.addSampleBuffer(sampleKey, event.data.buffer);
+				}
+				else if (event.data.func === "sendbuf") {
+					this.addSampleBuffer(event.data.name, event.data.data);
+				}
+				else if (event.data.sab) {
+					this.addSharedArrayBuffer(event.data);
+				}
+				else if (event.data.address) {
+					this.OSCMessages[event.data.address] = event.data.args;
+				} else if (event.data.phase) {
+					this.netClock.setPhase(event.data.phase, event.data.i);
+					// this.kuraPhase = event.data.phase;
+					// this.kuraPhaseIdx = event.data.i;
+				} else if (event.data.eval) {
+					this.eval(event.data);
+				} else if (event.data.hush) {
+					this.hush();
+				} else if (event.data.unhush) {
+					this.unhush();
+				}
+			} catch (error) {
+				console.error(`onMessageHandler ${error}`);
+			}
 		}
+		else
+			console.error(`error on onMessageHandler data`)
 	};
 
 	/**

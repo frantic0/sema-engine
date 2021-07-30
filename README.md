@@ -131,7 +131,7 @@ For the JS code, we provide `getBlock`, an utility function that pulls code from
 
 ## Prerequisites
 
-If you would like to make contributions to the sema-engine custom WAAPI audio worklet processor, there are two compilers required to build it:
+If you want to make changes, build or make contributions to the sema-engine custom WAAPI audio worklet processor, you will need to install two compilers to do it:
 
 * Emscripten SDK https://emscripten.org/docs/getting_started/downloads.html
 
@@ -158,12 +158,12 @@ make
 npm run build
 ```
 
-5. Test the sema-engine library in a [local example](https://github.com/frantic0/sema-engine/blob/main/test/index.html)
+4. Test the sema-engine library in a [local example](https://github.com/frantic0/sema-engine/blob/main/test/index.html)
 ```
 npm run dev
 ```
 
-To update submodule if there are any upgrades
+5. To update submodules if there are any upgrades (ATTENTION: this might break the sema-engine build)
 ```
 git submodule update --remote --merge
 ```

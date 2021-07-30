@@ -71,7 +71,7 @@ class MLSABOutputTransducer {
 
 			outputSABs[channel] = {
 				rb: this.ringbuf,
-				sab: this.sab,
+				// sab: this.sab,
 				created: Date.now(),
 				blocksize: blocksize,
 			};
@@ -301,7 +301,7 @@ onmessage = m => {
     let sab = m.data.sab;
     let rb = new RingBuffer(sab, Float64Array);
     inputSABs[m.data.channelID] = {
-      sab,
+      // sab,
       rb,
       blocksize: m.data.blocksize
     };

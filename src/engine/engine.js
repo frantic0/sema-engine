@@ -147,8 +147,8 @@ export class Engine {
 		});
 
 		this.sharedArrayBuffers[channelId] = {
-			sab: sab, // TODO: this is redundant, you can access the sab from the rb,
-			// TODO change hashmap name it is confusing and induces error
+			// sab: sab, // TODO: this is redundant, you can access the sab from the rb,
+			// // TODO change hashmap name it is confusing and induces error
 			rb: ringbuf,
 			blocksize
 		};
@@ -176,14 +176,16 @@ export class Engine {
 					});
 
 					this.sharedArrayBuffers[e.channelID] = {
-						sab: e.sab, // TODO this is redundant, you can access the sab from the rb,
-						// TODO also change hashmap name it is confusing and induces error
+						// sab: e.sab, // TODO this is redundant, you can access the sab from the rb,
+						// // TODO also change hashmap name it is confusing and induces error
 						rb: ringbuf,
+						blocksize,
 					};
 				} catch (err) {
 					console.error("Error pushing SharedBuffer to engine");
 				}
 			} else if (e.name && e.data) {
+				console.log("sending new buffer")
 				this.audioWorkletNode.port.postMessage({
 					func: "sendbuf",
 					name: e.name,
@@ -661,24 +663,6 @@ export class Engine {
 		if (event && event.data) {
 			if (event.data.func === 'logs') {
 				this.logger.push(event.data); //recieve data from the worker.js and push it to the logger.
-			}
-			else if (event.data.rq && event.data.rq === "send") {
-				switch (event.data.ttype) {
-					case "ML":
-						// this.messaging.publish("model-input-data", {
-						//   type: "model-input-data",
-						//   value: event.data.value,
-						//   ch: event.data.ch
-						// });
-						break;
-					case "NET":
-						this.peerNet.send(
-							event.data.ch[0],
-							event.data.value,
-							event.data.ch[1]
-						);
-						break;
-				}
 			} else if (event.data.rq && event.data.rq === "buf") {
 				switch (event.data.ttype) {
 					case "ML":
@@ -710,12 +694,27 @@ export class Engine {
 			} else if (event.data.rq && event.data.rq === "rts") { // ready to suspend
 		  	this.audioContext.suspend();
         this.isHushed = true;
-		  }
-      else if (event.data instanceof Error){
+		  } else if (event.data instanceof Error){
         // TODO use a logger to inject error
         console.error(`On Processor Message ${event.data}`);
       }
-
+			// else if (event.data.rq && event.data.rq === "send") {
+			// 	switch (event.data.ttype) {
+			// 		case "ML":
+			// 			// this.messaging.publish("model-input-data", {
+			// 			//   type: "model-input-data",
+			// 			//   value: event.data.value,
+			// 			//   ch: event.data.ch
+			// 			// });
+			// 			break;
+			// 		case "NET":
+			// 			this.peerNet.send(
+			// 				event.data.ch[0],
+			// 				event.data.value,
+			// 				event.data.ch[1]
+			// 			);
+			// 			break;
+			// 	}
 		}
 	}
 
