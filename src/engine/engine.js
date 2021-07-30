@@ -179,7 +179,7 @@ export class Engine {
 						// sab: e.sab, // TODO this is redundant, you can access the sab from the rb,
 						// // TODO also change hashmap name it is confusing and induces error
 						rb: ringbuf,
-						blocksize,
+						blocksize: e.blocksize,
 					};
 				} catch (err) {
 					console.error("Error pushing SharedBuffer to engine");
@@ -661,60 +661,57 @@ export class Engine {
 	onProcessorMessageHandler(event) {
 
 		if (event && event.data) {
-			if (event.data.func === 'logs') {
-				this.logger.push(event.data); //recieve data from the worker.js and push it to the logger.
-			} else if (event.data.rq && event.data.rq === "buf") {
-				switch (event.data.ttype) {
-					case "ML":
-						this.dispatcher.dispatch("onSharedBuffer", {
-							sab: event.data.value,
-							channelID: event.data.channelID, //channel ID
-							blocksize: event.data.blocksize,
-						});
-						break;
-					case "scope":
-						// this.dispatcher.dispatch("onSharedBuffer", {
-						// 	sab: event.data.value,
-						// 	channelID: event.data.channelID, //channel ID
-						// 	blocksize: event.data.blocksize,
-						// });
-
-						let ringbuf = new RingBuffer(event.data.value, Float64Array);
-
-						this.sharedArrayBuffers[event.data.channelID] = {
-							sab: event.data.value, // TODO: this is redundant, you can access the sab from the rb,
-							// TODO change hashmap name it is confusing and induces error
-							rb: ringbuf,
-							ttype: event.data.ttype,
-							channelID: event.data.channelID, //channel ID
-							blocksize: event.data.blocksize,
-						};
-						break;
+			try {
+				if (event.data.func === 'logs') {
+					this.logger.push(event.data); //recieve data from the worker.js and push it to the logger.
 				}
-			} else if (event.data.rq && event.data.rq === "rts") { // ready to suspend
-		  	this.audioContext.suspend();
-        this.isHushed = true;
-		  } else if (event.data instanceof Error){
-        // TODO use a logger to inject error
-        console.error(`On Processor Message ${event.data}`);
-      }
-			// else if (event.data.rq && event.data.rq === "send") {
-			// 	switch (event.data.ttype) {
-			// 		case "ML":
-			// 			// this.messaging.publish("model-input-data", {
-			// 			//   type: "model-input-data",
-			// 			//   value: event.data.value,
-			// 			//   ch: event.data.ch
-			// 			// });
-			// 			break;
-			// 		case "NET":
-			// 			this.peerNet.send(
-			// 				event.data.ch[0],
-			// 				event.data.value,
-			// 				event.data.ch[1]
-			// 			);
-			// 			break;
-			// 	}
+				else if (event.data.sab) {
+					this.dispatcher.dispatch("onSharedBuffer", {
+						sab: event.data.sab,
+						channelID: event.data.channelID, //channel ID
+						blocksize: event.data.blocksize,
+					});
+				}
+				else if (event.data.rq && event.data.rq === "rts") { // ready to suspend
+					this.audioContext.suspend();
+					this.isHushed = true;
+				}
+				else if (event.data instanceof Error){
+					// TODO use a logger to inject error
+					console.error(`On Processor Message ${event.data}`);
+				}
+				// else if (event.data.rq && event.data.rq === "buf") {
+				// 	switch (event.data.ttype) {
+				// 		case "ML":
+				// 			this.dispatcher.dispatch("onSharedBuffer", {
+				// 				sab: event.data.sab,
+				// 				channelID: event.data.channelID, //channel ID
+				// 				blocksize: event.data.blocksize,
+				// 			});
+				// 			break;
+				// 		case "scope":
+				// 			// this.dispatcher.dispatch("onSharedBuffer", {
+				// 			// 	sab: event.data.value,
+				// 			// 	channelID: event.data.channelID, //channel ID
+				// 			// 	blocksize: event.data.blocksize,
+				// 			// });
+
+				// 			let ringbuf = new RingBuffer(event.data.value, Float64Array);
+
+				// 			this.sharedArrayBuffers[event.data.channelID] = {
+				// 				sab: event.data.value, // TODO: this is redundant, you can access the sab from the rb,
+				// 				// TODO change hashmap name it is confusing and induces error
+				// 				rb: ringbuf,
+				// 				ttype: event.data.ttype,
+				// 				channelID: event.data.channelID, //channel ID
+				// 				blocksize: event.data.blocksize,
+				// 			};
+				// 			break;
+				// 	}
+				// }
+			} catch (error) {
+
+			}
 		}
 	}
 

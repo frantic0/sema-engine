@@ -8896,7 +8896,7 @@ class MaxiProcessor extends AudioWorkletProcessor {
 		let res = 0;
 		let obj = inputSABs[id];
 		if (obj) {
-			res = sab.value;
+			res = obj.value;
 		}
 		return res;
 	};
@@ -9008,14 +9008,14 @@ class MaxiProcessor extends AudioWorkletProcessor {
 
 		if(event && event.data){
 			try {
-				if (event.data.sample) {
+				if (event.data.sample) { // sample buffer — default samples loaded on app initialization
 					let sampleKey = event.data.sample.substr(0, event.data.sample.length - 4);
 					this.addSampleBuffer(sampleKey, event.data.buffer);
 				}
-				else if (event.data.func === "sendbuf") {
+				else if (event.data.func === "sendbuf") { // sample buffer — user created and named in the JS editor
 					this.addSampleBuffer(event.data.name, event.data.data);
 				}
-				else if (event.data.sab) {
+				else if (event.data.sab) { // shared array buffer - originates either in the engine OR the learner
 					this.addSharedArrayBuffer(event.data);
 				}
 				else if (event.data.address) {
@@ -9024,9 +9024,9 @@ class MaxiProcessor extends AudioWorkletProcessor {
 					this.netClock.setPhase(event.data.phase, event.data.i);
 					// this.kuraPhase = event.data.phase;
 					// this.kuraPhaseIdx = event.data.i;
-				} else if (event.data.eval) {
+				} else if (event.data.eval) { // DSP code from parsed by the compiler
 					this.eval(event.data);
-				} else if (event.data.hush) {
+				} else if (event.data.hush) { // engine stop request
 					this.hush();
 				} else if (event.data.unhush) {
 					this.unhush();

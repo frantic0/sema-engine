@@ -428,7 +428,7 @@ class MaxiProcessor extends AudioWorkletProcessor {
 		let res = 0;
 		let obj = inputSABs[id];
 		if (obj) {
-			res = sab.value;
+			res = obj.value;
 		}
 		return res;
 	};
