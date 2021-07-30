@@ -140,7 +140,7 @@ export class Engine {
 
 		this.audioWorkletNode.port.postMessage({
 			func: "sab",
-			value: sab,
+			sab: sab,
 			ttype: ttype,
 			channelID: channelId,
 			blocksize: blocksize,
@@ -150,6 +150,7 @@ export class Engine {
 			sab: sab, // TODO: this is redundant, you can access the sab from the rb,
 			// TODO change hashmap name it is confusing and induces error
 			rb: ringbuf,
+			blocksize
 		};
 
 		return sab;
@@ -161,19 +162,21 @@ export class Engine {
 	 */
 	addSharedBuffer(e) {
 		if (e) {
-			if (e.value && e.value instanceof SharedArrayBuffer) {
+			console.log(e)
+			if (e.sab && e.sab instanceof SharedArrayBuffer) {
 				try {
-					let ringbuf = new RingBuffer(e.value, Float64Array);
+					let ringbuf = new RingBuffer(e.sab, Float64Array);
+
 					this.audioWorkletNode.port.postMessage({
 						func: "sab",
-						value: e.value,
+						sab: e.sab,
 						ttype: e.ttype,
 						channelID: e.channelID,
 						blocksize: e.blocksize,
 					});
 
 					this.sharedArrayBuffers[e.channelID] = {
-						sab: e.value, // TODO this is redundant, you can access the sab from the rb,
+						sab: e.sab, // TODO this is redundant, you can access the sab from the rb,
 						// TODO also change hashmap name it is confusing and induces error
 						rb: ringbuf,
 					};

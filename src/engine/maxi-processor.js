@@ -189,7 +189,7 @@ class MaxiProcessor extends AudioWorkletProcessor {
 			if (console.log) cw = console.warn;
 			if (console.log) ce = console.error;
 			if (cl && ci && cw && ce) {
-				cw("taking over PROCESSOR console");
+				// cw("taking over PROCESSOR console");
 				console.log = function () {
 					this.port.postMessage({
 						func: "logs",
@@ -226,7 +226,7 @@ class MaxiProcessor extends AudioWorkletProcessor {
 					});
 					ce.apply(this, arguments);
 				}.bind(this);
-				ce("PROCESSOR console taken over");
+				// ce("PROCESSOR console taken over");
 			}
 		}
 	}
@@ -439,7 +439,12 @@ class MaxiProcessor extends AudioWorkletProcessor {
 	 */
 	addSampleBuffer = (name, buf) => {
 		// console.log(`loading sample '${name}'`);
-		this.sampleVectorBuffers[name] = this.translateFloat32ArrayToBuffer(buf);
+		if(name && buf)
+			try {
+				this.sampleVectorBuffers[name] = this.translateFloat32ArrayToBuffer(buf);
+			} catch (error) {
+				console.error(`addSampleBuffer ${error}`)
+			}
 	};
 
 	/**
@@ -449,14 +454,19 @@ class MaxiProcessor extends AudioWorkletProcessor {
 	 */
 	addSharedArrayBuffer = (data) => {
 		console.info("buffer received");
-		let sab = data.value;
-		let rb = new RingBuffer(sab, Float64Array);
-		inputSABs[data.channelID] = {
-			sab,
-			rb,
-			blocksize: data.blocksize,
-			value: data.blocksize > 1 ? new Float64Array(data.blocksize) : 0,
-		};
+		console.info(data);
+		if(data)
+			try {
+				let rb = new RingBuffer(data.sab, Float64Array);
+				inputSABs[data.channelID] = {
+					sab: data.sab,
+					rb,
+					blocksize: data.blocksize,
+					value: data.blocksize > 1 ? new Float64Array(data.blocksize) : 0,
+				};
+			} catch (error) {
+				console.error(`addSharedArrayBuffer ${error}`);
+			}
 	};
 
 	eval = (data) => {
