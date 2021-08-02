@@ -1,5 +1,9 @@
 //:::1::: RUN THIS BLOCK OF CODE FIRST, THEN SCROLL DOWN TO STEP 2
 
+importScripts("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs/dist/tf.min.js");
+____
+//:::2::: RUN THIS BLOCK, THEN SCROLL DOWN TO STEP 2
+
 //these are the parameters that will be sent to the FM synth
 var state = [0.01, 0.2, 0.0, 0.1, 0.1, 0.3, 0.1];
 
@@ -8,7 +12,7 @@ var mouseX=0;
 var mouseY=0;
 
 //modes for machine learning
-var MLMODES = {NONE:0,TRAIN:1,PREDICT:2};
+var MLMODES = { NONE:0, COLLECT:1, TRAIN:2, PREDICT:3};
 var mode = MLMODES.NONE;
 
 //setup channels to send data to LC
@@ -34,7 +38,7 @@ var inputMap = {
 	0:(x)=>{
 		//record the mouse values
 		mouseX = x[0]; mouseY = x[1];
-		if (mode == MLMODES.TRAIN) {
+		if (mode == MLMODES.COLLECT) {
 			//collect training data
 			mousePositions.push([mouseX, mouseY]);
 			states.push(state);
@@ -64,7 +68,7 @@ function randomList(n) {
 
 _____
 
-//:::2::: MANUAL CONTROL OF THE FM SYNTH
+//:::3::: MANUAL CONTROL OF THE FM SYNTH
 
 // try changing the state by changing the numbers below
 // they need to be between 0 and 1
@@ -73,7 +77,7 @@ sendState(state);
 state
 _____
 
-//:::3::: RANDOM EXPLORATION OF THE SYNTH
+//:::4::: RANDOM EXPLORATION OF THE SYNTH
 
 //run this code block to randomise the parameters - repeat until you find a sound that you'd like to train as a target for the network
 state = randomList(7);
@@ -82,25 +86,25 @@ state
 
 ___
 
-//:::4::: TRAINING DATA COLLECTION
+//:::5::: TRAINING DATA COLLECTION
 //To train the synth we're going to match up mouse coordinates to parameter settings. During training, you'll need to control the cursor position in this editor with the keyboard.
 
 
-//:::4a::: move the mouse to the top left corner of the screen
+//:::5a::: move the mouse to the top left corner of the screen
 
 
 ____
-//:::4b::: run this block to collect data, move the mouse around the top left corner for around 100-200 steps. You will see in the console window that data is being collected
-mode = MLMODES.TRAIN;
+//:::5b::: run this block to collect data, move the mouse around the top left corner for around 100-200 steps. You will see in the console window that data is being collected
+mode = MLMODES.COLLECT;
 ___
-//:::4c::: run this block to stop collecting data
+//:::5c::: run this block to stop collecting data
 mode = MLMODES.NONE;
-//:::4d:::repeat from step 3, with the mouse in the bottom right area of the screen
+//:::5d:::repeat from step 3, with the mouse in the bottom right area of the screen
 ___
 
 
 _____
-//:::5::: MODEL CREATION
+//:::6::: MODEL CREATION
 
 //create a neural network model.
 var model = tf.sequential();
@@ -119,7 +123,7 @@ model.compile({ loss: 'meanSquaredError', optimizer: tf.train.adam() });
 
 ____
 
-//:::6::: DATA CONVERSION
+//:::7::: DATA CONVERSION
 
 //Convert the data we've collected into the right format for tensorflow
 var trainIn = tf.tensor2d(mousePositions, [mousePositions.length, 2]);
@@ -127,7 +131,7 @@ var trainOut = tf.tensor2d(states, [states.length, state.length]);
 
 ____
 
-//:::7::: TRAINING
+//:::8::: TRAINING
 //train the model.  You can repeat this step as desired until the loss is low enough - 50 epochs is probably enough
 
 function onBatchEnd (x, logs){console.log(x, logs)};
@@ -141,7 +145,7 @@ model.predict(tf.tensor2d([mouseX, mouseY],[1,2])).dataSync()
 
 
 ____
-//:::8::: PREDICTION
+//:::9::: PREDICTION
 //use the model to predict synthesis parameters based on the mouse movements
 //run this block then move the mouse around
 //you should find something similar to your original two sounds in the top-left and bottom-right corners.  All other areas in between are interpolations from the model - you might find some interesting new sounds

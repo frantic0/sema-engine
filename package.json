@@ -37,10 +37,10 @@
 	},
 	"dependencies": {
 		"nearley": "^2.20.1",
-		"ringbuf.js": "^0.1.0"
+		"ringbuf.js": "^0.1.0",
+		"webmidi": "^2.5.2"
 	},
 	"devDependencies": {
-		"livereload": "git+https://github.com/frantic0/node-livereload.git",
 		"@rollup/plugin-commonjs": "^17.0.0",
 		"@rollup/plugin-eslint": "^8.0.1",
 		"@rollup/plugin-node-resolve": "^11.2.1",
@@ -50,6 +50,7 @@
 		"eslint": "^7.27.0",
 		"eslint-config-google": "^0.14.0",
 		"esm": "^3.2.25",
+		"livereload": "git+https://github.com/frantic0/node-livereload.git",
 		"mocha": "^7.2.0",
 		"nyc": "^15.1.0",
 		"rollup": "^2.50.5",

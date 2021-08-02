@@ -33506,18 +33506,74 @@ var __ZNSt7codecvtIcc10_mbstate_tE2idE$p1=5;
 var __ZTVSt15basic_streambufIcSt11char_traitsIcEE={a0:__ZTISt15basic_streambufIcSt11char_traitsIcEE,a1:__ZNSt15basic_streambufIcSt11char_traitsIcEED2Ev,a2:__ZNSt15basic_streambufIcSt11char_traitsIcEED0Ev,a3:__ZNSt15basic_streambufIcSt11char_traitsIcEE5imbueERKSt6locale,a4:__ZNSt15basic_streambufIcSt11char_traitsIcEE6setbufEPcl,a5:__ZNSt15basic_streambufIcSt11char_traitsIcEE7seekoffElNSt8ios_base7seekdirEj,a6:__ZNSt15basic_streambufIcSt11char_traitsIcEE7seekposESt4fposI10_mbstate_tEj,a7:__ZNSt15basic_streambufIcSt11char_traitsIcEE4syncEv,a8:__ZNSt15basic_streambufIcSt11char_traitsIcEE9showmanycEv,a9:__ZNSt15basic_streambufIcSt11char_traitsIcEE6xsgetnEPcl,a10:__ZNSt15basic_streambufIcSt11char_traitsIcEE9underflowEv,a11:__ZNSt15basic_streambufIcSt11char_traitsIcEE5uflowEv,a12:__ZNSt15basic_streambufIcSt11char_traitsIcEE9pbackfailEi,a13:__ZNSt15basic_streambufIcSt11char_traitsIcEE6xsputnEPKcl,a14:__ZNSt15basic_streambufIcSt11char_traitsIcEE8overflowEi};
 var __ZTVSt8ios_base={a0:__ZTISt8ios_base,a1:__ZNSt8ios_baseD2Ev,a2:__ZNSt8ios_baseD0Ev};
 var __ZNSt7num_putIcSt19ostreambuf_iteratorIcSt11char_traitsIcEEE2idE$p1=13;
-function constructor_struct$p_Z11_prt_data_t(){
+function constructor_struct$p_ZN10__cxxabiv119__dynamic_cast_infoE(){
+	this.a0=null;
+	this.i1=0;
+	this.a2=null;
+	this.i3=0;
+	this.a4=null;
+	this.i5=0;
+	this.i6=0;
+	this.i7=0;
+	this.i8=0;
+	this.i9=0;
+	this.i10=0;
+	this.i11=0;
+	this.i12=0;
+	this.i13=0;
+	this.i14=0;
+	this.i15=0;
+}
+function constructor_struct$p_Z12_scan_data_t(){
 	this.i0=0;
 	this.i1=0;
 	this.i2=0;
 	this.i3=0;
 	this.i4=0;
-	this.i5=0;
+	this.a5=nullArray;
 	this.i6=0;
-	this.a7=[0];
-	this.a8=[0];
-	this.a9=new Uint8Array(50);
-	this.d10=-0.;
+	this.a7=new Uint8Array(350);
+	this.a8=null;
+	this.a9=null;
+}
+function constructor_class$p_ZSt9basic_iosIcSt11char_traitsIcEE(){
+	this.a0=null;
+	this.i1=0;
+	this.i2=0;
+	this.i3=0;
+	this.i4=0;
+	this.i5=0;
+	this.a6=null;
+	this.a7={a0:null};
+	this.a8=nullArray;
+	this.a8o=0;
+	this.a9=nullArray;
+	this.a9o=0;
+	this.i10=0;
+	this.i11=0;
+	this.a12=null;
+	this.i13=0;
+	this.i14=0;
+	this.a15=null;
+	this.i16=0;
+	this.i17=0;
+	this.a18=null;
+	this.i19=0;
+	create_class$p_ZSt9basic_iosIcSt11char_traitsIcEE(this)}
+function constructor_class$p_ZSt11__stdoutbufIcE(){
+	this.a0=null;
+	this.a1={a0:null};
+	this.a2=null;
+	this.a3=nullArray;
+	this.a3o=0;
+	this.a4=nullArray;
+	this.a5=null;
+	this.a6=nullArray;
+	this.a6o=0;
+	this.a7=nullArray;
+	this.a8=null;
+	this.a9=null;
+	this.a10=null;
 	this.i11=0;
 }
 function constructor_struct$p_Z9lc_time_T(){
@@ -33534,6 +33590,53 @@ function constructor_struct$p_Z9lc_time_T(){
 	this.a10=null;
 	this.a11=null;
 }
+function construct_literal34(){
+	this.a0=null;
+	this.a1=null;
+	this.a2=null;
+	this.a3=null;
+	this.a4=null;
+	this.a5=null;
+	this.a6=null;
+	this.a7=null;
+	this.a8=null;
+	this.a9=null;
+	this.a10=null;
+	this.a11=null;
+	this.a12=null;
+	this.a13=null;
+	this.a14=null;
+	this.a15=null;
+}
+function construct_literal36(){
+	this.a0=null;
+	this.a1=null;
+	this.a2=null;
+	this.a3=null;
+	this.a4=null;
+	this.a5=null;
+	this.a6=null;
+	this.a7=null;
+	this.a8=null;
+	this.a9=null;
+	this.a10=null;
+	this.a11=null;
+	this.a12=null;
+}
+function constructor_struct$p_Z11_prt_data_t(){
+	this.i0=0;
+	this.i1=0;
+	this.i2=0;
+	this.i3=0;
+	this.i4=0;
+	this.i5=0;
+	this.i6=0;
+	this.a7=[0];
+	this.a8=[0];
+	this.a9=new Uint8Array(50);
+	this.d10=-0.;
+	this.i11=0;
+}
 function constructor_class$p_Z10maxiSample(){
 	this.d0=-0.;
 	this.d1=-0.;
@@ -33543,6 +33646,44 @@ function constructor_class$p_Z10maxiSample(){
 	this.i5=0;
 	this.i6=0;
 	this.a7={d0:-0.,i1:0};
+	this.a8=null;
+}
+function construct_literal55(){
+	this.a0=null;
+	this.a1=null;
+	this.a2=null;
+	this.a3=null;
+	this.a4=null;
+	this.a5=null;
+	this.a6=null;
+	this.a7=null;
+	this.a8=null;
+	this.a9=null;
+	this.a10=null;
+}
+function construct_literal63(){
+	this.a0=null;
+	this.a1=null;
+	this.a2=null;
+	this.a3=null;
+	this.a4=null;
+	this.a5=null;
+	this.a6=null;
+	this.a7=null;
+	this.a8=null;
+	this.a9=null;
+	this.a10=null;
+	this.a11=null;
+}
+function construct_literal74(){
+	this.a0=null;
+	this.a1=null;
+	this.a2=null;
+	this.a3=null;
+	this.a4=null;
+	this.a5=null;
+	this.a6=null;
+	this.a7=null;
 	this.a8=null;
 }
 function constructor_struct$p_Z7__sFILE(){
@@ -33571,123 +33712,6 @@ function constructor_struct$p_Z7__sFILE(){
 	this.i19=0;
 	this.a20={i0:0,i1:0};
 	this.i21=0;
-}
-function constructor_struct$p_Z12_scan_data_t(){
-	this.i0=0;
-	this.i1=0;
-	this.i2=0;
-	this.i3=0;
-	this.i4=0;
-	this.a5=nullArray;
-	this.i6=0;
-	this.a7=new Uint8Array(350);
-	this.a8=null;
-	this.a9=null;
-}
-function constructor_class$p_ZSt11__stdoutbufIcE(){
-	this.a0=null;
-	this.a1={a0:null};
-	this.a2=null;
-	this.a3=nullArray;
-	this.a3o=0;
-	this.a4=nullArray;
-	this.a5=null;
-	this.a6=nullArray;
-	this.a6o=0;
-	this.a7=nullArray;
-	this.a8=null;
-	this.a9=null;
-	this.a10=null;
-	this.i11=0;
-}
-function construct_literal29(){
-	this.a0=null;
-	this.a1=null;
-	this.a2=null;
-	this.a3=null;
-	this.a4=null;
-	this.a5=null;
-	this.a6=null;
-	this.a7=null;
-	this.a8=null;
-	this.a9=null;
-	this.a10=null;
-	this.a11=null;
-	this.a12=null;
-}
-function constructor_struct$p_ZN10__cxxabiv119__dynamic_cast_infoE(){
-	this.a0=null;
-	this.i1=0;
-	this.a2=null;
-	this.i3=0;
-	this.a4=null;
-	this.i5=0;
-	this.i6=0;
-	this.i7=0;
-	this.i8=0;
-	this.i9=0;
-	this.i10=0;
-	this.i11=0;
-	this.i12=0;
-	this.i13=0;
-	this.i14=0;
-	this.i15=0;
-}
-function construct_literal45(){
-	this.a0=null;
-	this.a1=null;
-	this.a2=null;
-	this.a3=null;
-	this.a4=null;
-	this.a5=null;
-	this.a6=null;
-	this.a7=null;
-	this.a8=null;
-	this.a9=null;
-	this.a10=null;
-}
-function construct_literal51(){
-	this.a0=null;
-	this.a1=null;
-	this.a2=null;
-	this.a3=null;
-	this.a4=null;
-	this.a5=null;
-	this.a6=null;
-	this.a7=null;
-	this.a8=null;
-	this.a9=null;
-	this.a10=null;
-	this.a11=null;
-	this.a12=null;
-	this.a13=null;
-	this.a14=null;
-	this.a15=null;
-}
-function construct_literal53(){
-	this.a0=null;
-	this.a1=null;
-	this.a2=null;
-	this.a3=null;
-	this.a4=null;
-	this.a5=null;
-	this.a6=null;
-	this.a7=null;
-	this.a8=null;
-	this.a9=null;
-	this.a10=null;
-	this.a11=null;
-}
-function construct_literal71(){
-	this.a0=null;
-	this.a1=null;
-	this.a2=null;
-	this.a3=null;
-	this.a4=null;
-	this.a5=null;
-	this.a6=null;
-	this.a7=null;
-	this.a8=null;
 }
 function constructor_struct$p_Z6_reent(){
 	this.i0=0;
@@ -33731,20 +33755,7 @@ function constructor_struct$p_Z11_misc_reent(){
 	this.a9={i0:0,i1:0};
 	this.a10={i0:0,i1:0};
 }
-function constructor_class$p_Z10maxiFilter(){
-	this.d0=-0.;
-	this.d1=-0.;
-	this.d2=-0.;
-	this.a3=new Float64Array(20);
-	this.d4=-0.;
-	this.d5=-0.;
-	this.d6=-0.;
-	this.d7=-0.;
-	this.d8=-0.;
-	this.d9=-0.;
-	this.d10=-0.;
-}
-function construct_literal88(){
+function construct_literal91(){
 	this.a0=null;
 	this.a1=null;
 	this.a2=null;
@@ -33761,30 +33772,19 @@ function construct_literal88(){
 	this.a13=null;
 	this.a14=null;
 }
-function constructor_class$p_ZSt9basic_iosIcSt11char_traitsIcEE(){
-	this.a0=null;
-	this.i1=0;
-	this.i2=0;
-	this.i3=0;
-	this.i4=0;
-	this.i5=0;
-	this.a6=null;
-	this.a7={a0:null};
-	this.a8=nullArray;
-	this.a8o=0;
-	this.a9=nullArray;
-	this.a9o=0;
-	this.i10=0;
-	this.i11=0;
-	this.a12=null;
-	this.i13=0;
-	this.i14=0;
-	this.a15=null;
-	this.i16=0;
-	this.i17=0;
-	this.a18=null;
-	this.i19=0;
-	create_class$p_ZSt9basic_iosIcSt11char_traitsIcEE(this)}
+function constructor_class$p_Z10maxiFilter(){
+	this.d0=-0.;
+	this.d1=-0.;
+	this.d2=-0.;
+	this.a3=new Float64Array(20);
+	this.d4=-0.;
+	this.d5=-0.;
+	this.d6=-0.;
+	this.d7=-0.;
+	this.d8=-0.;
+	this.d9=-0.;
+	this.d10=-0.;
+}
 function create_class$p_ZSt9basic_iosIcSt11char_traitsIcEE(obj){
 	var a=[];
 	a[0]=obj;
@@ -33800,13 +33800,13 @@ function create_class$p_ZSt13basic_ostreamIcSt11char_traitsIcEE(obj){
 	obj.a1.o=1;
 	obj.a1.a=a;
 	return obj;}
-function createArray_class$p_ZSbIwSt11char_traitsIwESaIwEE(e){
+function createArray_class$p_ZSbIcSt11char_traitsIcESaIcEE(e){
 	var r=[];
 	for(var i=0;i<e;i++)
 	r[i]={i0:0,i1:0,a2:nullArray};
 	return r;
 }
-function createArray_class$p_ZSbIcSt11char_traitsIcESaIcEE(e){
+function createArray_class$p_ZSbIwSt11char_traitsIwESaIwEE(e){
 	var r=[];
 	for(var i=0;i<e;i++)
 	r[i]={i0:0,i1:0,a2:nullArray};
@@ -34806,7 +34806,8 @@ class MaxiProcessor extends AudioWorkletProcessor {
 					this.port.postMessage({
 						func: "logs",
 						payload: [...arguments],
-						type: "[PROCESSOR]",
+						logLevel: "log",
+						origin: "[PROCESSOR]",
 					});
 					cl.apply(this, arguments);
 				}.bind(this);
@@ -34814,7 +34815,8 @@ class MaxiProcessor extends AudioWorkletProcessor {
 					this.port.postMessage({
 						func: "logs",
 						payload: [...arguments],
-						type: "[PROCESSOR]",
+						logLevel: "info",
+						origin: "[PROCESSOR]",
 					});
 					ci.apply(this, arguments);
 				}.bind(this);
@@ -34822,7 +34824,8 @@ class MaxiProcessor extends AudioWorkletProcessor {
 					this.port.postMessage({
 						func: "logs",
 						payload: [...arguments],
-						type: "[PROCESSOR]",
+						logLevel: "warn",
+						origin: "[PROCESSOR]",
 					});
 					cw.apply(this, arguments);
 				}.bind(this);
@@ -34830,7 +34833,8 @@ class MaxiProcessor extends AudioWorkletProcessor {
 					this.port.postMessage({
 						func: "logs",
 						payload: [...arguments],
-						type: "[PROCESSOR]",
+						logLevel: "error",
+						origin: "[PROCESSOR]",
 					});
 					ce.apply(this, arguments);
 				}.bind(this);
@@ -35032,10 +35036,11 @@ class MaxiProcessor extends AudioWorkletProcessor {
 	 * @param {*} id
 	 */
 	getSABValue = (id) => {
+
 		let res = 0;
-		let sab = inputSABs[id];
-		if (sab) {
-			res = sab.value;
+		let obj = inputSABs[id];
+		if (obj) {
+			res = obj.value;
 		}
 		return res;
 	};
@@ -35046,7 +35051,13 @@ class MaxiProcessor extends AudioWorkletProcessor {
 	 * @param {*} buf
 	 */
 	addSampleBuffer = (name, buf) => {
-		this.sampleVectorBuffers[name] = new Float64Array(buf);
+		// console.log(`loading sample '${name}'`);
+		if(name && buf)
+			try {
+				this.sampleVectorBuffers[name] = this.translateFloat32ArrayToBuffer(buf);
+			} catch (error) {
+				console.error(`addSampleBuffer ${error}`)
+			}
 	};
 
 	/**
@@ -35055,15 +35066,18 @@ class MaxiProcessor extends AudioWorkletProcessor {
 	 * @param {*} buf
 	 */
 	addSharedArrayBuffer = (data) => {
-		console.info("buffer received");
-		let sab = data.value;
-		let rb = new RingBuffer(sab, Float64Array);
-		inputSABs[data.channelID] = {
-			// sab,
-			rb,
-			blocksize: data.blocksize,
-			value: data.blocksize > 1 ? new Float64Array(data.blocksize) : 0,
-		};
+		if(data)
+			try {
+				let rb = new RingBuffer(data.sab, Float64Array);
+				inputSABs[data.channelID] = {
+					// sab: data.sab,
+					rb,
+					blocksize: data.blocksize,
+					value: data.blocksize > 1 ? new Float64Array(data.blocksize) : 0,
+				};
+			} catch (error) {
+				console.error(`addSharedArrayBuffer ${error}`);
+			}
 	};
 
 	eval = (data) => {
@@ -35135,24 +35149,38 @@ class MaxiProcessor extends AudioWorkletProcessor {
 	 * @param {*} event
 	 */
 	onMessageHandler = (event) => {
-		if (event.data.address) {
-			this.OSCMessages[event.data.address] = event.data.args;
-		} else if (event.data.sab) {
-			this.addSharedArrayBuffer(event.data.sab);
-		} else if (event.data.sample) {
-			let sampleKey = event.data.sample.substr(0, event.data.sample.length - 4);
-			this.addSampleBuffer(sampleKey, event.data.buffer);
-		}	else if (event.data.phase) {
-			this.netClock.setPhase(event.data.phase, event.data.i);
-			// this.kuraPhase = event.data.phase;
-			// this.kuraPhaseIdx = event.data.i;
-		} else if (event.data.eval) {
-			this.eval(event.data);
-		} else if (event.data.hush) {
-			this.hush();
-		} else if (event.data.unhush) {
-			this.unhush();
+
+		if(event && event.data){
+			try {
+				if (event.data.sample) { // sample buffer — default samples loaded on app initialization
+					let sampleKey = event.data.sample.substr(0, event.data.sample.length - 4);
+					this.addSampleBuffer(sampleKey, event.data.buffer);
+				}
+				else if (event.data.func === "sendbuf") { // sample buffer — user created and named in the JS editor
+					this.addSampleBuffer(event.data.name, event.data.data);
+				}
+				else if (event.data.sab) { // shared array buffer - originates either in the engine OR the learner
+					this.addSharedArrayBuffer(event.data);
+				}
+				else if (event.data.address) {
+					this.OSCMessages[event.data.address] = event.data.args;
+				} else if (event.data.phase) {
+					this.netClock.setPhase(event.data.phase, event.data.i);
+					// this.kuraPhase = event.data.phase;
+					// this.kuraPhaseIdx = event.data.i;
+				} else if (event.data.eval) { // DSP code from parsed by the compiler
+					this.eval(event.data);
+				} else if (event.data.hush) { // engine stop request
+					this.hush();
+				} else if (event.data.unhush) {
+					this.unhush();
+				}
+			} catch (error) {
+				console.error(`onMessageHandler ${error}`);
+			}
 		}
+		else
+			console.error(`error on onMessageHandler data`)
 	};
 
 	/**
