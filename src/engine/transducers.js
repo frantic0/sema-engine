@@ -43,7 +43,6 @@ export class SABOutputTransducer {
 
       outputSABs[channel] = {
 				rb: this.ringbuf,
-				// sab: this.sab,
 				created: now,
 				blocksize: blocksize,
 			};

@@ -663,12 +663,12 @@ export class Engine {
 		if (event && event.data) {
 			try {
 				if (event.data.func === 'logs') {
-					this.logger.push(event.data); //recieve data from the worker.js and push it to the logger.
+					this.logger.push(event.data); // receive data from the worker.js and push it to the logger.
 				}
-				else if (event.data.sab) {
+				else if (event.data.sab) { // receive SAB from worker.js Transducer and push it to the logger.
 					this.dispatcher.dispatch("onSharedBuffer", {
 						sab: event.data.sab,
-						channelID: event.data.channelID, //channel ID
+						channelID: event.data.channelID,
 						blocksize: event.data.blocksize,
 					});
 				}
