@@ -185,7 +185,7 @@ class MaxiProcessor extends AudioWorkletProcessor {
 		console.info(`Sample rate: ${sampleRate}`); // moving this to end of ctor for console feedback on successful processor initialisation
 	}
 
-	takeOverConsole(){
+	takeOverConsole() {
 		if (console) {
 			if (console.log) cl = console.log;
 			if (console.log) ci = console.info;
@@ -233,7 +233,6 @@ class MaxiProcessor extends AudioWorkletProcessor {
 			}
 		}
 	}
-
 
 	/**
 	 *
@@ -427,7 +426,6 @@ class MaxiProcessor extends AudioWorkletProcessor {
 	 * @param {*} id
 	 */
 	getSABValue = (id) => {
-
 		let res = 0;
 		let obj = inputSABs[id];
 		if (obj) {
@@ -436,6 +434,7 @@ class MaxiProcessor extends AudioWorkletProcessor {
 		return res;
 	};
 
+
 	/**
 	 *
 	 * @param {*} name
@@ -443,11 +442,11 @@ class MaxiProcessor extends AudioWorkletProcessor {
 	 */
 	addSampleBuffer = (name, buf) => {
 		// console.log(`loading sample '${name}'`);
-		if(name && buf)
+		if (name && buf)
 			try {
-				this.sampleVectorBuffers[name] = this.translateFloat32ArrayToBuffer(buf);
+				this.sampleVectorBuffers[name] = new Float64Array(buf);
 			} catch (error) {
-				console.error(`addSampleBuffer ${error}`)
+				console.error(`addSampleBuffer ${error}`);
 			}
 	};
 
@@ -457,7 +456,7 @@ class MaxiProcessor extends AudioWorkletProcessor {
 	 * @param {*} buf
 	 */
 	addSharedArrayBuffer = (data) => {
-		if(data)
+		if (data)
 			try {
 				let rb = new RingBuffer(data.sab, Float64Array);
 				inputSABs[data.channelID] = {
@@ -540,28 +539,32 @@ class MaxiProcessor extends AudioWorkletProcessor {
 	 * @param {*} event
 	 */
 	onMessageHandler = (event) => {
-
-		if(event && event.data){
+		if (event && event.data) {
 			try {
-				if (event.data.sample) { // sample buffer — default samples loaded on app initialization
-					let sampleKey = event.data.sample.substr(0, event.data.sample.length - 4);
+				if (event.data.sample) {
+					// sample buffer — default samples loaded on app initialization
+					let sampleKey = event.data.sample.substr(
+						0,
+						event.data.sample.length - 4
+					);
 					this.addSampleBuffer(sampleKey, event.data.buffer);
-				}
-				else if (event.data.func === "sendbuf") { // sample buffer — user created and named in the JS editor
+				} else if (event.data.func === "sendbuf") {
+					// sample buffer — user created and named in the JS editor
 					this.addSampleBuffer(event.data.name, event.data.data);
-				}
-				else if (event.data.sab) { // shared array buffer - originates either in the engine OR the learner
+				} else if (event.data.sab) {
+					// shared array buffer - originates either in the engine OR the learner
 					this.addSharedArrayBuffer(event.data);
-				}
-				else if (event.data.address) {
+				} else if (event.data.address) {
 					this.OSCMessages[event.data.address] = event.data.args;
 				} else if (event.data.phase) {
 					this.netClock.setPhase(event.data.phase, event.data.i);
 					// this.kuraPhase = event.data.phase;
 					// this.kuraPhaseIdx = event.data.i;
-				} else if (event.data.eval) { // DSP code from parsed by the compiler
+				} else if (event.data.eval) {
+					// DSP code from parsed by the compiler
 					this.eval(event.data);
-				} else if (event.data.hush) { // engine stop request
+				} else if (event.data.hush) {
+					// engine stop request
 					this.hush();
 				} else if (event.data.unhush) {
 					this.unhush();
@@ -569,9 +572,7 @@ class MaxiProcessor extends AudioWorkletProcessor {
 			} catch (error) {
 				console.error(`onMessageHandler ${error}`);
 			}
-		}
-		else
-			console.error(`error on onMessageHandler data`)
+		} else console.error(`error on onMessageHandler data`);
 	};
 
 	/**
@@ -764,7 +765,6 @@ class MaxiProcessor extends AudioWorkletProcessor {
 
 		return true;
 	}
-
 };
 
 registerProcessor("maxi-processor", MaxiProcessor);

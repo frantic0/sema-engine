@@ -209,6 +209,7 @@
   <link   rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.1/codemirror.min.css" integrity="sha512-MWdvo/Qqcf4pY1ecQUB1uBn0qLp19U/qJ1Rpp2BDZeuBA7YsFEwkvqR/+aG4BroPiAYDunKJ6X8R/Pmdt3p7oA==" crossorigin="anonymous" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.1/keymap/vim.min.js" integrity="sha512-g2nzBS/fBHxdSRXaDcYGHVg2Rjk7+3gITKVMv1q/ylh2izUiw1AZ50urelrhy7I6EYLQi5RM8FFj3rdATH5wIg==" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.1/mode/javascript/javascript.min.js" integrity="sha512-ssJuYJm7WuzXiDvMgmhFfPcXAM3QLILVaH8VhLDkauwZRTSlw7uxxUh2TXDau3y2eK0PsJfzL/q0lYsjTEO8sQ==" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/webmidi"></script>
 	<script async="" src="//localhost:35729/livereload.js?snipver=1" id="livereloadscript" crossorigin="anonymous"></script>
 </head>
 
@@ -388,51 +389,51 @@
 
 
 
-  const subscribeMidiEvents = input => {
+		const subscribeMidiEvents = input => {
 
-    input.addListener('pitchbend', "all", function(e) {
-      console.log("Pitch value: " + e.value);
-    });
+			input.addListener('pitchbend', "all", function(e) {
+				console.log("Pitch value: " + e.value);
+			});
 
-    // Listen for a 'note on' message on all channels
-    input.addListener('noteon',
-      "all",
-      e => console.log("Received 'noteon' message (" + e.note.name + e.note.octave + ")." )
-    );
+			// Listen for a 'note on' message on all channels
+			input.addListener('noteon',
+				"all",
+				e => console.log("Received 'noteon' message (" + e.note.name + e.note.octave + ")." )
+			);
 
-    // Listen to pitch bend message on channel 3
-    input.addListener('pitchbend',
-      3,
-      e => console.log("Received 'pitchbend' message.", e)
-    );
+			// Listen to pitch bend message on channel 3
+			input.addListener('pitchbend',
+				3,
+				e => console.log("Received 'pitchbend' message.", e)
+			);
 
-    // Listen to control change message on all channels
-    input.addListener('controlchange',
-      "all",
-      e => console.log("Received 'controlchange' message.", e)
-    );
+			// Listen to control change message on all channels
+			input.addListener('controlchange',
+				"all",
+				e => console.log("Received 'controlchange' message.", e)
+			);
 
-    // Listen to NRPN message on all channels
-    input.addListener('nrpn', "all",
-      e => {
-        if(e.controller.type === 'entry') {
-          console.log("Received 'nrpn' 'entry' message.", e);
-        }
-        if(e.controller.type === 'decrement') {
-          console.log("Received 'nrpn' 'decrement' message.", e);
-        }
-        if(e.controller.type === 'increment') {
-          console.log("Received 'nrpn' 'increment' message.", e);
-        }
-        console.log("message value: " + e.controller.value + ".", e);
-      }
-    );
+			// Listen to NRPN message on all channels
+			input.addListener('nrpn', "all",
+				e => {
+					if(e.controller.type === 'entry') {
+						console.log("Received 'nrpn' 'entry' message.", e);
+					}
+					if(e.controller.type === 'decrement') {
+						console.log("Received 'nrpn' 'decrement' message.", e);
+					}
+					if(e.controller.type === 'increment') {
+						console.log("Received 'nrpn' 'increment' message.", e);
+					}
+					console.log("message value: " + e.controller.value + ".", e);
+				}
+			);
 
-    input.addListener('programchange',
-      "12",
-      e => console.log("Received 'programchange' message.", e)
-    );
-  }
+			input.addListener('programchange',
+				"12",
+				e => console.log("Received 'programchange' message.", e)
+			);
+		}
 
 
     const createMIDIInput = async () => {
@@ -468,7 +469,7 @@
 
     $("createInputButton", "click", async () => createInput() );
 
-		$("createMIDIInputButton", "click", async () => createMIDIInput() );
+		$("midiButton", "click", async () => createMIDIInput() );
 
     $("mouseButton", "click", () => {
       if(engine){
