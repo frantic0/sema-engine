@@ -95,9 +95,11 @@ class Output {
 			} else {
 				if (value.length == this.blocksize) {
 					this.ringbuf.push(value);
-				} else if (value.length < this.blocksize) {
+				}
+				else if (value.length < this.blocksize) {
 					let newVal = new Float64Array(this.blocksize);
-					for (let i in value) newVal[i] = value[i];
+					for (let i in value)
+						newVal[i] = value[i];
 					this.ringbuf.push(newVal);
 				} else {
 					this.ringbuf.push(value.slice(0, this.blocksize));
