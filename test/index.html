@@ -388,11 +388,15 @@
     }
 
 
-
+		/**
+		 * Subscribes WebMidi.js events according to inputs found in the system
+		 * and request SAB creation in the engine to pump in MIDI data
+		 * @param {input} MIDI input detected in the system
+		 * TODO determine MAX SIZE of MIDI message payload to generalize the SAB blocksize
+		 */
 		const subscribeMidiEvents = input => {
 
-     if(engine){
-
+			if(engine && input){
 				try{
           const id = "midi",
                 ttype = "midiAll",
@@ -404,13 +408,17 @@
 														'all',
 														e => {
 															console.log("Pitch value: " + e.value);
+															engine.pushDataToSharedBuffer(id, [ e.value, 0 ]);
 														}
 					);
 
 					// Listen for a 'note on' message on all channels
 					input.addListener('noteon',
 														"all",
-														e => console.log("Received 'noteon' message (" + e.note.name + e.note.octave + ")." )
+														e => {
+															console.log("Received 'noteon' message (" + e.note.name + e.note.octave + ")." )
+															engine.pushDataToSharedBuffer(id, [ e.note.name, e.note.octave ]);
+														}
 					);
 
 					// Listen to pitch bend message on channel 3
@@ -450,7 +458,7 @@
           console.error("ERROR: Failed to create new channel for MIDI data: ", err);
         }
       }
-      else throw new Error('ERROR: Engine not initialized. Please press Start Engine first.')
+      else throw new Error('ERROR: Engine not initialized or undefined input on MIDI event subscription. ')
 		}
 
 
