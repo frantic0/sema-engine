@@ -222,24 +222,28 @@ var jsFuncMap = {
 	scop: {
 		//freq, data, channel, [blocksize]
 		setup: (o, p) =>
-			`${o} = new SABOutputTransducer(outputSABs,
-                                      this.port,
-                                      'scope',
-                                      ${p[1].loop},
-                                      this.currentSample,
-                                      ${p.length == 3 ? 1 : p[3].loop})`,
+			`${o} = new Output(this.port,
+                          'scope',
+                          ${p[1].loop},
+                          ${p.length == 3 ? 1 : p[3].loop})`,
 		loop: (o, p) => `${o}.send(${p[0].loop}, ${p[2].loop})`,
 	},
 
 	toJS: {
 		//freq, data, channel, [blocksize]
 		setup: (o, p) =>
-			`${o} = new SABOutputTransducer(outputSABs,
-                                      this.port,
-                                      'ML',
-                                      ${p[1].loop},
-                                      this.currentSample,
-                                      ${p.length == 3 ? 1 : p[3].loop})`,
+			`${o} = new Output(this.port,
+													'ML',
+													${p[1].loop},
+													${p.length == 3 ? 1 : p[3].loop})`,
+		//freq, data, channel, [blocksize]
+		// setup: (o, p) =>
+		// 	`${o} = new SABOutputTransducer(outputSABs,
+    //                                   this.port,
+    //                                   'ML',
+    //                                   ${p[1].loop},
+    //                                   this.currentSample,
+    //                                   ${p.length == 3 ? 1 : p[3].loop})`,
 		loop: (o, p) => `${o}.send(${p[0].loop}, ${p[2].loop})`,
 	},
 	fromJS: {
@@ -247,9 +251,11 @@ var jsFuncMap = {
 		// setup: (o, p) => `${o} = this.registerInputTransducer('ML', ${p[0].loop})`,
 		// loop:  (o, p) => `${o}.getValue()`
 		setup: (o, p) =>
-			`${o} = new SABInputTransducer(${p[0].loop}, ${p.length == 2 ? 1 : 0})`,
+			`${o} = new Input(${p[0].loop}, ${p.length == 2 ? 1 : 0})`,
+			// `${o} = new SABInputTransducer(${p[0].loop}, ${p.length == 2 ? 1 : 0})`,
 		loop: (o, p) =>
-			`${o}.getSABValue(inputSABs, ${p.length == 2 ? p[1].loop : 0})`,
+			`${o}.getValue(${p.length == 2 ? p[1].loop : 0})`,
+			// `${o}.getSABValue(inputSABs, ${p.length == 2 ? p[1].loop : 0})`,
 	},
 	mouseX: {
 		setup: (o, p) => ``,

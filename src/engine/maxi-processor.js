@@ -5,10 +5,11 @@ console.log(
 );
 
 /**
- * Audio Worklet Processor Scope Global Variables for consoleTakeOver()
- * ! * DO NOT REMOVE
+ * ! Audio Worklet Processor Scope Global Variables
  */
-var cl, ci, cw, ce;
+var cl, ci, cw, ce; // for consoleTakeOver()
+var inputSABs = {};
+var outputSABs = {};
 
 class fft {
 	constructor(bins, hopPercentage) {
@@ -74,9 +75,7 @@ function mtof(midinote) {
 	return Math.pow(2, (midinote - 69) / 12) * 440.0;
 }
 
-var inputSABs = {};
 
-var outputSABs = {};
 
 /**
  * The main Maxi Audio wrapper with a WASM-powered AudioWorkletProcessor.

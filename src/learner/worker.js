@@ -109,7 +109,7 @@ class Output {
 	}
 }
 
-self.createOutput = ( id, blocksize ) => {
+self.createOutputChannel = ( id, blocksize ) => {
   return new Output('ML', id, blocksize);
 };
 

@@ -1,7 +1,7 @@
 // import Maximilian from "./sema-engine.wasmmodule.js";
 // import RingBuffer from "./ringbuf.js";
 // import { RingBuffer } from "ringbuf.js";
-export class SABInputTransducer {
+export class Input {
 	constructor(id, triggered = 0) {
 		this.value = 0;
 		this.id = id;
@@ -9,13 +9,13 @@ export class SABInputTransducer {
 		this.zx = new Module.maxiTrigger();
 	}
 
-	getSABValue(inputBuffers, trigger) {
+	getValue(trigger) {
 		let reading = 1;
 		if (this.triggered) {
 			reading = this.zx.onZX(trigger);
 		}
 		if (reading) {
-			let sab = inputBuffers[this.id];
+			let sab = inputSABs[this.id];
 			if (sab) {
 				this.value = sab.value;
 			}
@@ -24,13 +24,13 @@ export class SABInputTransducer {
 	}
 }
 
-export class SABOutputTransducer {
-	constructor(outputSABs, port, ttype, channel, now, blocksize) {
+export class Output {
+	constructor(port, ttype, channel, blocksize) {
 		this.port = port;
-		this.zx = new Module.maxiTrigger();
+    this.ttype = ttype;
 		this.channel = channel;
 		this.blocksize = blocksize;
-    this.ttype = ttype;
+		this.zx = new Module.maxiTrigger();
 
 		//check for existing channels
 		if (channel in outputSABs && outputSABs[channel].blocksize == blocksize) {
@@ -43,7 +43,7 @@ export class SABOutputTransducer {
 
       outputSABs[channel] = {
 				rb: this.ringbuf,
-				created: now,
+				created: globalThis.currentTime,
 				blocksize: blocksize,
 			};
 

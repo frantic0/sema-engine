@@ -33506,8 +33506,26 @@ var __ZNSt7codecvtIcc10_mbstate_tE2idE$p1=5;
 var __ZTVSt15basic_streambufIcSt11char_traitsIcEE={a0:__ZTISt15basic_streambufIcSt11char_traitsIcEE,a1:__ZNSt15basic_streambufIcSt11char_traitsIcEED2Ev,a2:__ZNSt15basic_streambufIcSt11char_traitsIcEED0Ev,a3:__ZNSt15basic_streambufIcSt11char_traitsIcEE5imbueERKSt6locale,a4:__ZNSt15basic_streambufIcSt11char_traitsIcEE6setbufEPcl,a5:__ZNSt15basic_streambufIcSt11char_traitsIcEE7seekoffElNSt8ios_base7seekdirEj,a6:__ZNSt15basic_streambufIcSt11char_traitsIcEE7seekposESt4fposI10_mbstate_tEj,a7:__ZNSt15basic_streambufIcSt11char_traitsIcEE4syncEv,a8:__ZNSt15basic_streambufIcSt11char_traitsIcEE9showmanycEv,a9:__ZNSt15basic_streambufIcSt11char_traitsIcEE6xsgetnEPcl,a10:__ZNSt15basic_streambufIcSt11char_traitsIcEE9underflowEv,a11:__ZNSt15basic_streambufIcSt11char_traitsIcEE5uflowEv,a12:__ZNSt15basic_streambufIcSt11char_traitsIcEE9pbackfailEi,a13:__ZNSt15basic_streambufIcSt11char_traitsIcEE6xsputnEPKcl,a14:__ZNSt15basic_streambufIcSt11char_traitsIcEE8overflowEi};
 var __ZTVSt8ios_base={a0:__ZTISt8ios_base,a1:__ZNSt8ios_baseD2Ev,a2:__ZNSt8ios_baseD0Ev};
 var __ZNSt7num_putIcSt19ostreambuf_iteratorIcSt11char_traitsIcEEE2idE$p1=13;
-function construct_literal3(){
+function constructor_struct$p_ZN10__cxxabiv119__dynamic_cast_infoE(){
 	this.a0=null;
+	this.i1=0;
+	this.a2=null;
+	this.i3=0;
+	this.a4=null;
+	this.i5=0;
+	this.i6=0;
+	this.i7=0;
+	this.i8=0;
+	this.i9=0;
+	this.i10=0;
+	this.i11=0;
+	this.i12=0;
+	this.i13=0;
+	this.i14=0;
+	this.i15=0;
+}
+function constructor_struct$p_Z9lc_time_T(){
+	this.a0=createPointerArray([],0,52,nullObj);
 	this.a1=null;
 	this.a2=null;
 	this.a3=null;
@@ -33519,36 +33537,9 @@ function construct_literal3(){
 	this.a9=null;
 	this.a10=null;
 	this.a11=null;
-	this.a12=null;
 }
-function constructor_struct$p_Z12_scan_data_t(){
-	this.i0=0;
-	this.i1=0;
-	this.i2=0;
-	this.i3=0;
-	this.i4=0;
-	this.a5=nullArray;
-	this.i6=0;
-	this.a7=new Uint8Array(350);
-	this.a8=null;
-	this.a9=null;
-}
-function constructor_struct$p_Z11_prt_data_t(){
-	this.i0=0;
-	this.i1=0;
-	this.i2=0;
-	this.i3=0;
-	this.i4=0;
-	this.i5=0;
-	this.i6=0;
-	this.a7=[0];
-	this.a8=[0];
-	this.a9=new Uint8Array(50);
-	this.d10=-0.;
-	this.i11=0;
-}
-function constructor_struct$p_Z9lc_time_T(){
-	this.a0=createPointerArray([],0,52,nullObj);
+function construct_literal24(){
+	this.a0=null;
 	this.a1=null;
 	this.a2=null;
 	this.a3=null;
@@ -33585,23 +33576,30 @@ function constructor_class$p_ZSt9basic_iosIcSt11char_traitsIcEE(){
 	this.a18=null;
 	this.i19=0;
 	create_class$p_ZSt9basic_iosIcSt11char_traitsIcEE(this)}
-function constructor_class$p_ZSt11__stdoutbufIcE(){
+function construct_literal39(){
 	this.a0=null;
-	this.a1={a0:null};
+	this.a1=null;
 	this.a2=null;
-	this.a3=nullArray;
-	this.a3o=0;
-	this.a4=nullArray;
+	this.a3=null;
+	this.a4=null;
 	this.a5=null;
-	this.a6=nullArray;
-	this.a6o=0;
-	this.a7=nullArray;
+	this.a6=null;
+	this.a7=null;
+	this.a8=null;
+}
+function constructor_struct$p_Z12_scan_data_t(){
+	this.i0=0;
+	this.i1=0;
+	this.i2=0;
+	this.i3=0;
+	this.i4=0;
+	this.a5=nullArray;
+	this.i6=0;
+	this.a7=new Uint8Array(350);
 	this.a8=null;
 	this.a9=null;
-	this.a10=null;
-	this.i11=0;
 }
-function construct_literal53(){
+function construct_literal49(){
 	this.a0=null;
 	this.a1=null;
 	this.a2=null;
@@ -33619,7 +33617,20 @@ function construct_literal53(){
 	this.a14=null;
 	this.a15=null;
 }
-function construct_literal58(){
+function construct_literal51(){
+	this.a0=null;
+	this.a1=null;
+	this.a2=null;
+	this.a3=null;
+	this.a4=null;
+	this.a5=null;
+	this.a6=null;
+	this.a7=null;
+	this.a8=null;
+	this.a9=null;
+	this.a10=null;
+}
+function construct_literal52(){
 	this.a0=null;
 	this.a1=null;
 	this.a2=null;
@@ -33636,32 +33647,85 @@ function construct_literal58(){
 	this.a13=null;
 	this.a14=null;
 }
-function construct_literal66(){
+function constructor_class$p_Z10maxiSample(){
+	this.d0=-0.;
+	this.d1=-0.;
+	this.d2=-0.;
+	this.d3=-0.;
+	this.a4={d0:-0.,d1:-0.,d2:-0.};
+	this.i5=0;
+	this.i6=0;
+	this.a7={d0:-0.,i1:0};
+	this.a8=null;
+}
+function constructor_class$p_ZSt11__stdoutbufIcE(){
 	this.a0=null;
-	this.a1=null;
+	this.a1={a0:null};
 	this.a2=null;
-	this.a3=null;
-	this.a4=null;
+	this.a3=nullArray;
+	this.a3o=0;
+	this.a4=nullArray;
 	this.a5=null;
-	this.a6=null;
-	this.a7=null;
+	this.a6=nullArray;
+	this.a6o=0;
+	this.a7=nullArray;
 	this.a8=null;
 	this.a9=null;
 	this.a10=null;
+	this.i11=0;
 }
-function construct_literal76(){
-	this.a0=null;
-	this.a1=null;
-	this.a2=null;
-	this.a3=null;
-	this.a4=null;
-	this.a5=null;
+function constructor_struct$p_Z7__sFILE(){
+	this.a0=nullArray;
+	this.a0o=0;
+	this.i1=0;
+	this.i2=0;
+	this.i3=0;
+	this.a4={a0:nullArray,a0o:0,i1:0};
+	this.i5=0;
 	this.a6=null;
-	this.a7=null;
+	this.a7=nullArray;
+	this.a7o=0;
 	this.a8=null;
 	this.a9=null;
 	this.a10=null;
 	this.a11=null;
+	this.a12={a0:nullArray,a0o:0,i1:0};
+	this.a13=nullArray;
+	this.a13o=0;
+	this.i14=0;
+	this.a15=new Uint8Array(4);
+	this.a16={a0:nullArray,a0o:0,i1:0};
+	this.i17=0;
+	this.i18=0;
+	this.i19=0;
+	this.a20={i0:0,i1:0};
+	this.i21=0;
+}
+function constructor_struct$p_Z11_misc_reent(){
+	this.a0=null;
+	this.a1={i0:0,i1:0};
+	this.a2={i0:0,i1:0};
+	this.a3={i0:0,i1:0};
+	this.a4=new Uint8Array(8);
+	this.i5=0;
+	this.a6={i0:0,i1:0};
+	this.a7={i0:0,i1:0};
+	this.a8={i0:0,i1:0};
+	this.a9={i0:0,i1:0};
+	this.a10={i0:0,i1:0};
+}
+function constructor_class$p_Z10maxiFilter(){
+	this.d0=-0.;
+	this.d1=-0.;
+	this.d2=-0.;
+	this.a3=new Float64Array(20);
+	this.d4=-0.;
+	this.d5=-0.;
+	this.d6=-0.;
+	this.d7=-0.;
+	this.d8=-0.;
+	this.d9=-0.;
+	this.d10=-0.;
 }
 function constructor_struct$p_Z6_reent(){
 	this.i0=0;
@@ -33692,42 +33756,19 @@ function constructor_struct$p_Z6_reent(){
 	this.a22=null;
 	this.a23=null;
 }
-function constructor_class$p_Z10maxiSample(){
-	this.d0=-0.;
-	this.d1=-0.;
-	this.d2=-0.;
-	this.d3=-0.;
-	this.a4={d0:-0.,d1:-0.,d2:-0.};
+function constructor_struct$p_Z11_prt_data_t(){
+	this.i0=0;
+	this.i1=0;
+	this.i2=0;
+	this.i3=0;
+	this.i4=0;
 	this.i5=0;
 	this.i6=0;
-	this.a7={d0:-0.,i1:0};
-	this.a8=null;
-}
-function constructor_struct$p_Z11_misc_reent(){
-	this.a0=null;
-	this.a1={i0:0,i1:0};
-	this.a2={i0:0,i1:0};
-	this.a3={i0:0,i1:0};
-	this.a4=new Uint8Array(8);
-	this.i5=0;
-	this.a6={i0:0,i1:0};
-	this.a7={i0:0,i1:0};
-	this.a8={i0:0,i1:0};
-	this.a9={i0:0,i1:0};
-	this.a10={i0:0,i1:0};
-}
-function constructor_class$p_Z10maxiFilter(){
-	this.d0=-0.;
-	this.d1=-0.;
-	this.d2=-0.;
-	this.a3=new Float64Array(20);
-	this.d4=-0.;
-	this.d5=-0.;
-	this.d6=-0.;
-	this.d7=-0.;
-	this.d8=-0.;
-	this.d9=-0.;
+	this.a7=[0];
+	this.a8=[0];
+	this.a9=new Uint8Array(50);
 	this.d10=-0.;
+	this.i11=0;
 }
 function construct_literal90(){
 	this.a0=null;
@@ -33739,51 +33780,10 @@ function construct_literal90(){
 	this.a6=null;
 	this.a7=null;
 	this.a8=null;
-}
-function constructor_struct$p_ZN10__cxxabiv119__dynamic_cast_infoE(){
-	this.a0=null;
-	this.i1=0;
-	this.a2=null;
-	this.i3=0;
-	this.a4=null;
-	this.i5=0;
-	this.i6=0;
-	this.i7=0;
-	this.i8=0;
-	this.i9=0;
-	this.i10=0;
-	this.i11=0;
-	this.i12=0;
-	this.i13=0;
-	this.i14=0;
-	this.i15=0;
-}
-function constructor_struct$p_Z7__sFILE(){
-	this.a0=nullArray;
-	this.a0o=0;
-	this.i1=0;
-	this.i2=0;
-	this.i3=0;
-	this.a4={a0:nullArray,a0o:0,i1:0};
-	this.i5=0;
-	this.a6=null;
-	this.a7=nullArray;
-	this.a7o=0;
-	this.a8=null;
 	this.a9=null;
 	this.a10=null;
 	this.a11=null;
-	this.a12={a0:nullArray,a0o:0,i1:0};
-	this.a13=nullArray;
-	this.a13o=0;
-	this.i14=0;
-	this.a15=new Uint8Array(4);
-	this.a16={a0:nullArray,a0o:0,i1:0};
-	this.i17=0;
-	this.i18=0;
-	this.i19=0;
-	this.a20={i0:0,i1:0};
-	this.i21=0;
+	this.a12=null;
 }
 function create_class$p_ZSt9basic_iosIcSt11char_traitsIcEE(obj){
 	var a=[];
@@ -34362,7 +34362,7 @@ Module.maxiPolyBLEP = maxiPolyBLEP;
 // import Maximilian from "./sema-engine.wasmmodule.js";
 // import RingBuffer from "./ringbuf.js";
 // import { RingBuffer } from "ringbuf.js";
-export class SABInputTransducer {
+export class Input {
 	constructor(id, triggered = 0) {
 		this.value = 0;
 		this.id = id;
@@ -34370,13 +34370,13 @@ export class SABInputTransducer {
 		this.zx = new Module.maxiTrigger();
 	}
 
-	getSABValue(inputBuffers, trigger) {
+	getValue(trigger) {
 		let reading = 1;
 		if (this.triggered) {
 			reading = this.zx.onZX(trigger);
 		}
 		if (reading) {
-			let sab = inputBuffers[this.id];
+			let sab = inputSABs[this.id];
 			if (sab) {
 				this.value = sab.value;
 			}
@@ -34385,13 +34385,13 @@ export class SABInputTransducer {
 	}
 }
 
-export class SABOutputTransducer {
-	constructor(outputSABs, port, ttype, channel, now, blocksize) {
+export class Output {
+	constructor(port, ttype, channel, blocksize) {
 		this.port = port;
-		this.zx = new Module.maxiTrigger();
+    this.ttype = ttype;
 		this.channel = channel;
 		this.blocksize = blocksize;
-    this.ttype = ttype;
+		this.zx = new Module.maxiTrigger();
 
 		//check for existing channels
 		if (channel in outputSABs && outputSABs[channel].blocksize == blocksize) {
@@ -34404,7 +34404,7 @@ export class SABOutputTransducer {
 
       outputSABs[channel] = {
 				rb: this.ringbuf,
-				created: now,
+				created: globalThis.currentTime,
 				blocksize: blocksize,
 			};
 
@@ -34424,13 +34424,17 @@ export class SABOutputTransducer {
 			if (this.ringbuf.available_write() > this.blocksize) {
 				if (typeof value == "number") {
 					this.ringbuf.push(new Float64Array([value]));
-				} else {
+				}
+				else {
 					// console.log("SAB", value.length, this.blocksize);
 					if (value.length == this.blocksize) {
 						this.ringbuf.push(value);
-					} else if (value.length < this.blocksize) {
+					}
+					else if (value.length < this.blocksize) {
 						let newVal = new Float64Array(this.blocksize);
-						for (let i in value) newVal[i] = value[i];
+						for (let i in value)
+							newVal[i] = value[i];
+
 						this.ringbuf.push(newVal);
 					} else {
 						this.ringbuf.push(value.slice(0, this.blocksize));
@@ -34614,10 +34618,11 @@ console.log(
 );
 
 /**
- * Audio Worklet Processor Scope Global Variables for consoleTakeOver()
- * ! * DO NOT REMOVE
+ * ! Audio Worklet Processor Scope Global Variables
  */
-var cl, ci, cw, ce;
+var cl, ci, cw, ce; // for consoleTakeOver()
+var inputSABs = {};
+var outputSABs = {};
 
 class fft {
 	constructor(bins, hopPercentage) {
@@ -34683,9 +34688,7 @@ function mtof(midinote) {
 	return Math.pow(2, (midinote - 69) / 12) * 440.0;
 }
 
-var inputSABs = {};
 
-var outputSABs = {};
 
 /**
  * The main Maxi Audio wrapper with a WASM-powered AudioWorkletProcessor.
