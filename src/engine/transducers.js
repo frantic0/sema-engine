@@ -24,10 +24,10 @@ export class Input {
 	}
 }
 
-export class Output {
-	constructor(port, ttype, channel, blocksize) {
-		this.port = port;
-    this.ttype = ttype;
+export class Output  {
+	constructor(ttype, channel, blocksize, sender) {
+		this.port = sender.port;
+		this.ttype = ttype;
 		this.channel = channel;
 		this.blocksize = blocksize;
 		this.zx = new Module.maxiTrigger();
@@ -41,7 +41,7 @@ export class Output {
 			this.sab = RingBuffer.getStorageForCapacity(32 * blocksize, Float64Array);
 			this.ringbuf = new RingBuffer(this.sab, Float64Array);
 
-      outputSABs[channel] = {
+			outputSABs[channel] = {
 				rb: this.ringbuf,
 				created: globalThis.currentTime,
 				blocksize: blocksize,
@@ -63,16 +63,13 @@ export class Output {
 			if (this.ringbuf.available_write() > this.blocksize) {
 				if (typeof value == "number") {
 					this.ringbuf.push(new Float64Array([value]));
-				}
-				else {
+				} else {
 					// console.log("SAB", value.length, this.blocksize);
 					if (value.length == this.blocksize) {
 						this.ringbuf.push(value);
-					}
-					else if (value.length < this.blocksize) {
+					} else if (value.length < this.blocksize) {
 						let newVal = new Float64Array(this.blocksize);
-						for (let i in value)
-							newVal[i] = value[i];
+						for (let i in value) newVal[i] = value[i];
 
 						this.ringbuf.push(newVal);
 					} else {

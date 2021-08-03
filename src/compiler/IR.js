@@ -222,21 +222,22 @@ var jsFuncMap = {
 	scop: {
 		//freq, data, channel, [blocksize]
 		setup: (o, p) =>
-			`${o} = new Output(this.port,
-                          'scope',
-                          ${p[1].loop},
-                          ${p.length == 3 ? 1 : p[3].loop})`,
+			`${o} = new Output( this.port,
+													'scope',
+													${p[1].loop},
+													${p.length == 3 ? 1 : p[3].loop})`,
 		loop: (o, p) => `${o}.send(${p[0].loop}, ${p[2].loop})`,
 	},
 
 	toJS: {
-		//freq, data, channel, [blocksize]
-		setup: (o, p) =>
-			`${o} = new Output(this.port,
-													'ML',
-													${p[1].loop},
-													${p.length == 3 ? 1 : p[3].loop})`,
-		//freq, data, channel, [blocksize]
+		// freq, data, channel, [blocksize]
+		setup: (o, p) => `this.createOutput(${p[1].loop},
+																				{ p.length == 3 ? 1 : p[3].loop })`,
+		// setup: (o, p) => `${o} = new Output(
+		// 											'ML',
+		// 											${p[1].loop},
+		// 											${p.length == 3 ? 1 : p[3].loop},
+		// 											this)`,
 		// setup: (o, p) =>
 		// 	`${o} = new SABOutputTransducer(outputSABs,
     //                                   this.port,
@@ -244,7 +245,8 @@ var jsFuncMap = {
     //                                   ${p[1].loop},
     //                                   this.currentSample,
     //                                   ${p.length == 3 ? 1 : p[3].loop})`,
-		loop: (o, p) => `${o}.send(${p[0].loop}, ${p[2].loop})`,
+			// loop: (o, p) => `${o}.send(${p[0].loop}, ${p[2].loop})`,
+		loop: (o, p) => `this.send(${p[0].loop}, ${p[2].loop})`,
 	},
 	fromJS: {
 		//channel

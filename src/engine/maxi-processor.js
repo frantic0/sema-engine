@@ -157,13 +157,6 @@ class MaxiProcessor extends AudioWorkletProcessor {
 
 		this.takeOverConsole();
 
-		// CLOCK VARIABLES
-
-		// this.clock = new Module.maxiOsc();
-		// this.tempo = 120.0; // tempo (in beats per minute);
-		// this.secondsPerBeat = 60.0 / this.tempo;
-		// this.counterTimeValue = this.secondsPerBeat / 4; //___16th note
-
 		this.clockPhasor;
 		this.bpm = 120;
 		this.beatsPerBar = 4;
@@ -366,6 +359,70 @@ class MaxiProcessor extends AudioWorkletProcessor {
 
 	/**
 	 *
+	 * @param {*} ttype
+	 * @param {*} channel
+	 * @param {*} blocksize
+	 * @returns
+	 */
+	Output = (channel, ttype, blocksize) => {
+		// check for existing channels
+		if (channel in outputSABs && outputSABs[channel].blocksize == blocksize) {
+			// reuse existing
+		} else {
+			// create a new SAB and notify the receiver
+			let sab = RingBuffer.getStorageForCapacity(32 * blocksize, Float64Array);
+			let ringbuf = new RingBuffer(sab, Float64Array);
+
+			outputSABs[channel] = {
+				rb: ringbuf,
+				created: this.currentTime,
+				blocksize,
+				zx: new Module.maxiTrigger()
+			};
+
+			this.port.postMessage({
+				rq: "buf",
+				sab,
+				ttype,
+				channelID: channel,
+				blocksize,
+			});
+		}
+	};
+
+	send = (channel, trig, value) => {
+		if (channel in outputSABs){
+			let ringbuf = outputSABs[channel].rb;
+			let blocksize = outputSABs[channel].blocksize;
+			let zx = outputSABs[channel].zx;
+
+			if (zx.onZX(trig)) {
+				//console.log("tr", this.ringbuf.available_write(), value, this);
+				if (ringbuf.available_write() > blocksize) {
+					if (typeof value == "number") {
+						ringbuf.push(new Float64Array([value]));
+					} else {
+						// console.log("SAB", value.length, this.blocksize);
+						if (value.length == blocksize) {
+							ringbuf.push(value);
+						} else if (value.length < blocksize) {
+							let newVal = new Float64Array(blocksize);
+							for (let i in value) newVal[i] = value[i];
+
+							ringbuf.push(newVal);
+						} else {
+							ringbuf.push(value.slice(0, blocksize));
+						}
+					}
+					// console.log('val written', value);
+				}
+			}
+		}
+		return value;
+	}
+
+	/**
+	 *
 	 * @param {*} sendFrequency
 	 */
 	createNetOutputTransducer = (sendFrequency) => {
@@ -432,7 +489,6 @@ class MaxiProcessor extends AudioWorkletProcessor {
 		}
 		return res;
 	};
-
 
 	/**
 	 *
