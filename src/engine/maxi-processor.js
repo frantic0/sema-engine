@@ -364,7 +364,7 @@ class MaxiProcessor extends AudioWorkletProcessor {
 	 * @param {*} blocksize
 	 * @returns
 	 */
-	Output = (channel, ttype, blocksize) => {
+	createOutput = (channel, blocksize) => {
 		// check for existing channels
 		if (channel in outputSABs && outputSABs[channel].blocksize == blocksize) {
 			// reuse existing
@@ -383,9 +383,8 @@ class MaxiProcessor extends AudioWorkletProcessor {
 			this.port.postMessage({
 				rq: "buf",
 				sab,
-				ttype,
 				channelID: channel,
-				blocksize,
+				blocksize
 			});
 		}
 	};
@@ -401,7 +400,8 @@ class MaxiProcessor extends AudioWorkletProcessor {
 				if (ringbuf.available_write() > blocksize) {
 					if (typeof value == "number") {
 						ringbuf.push(new Float64Array([value]));
-					} else {
+					}
+					else {
 						// console.log("SAB", value.length, this.blocksize);
 						if (value.length == blocksize) {
 							ringbuf.push(value);

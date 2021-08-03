@@ -25,11 +25,10 @@ export class Input {
 }
 
 export class Output  {
-	constructor(ttype, channel, blocksize, sender) {
-		this.port = sender.port;
-		this.ttype = ttype;
+	constructor(channel, blocksize, sender) {
 		this.channel = channel;
 		this.blocksize = blocksize;
+		this.port = sender.port;
 		this.zx = new Module.maxiTrigger();
 
 		//check for existing channels
@@ -50,7 +49,6 @@ export class Output  {
 			this.port.postMessage({
 				rq: "buf",
 				sab: this.sab,
-				ttype: ttype,
 				channelID: channel,
 				blocksize: blocksize,
 			});

@@ -231,22 +231,20 @@ var jsFuncMap = {
 
 	toJS: {
 		// freq, data, channel, [blocksize]
-		setup: (o, p) => `this.createOutput(${p[1].loop},
-																				{ p.length == 3 ? 1 : p[3].loop })`,
-		// setup: (o, p) => `${o} = new Output(
-		// 											'ML',
-		// 											${p[1].loop},
-		// 											${p.length == 3 ? 1 : p[3].loop},
-		// 											this)`,
-		// setup: (o, p) =>
-		// 	`${o} = new SABOutputTransducer(outputSABs,
+		// setup: (o, p) => `this.createOutput(${p[1].loop},
+		// 																		${p.length == 3 ? 1 : p[3].loop})`,
+		// loop: (o, p) => `this.send(${p[0].loop}, ${p[2].loop})`,
+		setup: (o, p) => `${o} = new Output(
+													${p[1].loop},
+													${p.length == 3 ? 1 : p[3].loop},
+													this)`,
+		loop: (o, p) => `${o}.send(${p[0].loop}, ${p[2].loop})`,
+		// setup: (o, p) => `${o} = new SABOutputTransducer(outputSABs,
     //                                   this.port,
     //                                   'ML',
     //                                   ${p[1].loop},
     //                                   this.currentSample,
     //                                   ${p.length == 3 ? 1 : p[3].loop})`,
-			// loop: (o, p) => `${o}.send(${p[0].loop}, ${p[2].loop})`,
-		loop: (o, p) => `this.send(${p[0].loop}, ${p[2].loop})`,
 	},
 	fromJS: {
 		//channel

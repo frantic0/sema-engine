@@ -105,6 +105,7 @@ dist
 
 index*
 index.*
+maxi-processor.js
 
 .vscode
 .vscode/*
