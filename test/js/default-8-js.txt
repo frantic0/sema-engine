@@ -1,9 +1,39 @@
-:function:(x,y@{200}sin;);
+define a lambda
+(:x:,:y:@{:x:,:y:}pul)
+(@{100}sin)
+(:a:@{:a:}saw)
 
-:mixfunc:(:x:,:y:@);
+case 1: define a function, store in variable, create instanace when calling
+:function:(:a:@{:a:}saw);
+>{100}:function:;
+
+case 2: direct call {100}(:a:@{:a:}saw)
+
+case 3: pass as param
+:function:(:a:@{:a:}saw);
+{[100,200,300], :function:}map;
+
+
+-----
+
+two IR structures:
+
+lambda (param list, code) -> translates to a javascript closure
+
+lambda call (param list, lambda) -> calls the closure
+
+-----
 
 
 
+
+:synth:(:x:@{:x:saw;})
+>{100}:synth:;
+
+
+{100}(:x:@{{:x:}saw})
+
+{x:,y:}saw/;
 
 importScripts("https://cdnjs.cloudflare.com/ajax/libs/aurora.js/0.4.2/aurora.min.js")
 

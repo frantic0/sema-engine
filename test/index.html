@@ -355,6 +355,8 @@
           if(dspCode){
             console.info(editorLivecode.getValue());
             engine.eval(dspCode);
+          }else{
+            console.info(errors);
           }
         } catch (err) {
           console.error("ERROR: Failed to compile and eval: ", err);
@@ -606,7 +608,7 @@
       return editor;
     }
 
-    const editorLivecode = setupEditorWithContent("textArea-livecode", '/test/langs/default-7-lc.txt');
+    const editorLivecode = setupEditorWithContent("textArea-livecode", '/test/langs/default-9-lc.txt');
     const editorGrammar =  setupEditorWithContent("textArea-grammar",  '/test/langs/default-grammar.txt');
     const editorJS =       setupEditorWithContent("textArea-js",       '/test/js/default-6-js.txt');
     // const editorLivecode = setupEditorWithContent("textArea-livecode", '/test/langs/rubber-duckling-lc-1.txt');
