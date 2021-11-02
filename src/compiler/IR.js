@@ -623,6 +623,7 @@ var jsFuncMap = {
 		// loop: (o, p) => `(()=>{return ${p[0].loop}.map(${p[1].loop})})()`,
 		loop: (o, p) => `(()=>{let fInst = (${p[1].loop})(); return ${p[0].loop}.reduce(fInst);})()`,
 	},
+	//expand, 
 
 
 
@@ -836,13 +837,12 @@ export default class ASTreeToJavascript {
 				for(let v in el.vars) {
 					lambdaVars += el.vars[v].value + ",";
 				}
-				lambdaVars = lambdaVars.slice(0,lambdaVars.length-1);
 				//lq = local dict storage
 				let closureCode = `
 					${objName} = () => {
 						let lq = {};
 						${functionCode.setup}
-						return (${lambdaVars}, mem) => {
+						return (${lambdaVars} mem) => {
 							return ${functionCode.loop}
 						}
 					}
@@ -866,7 +866,7 @@ export default class ASTreeToJavascript {
 					setupCode += paramCode.setup;
 				}
 				console.log(setupCode);
-				lambdaParams = lambdaParams.slice(0,lambdaParams.length-1); //remove last comma
+				// lambdaParams = lambdaParams.slice(0,lambdaParams.length-1); //remove last comma
 				console.log(lambdaParams);
 				let objName = getNextObjectName(genMode == ASTreeToJavascript.genModes.LAMBDA ? 'lq' : 'q'); 
 				let lambdaInstanceCode = `${ASTreeToJavascript.genGetVarCode(el.lambda)}()`;
@@ -879,7 +879,7 @@ export default class ASTreeToJavascript {
 									${objName} = ${lambdaInstanceCode};
 									console.log(${objName} == undefined);
 								}
-								return ${objName}(${lambdaParams}, mem);
+								return ${objName}(${lambdaParams} mem);
 							})
 							()
 						))

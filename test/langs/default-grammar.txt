@@ -90,6 +90,9 @@ LambdaVarBlock -> LambdaVarList _ %lambdaVarListEnd
 	{% d => (d[0] ) %}
     
 LambdaVarList -> 
+  	_
+     {% d=> [] %}
+     |
 	Variable  
 	{% d => ( [ d[0] ] ) %}
     |
