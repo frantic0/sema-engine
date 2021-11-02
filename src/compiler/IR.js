@@ -607,6 +607,24 @@ var jsFuncMap = {
 			`${o} = new mfcc(${p[1].loop}, ${p[2].loop}, ${p[3].loop})`,
 		loop: (o, p) => `${o}.play(${p[0].loop})`,
 	},
+	//functional
+	map: {
+		setup: (o, p) => ``,
+		// loop: (o, p) => `(()=>{return ${p[0].loop}.map(${p[1].loop})})()`,
+		loop: (o, p) => `(()=>{let fInst = (${p[1].loop})(); return ${p[0].loop}.map(fInst);})()`,
+	},
+	filt: {
+		setup: (o, p) => ``,
+		// loop: (o, p) => `(()=>{return ${p[0].loop}.map(${p[1].loop})})()`,
+		loop: (o, p) => `(()=>{let fInst = (${p[1].loop})(); return ${p[0].loop}.filter(fInst);})()`,
+	},
+	redu: {
+		setup: (o, p) => ``,
+		// loop: (o, p) => `(()=>{return ${p[0].loop}.map(${p[1].loop})})()`,
+		loop: (o, p) => `(()=>{let fInst = (${p[1].loop})(); return ${p[0].loop}.reduce(fInst);})()`,
+	},
+
+
 
 	//polybleps
 	sinb: genBlepOsc(0),
