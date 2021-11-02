@@ -68,6 +68,7 @@ class poll {
 		if (this.clock.impulse(0.5)) {
 			console.log(val);
 		}
+		return val;
 	}
 }
 
