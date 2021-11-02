@@ -309,13 +309,6 @@ var jsFuncMap = {
 			p[p.length - 1].loop
 		}));`,
 		loop: (o, p) => {
-			// let playArgs = `${p[0].loop}`;
-			// if (p.length == 3) {
-			// 	playArgs += `,${p[1].loop}`;
-			// } else if (p.length == 4) {
-			// 	playArgs += `,${p[1].loop},${p[2].loop}`;
-			// }
-			// return `(${o}.isReady() ? ${o}.playOnZX(${playArgs}) : 0.0)`;
 			let playFunction="";
 			switch(p.length) {
 				case 2:
@@ -610,20 +603,35 @@ var jsFuncMap = {
 	//functional
 	map: {
 		setup: (o, p) => ``,
-		// loop: (o, p) => `(()=>{return ${p[0].loop}.map(${p[1].loop})})()`,
 		loop: (o, p) => `(()=>{let fInst = (${p[1].loop})(); return ${p[0].loop}.map(fInst);})()`,
 	},
 	filt: {
 		setup: (o, p) => ``,
-		// loop: (o, p) => `(()=>{return ${p[0].loop}.map(${p[1].loop})})()`,
 		loop: (o, p) => `(()=>{let fInst = (${p[1].loop})(); return ${p[0].loop}.filter(fInst);})()`,
 	},
 	redu: {
 		setup: (o, p) => ``,
-		// loop: (o, p) => `(()=>{return ${p[0].loop}.map(${p[1].loop})})()`,
 		loop: (o, p) => `(()=>{let fInst = (${p[1].loop})(); return ${p[0].loop}.reduce(fInst);})()`,
 	},
 	//expand, 
+	expa: {
+		setup: (o, p) => ``,
+		loop: (o, p) => `(()=>{
+			let func = (${p[1].loop}); 
+			if (!${o}_alloc) {
+				${o}_alloc=1;
+				${o}_inst=[];
+				for (let v in ${p[0].loop}) {
+					${o}_inst[v] = func();
+				}
+			}
+			let r=[];
+			for (let v in ${p[0].loop}) {
+				r[v] = 	${o}_inst[v](${p[0].loop}[v]);
+			}
+			return r;
+		})()`,
+	},
 
 
 
@@ -875,9 +883,7 @@ export default class ASTreeToJavascript {
 						((
 							(() => {
 								if (${objName} == undefined) {
-									console.log("creating lambda ${objName}");
 									${objName} = ${lambdaInstanceCode};
-									console.log(${objName} == undefined);
 								}
 								return ${objName}(${lambdaParams} mem);
 							})
