@@ -1,3 +1,5 @@
-:f1:(:x:@{:x:}sawb);
-:func:(:x:,:y:@{:x:}:y:);
->{50,:f1:}:func:;
+:flfo:(:x:,:h:@{{:x:}sin,20,:h:}bexp);
+:filt:(:x:@{:x:,{0.1,400}:flfo:,4}hpz);
+:dst:(:x:@{{:x:,20}dist}:filt:);
+:osc:(:x:@{{:x:}sawb}:dst:);
+>{{1,50}:flfo:}:osc:;

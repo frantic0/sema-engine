@@ -672,10 +672,11 @@ export default class ASTreeToJavascript {
     // console.log(`DEBUG:IR:traverseTree:level: ${level}`);
     // console.log(`DEBUG:IR:traverseTree:vars:`);
     // console.log(vars);
-	function getNextObjectName() {
-		return "q.b" + blockIdx + "u" + ASTreeToJavascript.getNextID();
+	function getNextObjectName(dictname='q') {
+		return dictname + ".b" + blockIdx + "u" + ASTreeToJavascript.getNextID();
 	}
-    let attribMap = {
+  
+	let attribMap = {
       '@lang': (ccode, el) => {
         let statements = [];
         el.map((langEl) => {
@@ -698,7 +699,7 @@ export default class ASTreeToJavascript {
 
         let functionName = el['@func'].value;
         let funcInfo = jsFuncMap[functionName];
-        let objName = getNextObjectName(); 
+        let objName = getNextObjectName(genMode == ASTreeToJavascript.genModes.LAMBDA ? 'lq' : 'q'); 
 
         let allParams=[];
 
@@ -739,8 +740,12 @@ export default class ASTreeToJavascript {
       },
       '@getvar': (ccode, el) => {
 				if (genMode == ASTreeToJavascript.genModes.LAMBDA) {
-					code.loop += el;
-
+					let memIdx = vars[el];
+					if (memIdx == undefined) {
+						code.loop += el;
+					}else{
+						ccode.loop += `(mem[${memIdx}] != undefined ? mem[${memIdx}] : 0)`;
+					}
 				}else{
 					// let memIdx = vars[el];
 					// if (memIdx == undefined) {
@@ -808,15 +813,16 @@ export default class ASTreeToJavascript {
 				console.log(el);
 				let functionCode =  ASTreeToJavascript.traverseTree(el.tree, ASTreeToJavascript.emptyCode(), level, vars, blockIdx, ASTreeToJavascript.genModes.LAMBDA);
 				console.log(functionCode);
-				let objName = getNextObjectName();
+				let objName = getNextObjectName(genMode == ASTreeToJavascript.genModes.LAMBDA ? 'lq' : 'q');
 				let lambdaVars = '';
 				for(let v in el.vars) {
 					lambdaVars += el.vars[v].value + ",";
 				}
 				lambdaVars = lambdaVars.slice(0,lambdaVars.length-1);
+				//lq = local dict storage
 				let closureCode = `
 					${objName} = () => {
-						let q = {};
+						let lq = {};
 						${functionCode.setup}
 						return (${lambdaVars}, mem) => {
 							return ${functionCode.loop}
@@ -844,18 +850,22 @@ export default class ASTreeToJavascript {
 				console.log(setupCode);
 				lambdaParams = lambdaParams.slice(0,lambdaParams.length-1); //remove last comma
 				console.log(lambdaParams);
-				let objName = getNextObjectName(); 
+				let objName = getNextObjectName(genMode == ASTreeToJavascript.genModes.LAMBDA ? 'lq' : 'q'); 
 				let lambdaInstanceCode = `${ASTreeToJavascript.genGetVarCode(el.lambda)}()`;
-				let loopCode = `
-						(
-						() => {
-							if (${objName} == undefined) {
-								${objName} = ${lambdaInstanceCode};
-							}
-							return ${objName}(${lambdaParams}, mem);
-						}
-						)()
-				
+				//QUESTION: why does this only work with the extra parentheses?
+				let loopCode = `(
+						((
+							(() => {
+								if (${objName} == undefined) {
+									console.log("creating lambda ${objName}");
+									${objName} = ${lambdaInstanceCode};
+									console.log(${objName} == undefined);
+								}
+								return ${objName}(${lambdaParams}, mem);
+							})
+							()
+						))
+						)
 					`;
 				ccode.setup += setupCode;
 				ccode.loop += loopCode;

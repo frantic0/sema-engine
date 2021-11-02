@@ -24,6 +24,23 @@ lambda call (param list, lambda) -> calls the closure
 
 -----
 
+z = console.log;
+q = {};
+e = () => {q2 = 7; z("cr e"); return (a) =>{return q2+a;}};
+
+w = () => {let q = 18; let dcw = {};z("cr w"); return (a) =>{if (!dcw.e)dcw.e = e(); return q+a+dcw.e(8);}};
+
+a = function () {
+	let dc={};
+	return ()=>{z(dc); if (!dc.b) dc.b=w(); return dc.b(3);}
+}
+ainst = a()
+
+_____
+
+ainst()
+
+_________
 
 
 
