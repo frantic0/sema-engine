@@ -603,17 +603,23 @@ var jsFuncMap = {
 	//functional
 	map: {
 		setup: (o, p) => ``,
-		loop: (o, p) => `(()=>{let fInst = (${p[1].loop})(); return ${p[0].loop}.map(fInst);})()`,
+		loop: (o, p) => `(()=>{let fInst = (${p[1].loop})(); 
+		let fMap = (x) => {return fInst(x, mem)};
+		return ${p[0].loop}.map(fMap) ;})()`,
 	},
 	filt: {
 		setup: (o, p) => ``,
-		loop: (o, p) => `(()=>{let fInst = (${p[1].loop})(); return ${p[0].loop}.filter(fInst);})()`,
+		loop: (o, p) => `(()=>{let fInst = (${p[1].loop})(); 
+		let fMap = (x) => {return fInst(x, mem)};
+		return ${p[0].loop}.filter(fMap);})()`,
 	},
 	redu: {
 		setup: (o, p) => ``,
-		loop: (o, p) => `(()=>{let fInst = (${p[1].loop})(); return ${p[0].loop}.reduce(fInst);})()`,
+		loop: (o, p) => `(()=>{let fInst = (${p[1].loop})(); 
+		let fMap = (x,y) => {return fInst(x, y, mem)};
+		return ${p[0].loop}.reduce(fMap);})()`,
 	},
-	//expand, 
+	//expand
 	expa: {
 		setup: (o, p) => ``,
 		loop: (o, p) => `(()=>{
@@ -627,7 +633,7 @@ var jsFuncMap = {
 			}
 			let r=[];
 			for (let v in ${p[0].loop}) {
-				r[v] = 	${o}_inst[v](${p[0].loop}[v]);
+				r[v] = 	${o}_inst[v](${p[0].loop}[v], mem);
 			}
 			return r;
 		})()`,

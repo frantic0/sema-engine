@@ -43,6 +43,17 @@ ainst()
 _________
 
 
+func:(x:@{{x:}sawb, {{x:,1.01}mul}rectb}mix); //dual detuned oscillator
+seq:{{3}clp, [3,2,5],[1,1.1,2,3,9]}rsq; //a sequence of frequency multipliers
+freqmod:(x:@{x:,seq:}mul); //function to modulate frequency
+oscs:{{[30,30.1,30.2,30.4, 46,60.1],freqmod:}map,func:}expa; //create oscillators and modulate frequency
+mixf:(x:,y:@{x:,y:}add);  //function for mixing
+mx:{oscs:, mixf:}redu; //mix down the list of oscillators
+>{mx:,{{0.01}sin,20,500}bexp,1}hpz;  //filter and output
+
+
+________________________-
+
 
 :synth:(:x:@{:x:saw;})
 >{100}:synth:;
