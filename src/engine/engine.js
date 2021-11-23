@@ -309,7 +309,7 @@ export class Engine {
 
 	/**
 	 * Initialises audio context and sets worklet processor code
-	 * @play
+	 * @init
 	 */
 	async init(origin) {
 		if (origin && new URL(origin)) {
@@ -465,6 +465,7 @@ export class Engine {
 				setup: dspFunction.setup,
 				loop: dspFunction.loop,
 			});
+			this.unHush();
       this.isHushed = false;
 			return true;
 		} else return false;
