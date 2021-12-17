@@ -6,7 +6,7 @@ var vars = {};
 
 function genBlepOsc(waveform) {
 	return {
-		setup: (o, p) => `${o} = new Maximilian.maxiPolyBLEP();
+		setup: (o, p) => `${o} = new Module.maxiPolyBLEP();
 											${o}.setWaveform(${waveform});
 											`,
 		loop: (o, p) => {
@@ -309,13 +309,6 @@ var jsFuncMap = {
 			p[p.length - 1].loop
 		}));`,
 		loop: (o, p) => {
-			// let playArgs = `${p[0].loop}`;
-			// if (p.length == 3) {
-			// 	playArgs += `,${p[1].loop}`;
-			// } else if (p.length == 4) {
-			// 	playArgs += `,${p[1].loop},${p[2].loop}`;
-			// }
-			// return `(${o}.isReady() ? ${o}.playOnZX(${playArgs}) : 0.0)`;
 			let playFunction="";
 			switch(p.length) {
 				case 2:
@@ -607,6 +600,46 @@ var jsFuncMap = {
 			`${o} = new mfcc(${p[1].loop}, ${p[2].loop}, ${p[3].loop})`,
 		loop: (o, p) => `${o}.play(${p[0].loop})`,
 	},
+	//functional
+	map: {
+		setup: (o, p) => ``,
+		loop: (o, p) => `(()=>{let fInst = (${p[1].loop})(); 
+		let fMap = (x) => {return fInst(x, mem)};
+		return ${p[0].loop}.map(fMap) ;})()`,
+	},
+	filt: {
+		setup: (o, p) => ``,
+		loop: (o, p) => `(()=>{let fInst = (${p[1].loop})(); 
+		let fMap = (x) => {return fInst(x, mem)};
+		return ${p[0].loop}.filter(fMap);})()`,
+	},
+	redu: {
+		setup: (o, p) => ``,
+		loop: (o, p) => `(()=>{let fInst = (${p[1].loop})(); 
+		let fMap = (x,y) => {return fInst(x, y, mem)};
+		return ${p[0].loop}.reduce(fMap);})()`,
+	},
+	//expand
+	expa: {
+		setup: (o, p) => ``,
+		loop: (o, p) => `(()=>{
+			let func = (${p[1].loop}); 
+			if (!${o}_alloc) {
+				${o}_alloc=1;
+				${o}_inst=[];
+				for (let v in ${p[0].loop}) {
+					${o}_inst[v] = func();
+				}
+			}
+			let r=[];
+			for (let v in ${p[0].loop}) {
+				r[v] = 	${o}_inst[v](${p[0].loop}[v], mem);
+			}
+			return r;
+		})()`,
+	},
+
+
 
 	//polybleps
 	sinb: genBlepOsc(0),
@@ -625,7 +658,7 @@ var jsFuncMap = {
 	vtrapb: genBlepOsc(13),
 	//blep with modulatable waveform
 	polyblep:{
-		setup: (o, p) => `${o} = new Maximilian.maxiPolyBLEP();`,
+		setup: (o, p) => `${o} = new Module.maxiPolyBLEP();`,
 		loop: (o, p) => {
 			if (p.length==2) {
 				return `(()=>{${o}.setWaveform(${p[1].loop}); return ${o}.play(${p[0].loop});})()`;
@@ -642,7 +675,6 @@ var jsFuncMap = {
 // if (${o}_tenvm.onChanged(${p[5].loop}, 1e-5)) {${o}.setEnvMod(${p[5].loop})};
 // if (${o}_tdec.onChanged(${p[6].loop}, 1e-5)) {${o}.setDecay(${p[6].loop})};
 // if (newPitch || newVel) {${o}.noteOn(${p[0].loop},${p[1].loop})};
-
 export default class ASTreeToJavascript {
 
   static getNextID() {
@@ -658,15 +690,30 @@ export default class ASTreeToJavascript {
     };
   }
 
-  static traverseTree(t, code, level, vars, blockIdx) {
+	static genGetVarCode(el) {
+		let memIdx = vars[el];
+		if (memIdx == undefined) {
+			memIdx = Object.keys(vars).length;
+			vars[el] = memIdx;
+		}
+		return `(mem[${memIdx}] != undefined ? mem[${memIdx}] : 0)`;
+	}
+
+  static genModes = {GLOBAL:0, LAMBDA: 1};
+
+  static traverseTree(t, code, level, vars, blockIdx, genMode = ASTreeToJavascript.genModes.GLOBAL) {
     // console.log(`DEBUG:IR:traverseTree:level: ${level}`);
     // console.log(`DEBUG:IR:traverseTree:vars:`);
     // console.log(vars);
-    let attribMap = {
+	function getNextObjectName(dictname='q') {
+		return dictname + ".b" + blockIdx + "u" + ASTreeToJavascript.getNextID();
+	}
+  
+	let attribMap = {
       '@lang': (ccode, el) => {
         let statements = [];
         el.map((langEl) => {
-          let statementCode = ASTreeToJavascript.traverseTree(langEl, ASTreeToJavascript.emptyCode(), level, vars, blockIdx);
+          let statementCode = ASTreeToJavascript.traverseTree(langEl, ASTreeToJavascript.emptyCode(), level, vars, blockIdx, genMode);
           // console.log("@lang: " + statementCode.loop);
           ccode.setup += statementCode.setup;
           ccode.loop += statementCode.loop;
@@ -674,13 +721,8 @@ export default class ASTreeToJavascript {
         });
         return ccode;
       },
-      // '@sigOut': (ccode, el) => {
-      //   ccode = ASTreeToJavascript.traverseTree(el, ccode, level, vars, blockIdx);
-      //   ccode.loop = `q.sigOut = ${ccode.loop};`;
-      //   return ccode;
-      // },
       '@spawn': (ccode, el) => {
-        ccode = ASTreeToJavascript.traverseTree(el, ccode, level, vars, blockIdx);
+        ccode = ASTreeToJavascript.traverseTree(el, ccode, level, vars, blockIdx, genMode);
         ccode.loop += ";";
         return ccode;
       },
@@ -690,13 +732,13 @@ export default class ASTreeToJavascript {
 
         let functionName = el['@func'].value;
         let funcInfo = jsFuncMap[functionName];
-        let objName = "q.b" + blockIdx + "u" + ASTreeToJavascript.getNextID();
+        let objName = getNextObjectName(genMode == ASTreeToJavascript.genModes.LAMBDA ? 'lq' : 'q'); 
 
         let allParams=[];
 
         for (let p = 0; p < el['@params'].length; p++) {
           let params = ASTreeToJavascript.emptyCode();
-          params = ASTreeToJavascript.traverseTree(el['@params'][p], params, level+1, vars, blockIdx);
+          params = ASTreeToJavascript.traverseTree(el['@params'][p], params, level+1, vars, blockIdx, genMode);
           // console.log(params);
           allParams[p] = params;
         }
@@ -724,21 +766,30 @@ export default class ASTreeToJavascript {
           vars[variableName] = memIdx;
           // console.log(memIdx);
         }
-        let varValueCode = ASTreeToJavascript.traverseTree(el['@varvalue'], ASTreeToJavascript.emptyCode(), level+1, vars, blockIdx);
+        let varValueCode = ASTreeToJavascript.traverseTree(el['@varvalue'], ASTreeToJavascript.emptyCode(), level+1, vars, blockIdx, genMode);
         ccode.setup += varValueCode.setup;
-        // ccode.loop = `this.setvar(q, '${el['@varname']}', ${varValueCode.loop})`;
         ccode.loop = `(mem[${memIdx}] = ${varValueCode.loop})`;
         return ccode;
       },
       '@getvar': (ccode, el) => {
-        let memIdx = vars[el];
-        if (memIdx == undefined) {
-					memIdx = Object.keys(vars).length;
-          vars[el] = memIdx;
-        }
-        // ccode.loop += `this.getvar(q, '${el.value}')`;
-        ccode.loop += `(mem[${memIdx}] != undefined ? mem[${memIdx}] : 0)`;
-        return ccode;
+				if (genMode == ASTreeToJavascript.genModes.LAMBDA) {
+					let memIdx = vars[el];
+					if (memIdx == undefined) {
+						code.loop += el;
+					}else{
+						ccode.loop += `(mem[${memIdx}] != undefined ? mem[${memIdx}] : 0)`;
+					}
+				}else{
+					// let memIdx = vars[el];
+					// if (memIdx == undefined) {
+					// 	memIdx = Object.keys(vars).length;
+					// 	vars[el] = memIdx;
+					// }
+					// // ccode.loop += `this.getvar(q, '${el.value}')`;
+					// ccode.loop += `(mem[${memIdx}] != undefined ? mem[${memIdx}] : 0)`;
+					ccode.loop += ASTreeToJavascript.genGetVarCode(el);
+				}
+				return ccode;
       },
       '@string': (ccode, el) => {
         // console.log(el.value);
@@ -773,7 +824,7 @@ export default class ASTreeToJavascript {
 
         for(let i_list=0; i_list < el.length; i_list++) {
           //if the element is a static number, set this element once in the setup code
-          let element =  ASTreeToJavascript.traverseTree(el[i_list], ASTreeToJavascript.emptyCode(), level, vars, blockIdx);
+          let element =  ASTreeToJavascript.traverseTree(el[i_list], ASTreeToJavascript.emptyCode(), level, vars, blockIdx, genMode);
           if(Object.keys(el[i_list])[0] == '@num') {
 						// ccode.setup += `${objName}.set(${i_list}, ${element.loop});`;
 						ccode.setup += `${objName}[${i_list}] = ${element.loop};`;
@@ -789,7 +840,67 @@ export default class ASTreeToJavascript {
         // ccode.loop+=`${objName}`;
         // console.log(ccode);
         return ccode;
-      }
+      },
+			'@lambda': (ccode, el) => {
+				console.log("LAMBDA");
+				console.log(el);
+				let functionCode =  ASTreeToJavascript.traverseTree(el.tree, ASTreeToJavascript.emptyCode(), level, vars, blockIdx, ASTreeToJavascript.genModes.LAMBDA);
+				console.log(functionCode);
+				let objName = getNextObjectName(genMode == ASTreeToJavascript.genModes.LAMBDA ? 'lq' : 'q');
+				let lambdaVars = '';
+				for(let v in el.vars) {
+					lambdaVars += el.vars[v].value + ",";
+				}
+				//lq = local dict storage
+				let closureCode = `
+					${objName} = () => {
+						let lq = {};
+						${functionCode.setup}
+						return (${lambdaVars} mem) => {
+							return ${functionCode.loop}
+						}
+					}
+				`;
+				console.log(closureCode);
+				ccode.setup += closureCode;
+				ccode.loop += objName;
+				return ccode;
+			},
+			'@lambdacall': (ccode, el) => {
+				console.log("LAMBDACALL");
+				console.log(el.params);
+				console.log(el.lambda);
+				let lambdaParams = '';
+				let setupCode = "";
+				for(let v in el.params) {
+					console.log(v);
+					let paramCode =  ASTreeToJavascript.traverseTree(el.params[v], ASTreeToJavascript.emptyCode(), level, vars, blockIdx, genMode);
+					console.log(paramCode.loop);
+					lambdaParams += paramCode.loop + ",";
+					setupCode += paramCode.setup;
+				}
+				console.log(setupCode);
+				// lambdaParams = lambdaParams.slice(0,lambdaParams.length-1); //remove last comma
+				console.log(lambdaParams);
+				let objName = getNextObjectName(genMode == ASTreeToJavascript.genModes.LAMBDA ? 'lq' : 'q'); 
+				let lambdaInstanceCode = `${ASTreeToJavascript.genGetVarCode(el.lambda)}()`;
+				//QUESTION: why does this only work with the extra parentheses?
+				let loopCode = `(
+						((
+							(() => {
+								if (${objName} == undefined) {
+									${objName} = ${lambdaInstanceCode};
+								}
+								return ${objName}(${lambdaParams} mem);
+							})
+							()
+						))
+						)
+					`;
+				ccode.setup += setupCode;
+				ccode.loop += loopCode;
+				return ccode;
+			}
     }
 
     if (Array.isArray(t)) {
@@ -813,16 +924,15 @@ export default class ASTreeToJavascript {
   static treeToCode(tree, blockIdx=0) {
     // console.log(tree);
     vars = {};
-    let code = ASTreeToJavascript.traverseTree(tree, ASTreeToJavascript.emptyCode(), 0, vars, blockIdx);
+    let code = ASTreeToJavascript.traverseTree(tree, ASTreeToJavascript.emptyCode(), 0, vars, blockIdx, ASTreeToJavascript.genModes.GLOBAL);
     // console.log(vars);
 		// code.setup = `() => {let q=this.newq(); q.sigOut=0; ${code.setup}; return q;}`;
     // code.loop = `(q, inputs, mem) => {${code.loop} return q.sigOut;}`
-		code.setup = `() => {let q=this.newq(); ${code.setup}; return q;}`;
+	code.setup = `() => {let q=this.newq(); ${code.setup}; return q;}`;
     code.loop = `(q, inputs, mem) => {${code.loop}}`
-    // console.log("DEBUG:treeToCode");
-		// console.log(code.setup);
-		// console.log(code.loop);
+    console.log("DEBUG:treeToCode");
+	console.log(code.setup);
+	console.log(code.loop);
     return code;
   }
 }
-

@@ -1,1 +1,3 @@
->{{1}adc, {50}sin}mul;
+func:(x:@{x:}saw);
+oscs:{[100,200],func:}expa;
+>{oscs:}mix;

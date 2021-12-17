@@ -21,7 +21,7 @@ if (self.console) {
 		console.log = function () {
 			self.postMessage({
 				func: "logs",
-				payload: [...arguments],
+				payload: processPayload([...arguments]),
 				logLevel: "log",
 				origin: "[LEARNER]",
 			});
@@ -30,7 +30,7 @@ if (self.console) {
 		console.info = function (text) {
 			self.postMessage({
 				func: "logs",
-				payload: [...arguments],
+				payload: processPayload([...arguments]),
 				logLevel: "info",
 				origin: "[LEARNER]",
 			});
@@ -39,7 +39,7 @@ if (self.console) {
 		console.warn = function (text) {
 			self.postMessage({
 				func: "logs",
-				payload: [...arguments],
+				payload: processPayload([...arguments]),
 				logLevel: "warn",
 				origin: "[LEARNER]",
 			});
@@ -48,7 +48,7 @@ if (self.console) {
 		console.error = function (text) {
 			self.postMessage({
 				func: "logs",
-				payload: [...arguments],
+				payload: processPayload([...arguments]),
 				logLevel: "error",
 				origin: "[LEARNER]",
 			});
@@ -58,6 +58,18 @@ if (self.console) {
 	}
 }
 
+//for processing payloads. deals with if there is an object in the log and flattens it.
+function processPayload(payload) {
+	let newLoad = [];
+	for (var i = 0; i < payload.length; i++) {
+		// console.log(payload[i], typeof(payload[i]));
+		if (typeof payload[i] === 'object' || typeof payload[i] === 'function' || typeof payload[i] === 'error' ){
+			let curStr = JSON.stringify(payload[i]);
+			newLoad.push(curStr);
+		} else { newLoad.push(payload[i])}
+	}
+	return newLoad;
+}
 
 class Output {
 	constructor(ttype, channel, blocksize) {
@@ -264,6 +276,7 @@ function initWithURL(url){
 
 const gevalToConsole = e => {
   try {
+		console.log('DEBUG WORKER: GEVAL TO CONSOLE');
 		if (!geval) var geval = eval;
 
     let res = geval(e);

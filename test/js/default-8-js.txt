@@ -1,9 +1,67 @@
-:function:(x,y@{200}sin;);
+define a lambda
+(:x:,:y:@{:x:,:y:}pul)
+(@{100}sin)
+(:a:@{:a:}saw)
 
-:mixfunc:(:x:,:y:@);
+case 1: define a function, store in variable, create instanace when calling
+:function:(:a:@{:a:}saw);
+>{100}:function:;
+
+case 2: direct call {100}(:a:@{:a:}saw)
+
+case 3: pass as param
+:function:(:a:@{:a:}saw);
+{[100,200,300], :function:}map;
 
 
+-----
 
+two IR structures:
+
+lambda (param list, code) -> translates to a javascript closure
+
+lambda call (param list, lambda) -> calls the closure
+
+-----
+
+z = console.log;
+q = {};
+e = () => {q2 = 7; z("cr e"); return (a) =>{return q2+a;}};
+
+w = () => {let q = 18; let dcw = {};z("cr w"); return (a) =>{if (!dcw.e)dcw.e = e(); return q+a+dcw.e(8);}};
+
+a = function () {
+	let dc={};
+	return ()=>{z(dc); if (!dc.b) dc.b=w(); return dc.b(3);}
+}
+ainst = a()
+
+_____
+
+ainst()
+
+_________
+
+
+func:(x:@{{x:}sawb, {{x:,1.01}mul}rectb}mix); //dual detuned oscillator
+seq:{{3}clp, [3,2,5],[1,1.1,2,3,9]}rsq; //a sequence of frequency multipliers
+freqmod:(x:@{x:,seq:}mul); //function to modulate frequency
+oscs:{{[30,30.1,30.2,30.4, 46,60.1],freqmod:}map,func:}expa; //create oscillators and modulate frequency
+mixf:(x:,y:@{x:,y:}add);  //function for mixing
+mx:{oscs:, mixf:}redu; //mix down the list of oscillators
+>{mx:,{{0.01}sin,20,500}bexp,1}hpz;  //filter and output
+
+
+________________________-
+
+
+:synth:(:x:@{:x:saw;})
+>{100}:synth:;
+
+
+{100}(:x:@{{:x:}saw})
+
+{x:,y:}saw/;
 
 importScripts("https://cdnjs.cloudflare.com/ajax/libs/aurora.js/0.4.2/aurora.min.js")
 

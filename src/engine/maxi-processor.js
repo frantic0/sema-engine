@@ -68,6 +68,7 @@ class poll {
 		if (this.clock.impulse(0.5)) {
 			console.log(val);
 		}
+		return val;
 	}
 }
 
@@ -253,10 +254,10 @@ class MaxiProcessor extends AudioWorkletProcessor {
 	};
 
 	/**
-	 *
+	 * create a new memory block
 	 */
 	newmem = () => {
-		return new Array(512);
+		return new Array(2048);
 	};
 
 	/**
