@@ -2,194 +2,403 @@
 
 ![Node.js CI](https://github.com/frantic0/sema-engine/workflows/Node.js%20CI/badge.svg)
 ![version](https://img.shields.io/badge/version-0.1.4-red)
+[![npm](https://img.shields.io/npm/v/sema-engine.svg)](https://www.npmjs.com/package/sema-engine)
 [![stability-experimental](https://img.shields.io/badge/stability-experimental-orange.svg)](https://github.com/emersion/stability-badges#experimental)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-yellow.svg)](https://github.com/frantic0/sema-engine/blob/main)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-yellow.svg)](https://github.com/frantic0/sema-engine/blob/main/CONTRIBUTING.md)
 [![Website](https://img.shields.io/website?url=https%3A%2F%2Fsema.codes)](https://frantic0.github.io/sema-engine/)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/frantic0/sema-engine/blob/main/LICENSE)
 
-*sema-engine* is a Javascript library that provides a high-performance audio engine for modern Web applications, with an easy-to-use API. It was extracted from [sema](https://github.com/mimic-sussex/sema), an app developed by @[frantic0](https://github.com/frantic0), @[chriskiefer](https://github.com/chriskiefer) and @[thormagnusson](https://github.com/thormagnusson), and refactored for the [MIMICproject.com](https://mimicproject.com/about).
+**sema-engine** is a JavaScript audio signal engine for live coding, interactive music, machine listening, and browser-based DSP applications.
 
-*sema-engine* builds upon the following components:
+It provides a small API around a high-performance Web Audio `AudioWorklet` processor, a live-code compiler pipeline, sample loading, analyser support, shared buffers, and learner integration. It was extracted from [Sema](https://github.com/mimic-sussex/sema), a live coding playground for music and machine learning, and refactored as a reusable engine for the [MIMIC project](https://mimicproject.com/about).
 
-* the Maximilian DSP C++ library – from which *sema-engine* consumes DSP objects, as a git submodule
+> Status: experimental. APIs may change.
 
-* the Web Audio API Audio Worklet – packs a bespoke Audio Worklet node (src/engine.js) and processor (maxi-processor), which loads Maximilian DSP objects and dynamic program specifications
+## Features
 
-* the Nearley compiler – generates parsers from an EBNF grammar specification
+- Web Audio API engine built around an `AudioWorklet` processor.
+- Maximilian-powered DSP objects compiled for browser use.
+- Live-code compilation using Nearley grammars.
+- ES module and UMD builds.
+- Sample loading into the audio processor.
+- Analyser utilities for visualisation.
+- Shared buffer support for communication between the audio engine, UI, and learners.
+- Integration hooks for machine learning workflows through `Learner`.
 
-The *sema-engine* library exposes ES and UMD modules (works on the browser, with modern native JS modules and older JS module formats—amd, cjs for nodejs applications—think electron!).
+## How it works
 
-*sema-engine* uses Github Actions workflows for build automation and continuous integration. The development builds propagate source maps (.map files)—so you can have modern debugging features like using breakpoints in the context of the client application. The production build ships all formats optimised and minified.
+`sema-engine` brings together three main parts:
 
+1. **Maximilian DSP**  
+   C++ DSP objects are used as the audio foundation.
 
-## Usage
+2. **Web Audio API AudioWorklet**  
+   The engine loads a custom `maxi-processor.js` worklet that runs audio code off the main JavaScript thread.
 
-The *sema-engine* is published in the Node Package Manager (NPM) registry. If you are developing a Web application in a modern environment, and using a bundler such as *Webpack* or *Rollup*, you can easily add *sema-engine* as a dependency,
+3. **Nearley compiler**  
+   Language grammars are compiled from EBNF-style specifications and used to turn live-code text into DSP code that can be evaluated by the engine.
 
-```
+## Installation
+
+```sh
 npm install sema-engine
 ```
 
-For an advanced use, check how *sema-engine* integrates with [Sema](https://github.com/mimic-sussex/sema), a full-fledged application from which *sema-engine* was extracted.
+The package exposes both ES module and UMD/CommonJS-compatible builds.
 
+## Quick start
 
-You can use also use the *sema-engine* library modules in an a HTML file using inline `<script>` tags (check the published [example](https://frantic0.github.io/sema-engine/) which is output by the development build).
+```js
+import {
+  Engine,
+  compile,
+  Learner,
+  getBlock
+} from "sema-engine";
 
+const engine = new Engine();
+
+// This must point to the location where maxi-processor.js is served.
+const assetBaseUrl = window.location.origin;
+
+async function startEngine() {
+  const ok = await engine.init(assetBaseUrl);
+
+  if (!ok) {
+    throw new Error("Failed to initialise sema-engine.");
+  }
+
+  engine.play();
+}
 ```
+
+### Important: serve `maxi-processor.js`
+
+`engine.init(assetBaseUrl)` loads the worklet processor from:
+
+```txt
+${assetBaseUrl}/maxi-processor.js
+```
+
+Make sure `maxi-processor.js` is available at that URL.
+
+For example, if your app is served from:
+
+```txt
+https://example.com/my-app
+```
+
+and you pass:
+
+```js
+await engine.init("https://example.com/my-app");
+```
+
+then the processor must be available at:
+
+```txt
+https://example.com/my-app/maxi-processor.js
+```
+
+When using a bundler, copy the file from:
+
+```txt
+node_modules/sema-engine/maxi-processor.js
+```
+
+to your public/static output directory.
+
+## Browser usage with native ES modules
+
+You can also use the built module directly in a browser page:
+
+```html
 <script type="module">
+  import {
+    Engine,
+    compile,
+    Learner,
+    getBlock
+  } from "./index.mjs";
 
-    import {
-      Engine,
-      compile,
-      Learner,
-      getBlock
-    } from "../index.mjs";
+  const engine = new Engine();
 
-</script>
-```
-Note the that the script tag for the sema-engine module with `index.mjs` has `type = module`.
+  const assetBaseUrl = new URL(".", window.location.href)
+    .href
+    .replace(/\/$/, "");
 
-When initialising *sema-engine*, you need to pass the `origin` URL which points to where package dependencies – e.g. maxi-processor.js and maximilian.wasmmodule.js (check the `dist/` folder) – should be served from.
+  document.getElementById("playButton").addEventListener("click", async () => {
+    const ok = await engine.init(assetBaseUrl);
 
-```
-  let engine,
-      analyser = 0,
-      dspCode,
-      learner
-      ;
+    if (!ok) {
+      console.error("Failed to initialise sema-engine.");
+      return;
+    }
 
-  let origin = document.location.origin;
-
-  const $ = (elemId, callback) =>
-    document.getElementById(elemId).addEventListener("click", callback);
-
-  $("playButton", "click", () => {
-    engine = new Engine();
-    engine.init(origin);
     engine.play();
-  })
-```
-
-Note that the engine will make its operations depend on the `origin` URL for instance for loading audio samples, which should be pointed to using a relative path to the origin like so:
-
-```
-  $("loadSamplesButton", "click", () => {
-    if(engine){
-      try{
-        engine.loadSample("909.wav",       "/audio/909.wav");
-        engine.loadSample("909b.wav",      "/audio/909b.wav");
-        engine.loadSample("909closed.wav", "/audio/909closed.wav");
-        engine.loadSample("909open.wav",   "/audio/909closed.wav");
-      } catch (error) {
-        console.error("ERROR: Failed to compile and eval: ", error);
-      }
-    }
-    else throw new Error('ERROR: Engine not initialized. Press Start engine first.')
-  })
-
-  $("learnerButton", "click", async () => {
-    if(engine){
-      try{
-        learner = new Learner();
-        await engine.addLearner('l1', learner);
-      }catch(error){
-        console.error("ERROR: Error creating or initialising learner: ", r);
-      }
-    }
   });
 </script>
 ```
 
-To compile the livecode, you need to do it against its grammar language specification, with the `compile` function. Only then you can inject the resulting code in the engine and evaluate it.
+## Loading samples
 
-For the JS code, we provide `getBlock`, an utility function that pulls code from an editor block. Blocks in a Codemirror editor instance are delimited by `____` (3 or more underscores).
+Samples are loaded relative to the same base URL passed to `engine.init()`.
 
-```
-  const evalLiveCode = () => {
-    if(engine){
-      try{
-        const { errors, dspCode } = compile( editorGrammar.getValue(), editorLivecode.getValue() );
-        if(dspCode){
-          console.info(editorLivecode.getValue());
-          engine.eval(dspCode);
-        }
-      } catch (err) {
-        console.error("ERROR: Failed to compile and eval: ", err);
-      }
-    }
-    else throw new Error('ERROR: Engine not initialized. Please press Start Engine first.')
+```js
+document.getElementById("loadSamplesButton").addEventListener("click", () => {
+  if (!engine) {
+    throw new Error("Engine not initialised. Start the engine first.");
   }
 
-  const evalJs = async () => {
-    if(learner && editorJS){
-      const code = getBlock(editorJS);
-      learner.eval(code);
-    }
-    else throw new Error('ERROR: Learner not initialized. Please press Create Learner first.')
+  try {
+    engine.loadSample("909.wav", "/audio/909.wav");
+    engine.loadSample("909b.wav", "/audio/909b.wav");
+    engine.loadSample("909closed.wav", "/audio/909closed.wav");
+    engine.loadSample("909open.wav", "/audio/909open.wav");
+  } catch (error) {
+    console.error("Failed to load samples:", error);
   }
+});
 ```
 
-## Prerequisites
+If `assetBaseUrl` is:
 
-If you would like to make contributions to the sema-engine custom WAAPI audio worklet processor, there are two compilers required to build it:
-
-* Emscripten SDK https://emscripten.org/docs/getting_started/downloads.html
-
-* Cheerp compiler https://leaningtech.com/cheerp/
-
-Check the Makefile to better understand the compilation workflow.
-
-## Build
-
-If you are cloning this library for the first time:
-
-1. Initialise the Maximilian and the Open303 submodules
+```txt
+https://example.com/my-app
 ```
+
+then:
+
+```js
+engine.loadSample("909.wav", "/audio/909.wav");
+```
+
+loads:
+
+```txt
+https://example.com/my-app/audio/909.wav
+```
+
+## Compiling and evaluating live code
+
+Use `compile(grammarSource, liveCodeSource)` to compile live-code text against a grammar specification. If compilation succeeds, pass the generated DSP code to the engine.
+
+```js
+function evalLiveCode(grammarSource, liveCodeSource) {
+  if (!engine) {
+    throw new Error("Engine not initialised. Start the engine first.");
+  }
+
+  try {
+    const { errors, dspCode } = compile(grammarSource, liveCodeSource);
+
+    if (errors && errors.length > 0) {
+      console.error("Compilation errors:", errors);
+      return;
+    }
+
+    if (dspCode) {
+      engine.eval(dspCode);
+    }
+  } catch (error) {
+    console.error("Failed to compile and evaluate live code:", error);
+  }
+}
+```
+
+## Using a Learner
+
+`Learner` can be connected to the engine for machine learning workflows and shared-buffer communication.
+
+```js
+let learner;
+
+document.getElementById("learnerButton").addEventListener("click", async () => {
+  if (!engine) {
+    throw new Error("Engine not initialised. Start the engine first.");
+  }
+
+  try {
+    learner = new Learner();
+    await engine.addLearner("l1", learner);
+  } catch (error) {
+    console.error("Error creating or initialising learner:", error);
+  }
+});
+```
+
+## Evaluating JavaScript editor blocks
+
+`getBlock` is a utility for extracting the current code block from an editor. In Sema-style CodeMirror editors, blocks are delimited by three or more underscores:
+
+```txt
+___
+```
+
+Example:
+
+```js
+function evalJsBlock(editorJS) {
+  if (!learner) {
+    throw new Error("Learner not initialised. Create a learner first.");
+  }
+
+  if (!editorJS) {
+    throw new Error("No JavaScript editor instance provided.");
+  }
+
+  const code = getBlock(editorJS);
+  learner.eval(code);
+}
+```
+
+## API overview
+
+| Export | Description |
+| --- | --- |
+| `Engine` | Main audio engine. Initialises the AudioContext, loads the worklet processor, evaluates DSP code, loads samples, manages analysers, and communicates with learners. |
+| `compile` | High-level compiler function for turning grammar and live-code input into DSP code. |
+| `compileGrammar` | Compiles a grammar specification. |
+| `parse` | Parses source text with a compiled grammar. |
+| `ASTreeToDSPcode` | Converts parsed AST structures into DSP code. |
+| `ASTreeToJavascript` | JavaScript IR utilities. |
+| `Learner` | Learner integration class for ML-related workflows. |
+| `getBlock` | Extracts the active code block from an editor. |
+| `Logger` | Logging utility used by the engine and processor. |
+
+## Browser requirements
+
+`sema-engine` relies on Web Audio API `AudioWorklet`, so it should be served from a secure context:
+
+- `https://...`
+- or `http://localhost` during development
+
+Most modern Chromium-based browsers support AudioWorklets. If you experience issues, check that:
+
+- the page is served over HTTPS or localhost,
+- `maxi-processor.js` is reachable,
+- the browser allows audio playback after a user gesture,
+- the browser console does not show CORS or worklet loading errors.
+
+## Development
+
+Clone the repository and initialise submodules:
+
+```sh
+git clone https://github.com/frantic0/sema-engine.git
+cd sema-engine
 git submodule update --init --recursive
 ```
 
-2. Build the WAAPI Audio Worklet processor with Maximilian Pure JS, WebAssembly modules, using CHEERP and Emscripten. Build the sema-engine library into UMD and ES modules.
-```
-make
+Install dependencies:
+
+```sh
+npm install
 ```
 
-3. Build the sema-engine library into UMD and ES modules, after changes to any source file
-```
-npm run build
-```
+Run the development build:
 
-5. Test the sema-engine library in a [local example](https://github.com/frantic0/sema-engine/blob/main/test/index.html)
-```
+```sh
 npm run dev
 ```
 
-To update submodule if there are any upgrades
+Build the library:
+
+```sh
+npm run build
 ```
+
+Run tests:
+
+```sh
+npm test
+```
+
+## Building the AudioWorklet processor
+
+If you are contributing to the custom Web Audio API processor or the Maximilian/Open303 build pipeline, you will also need:
+
+- [Emscripten SDK](https://emscripten.org/docs/getting_started/downloads.html)
+- [Cheerp compiler](https://leaningtech.com/cheerp/)
+
+Then run:
+
+```sh
+make
+```
+
+This builds the Maximilian/WebAssembly/Pure JS processor and then builds the `sema-engine` library outputs.
+
+To update submodules:
+
+```sh
 git submodule update --remote --merge
 ```
 
+## Tests and examples
 
-## Tests and Examples
+`sema-engine` uses Mocha for unit and integration tests.
 
-The *sema-engine* library uses Mocha for unit and integration tests.
+The development build includes a local example for experimenting with:
 
-The development build outputs the example above, which you can use to learn and test out how to work with the engine.
+- starting and stopping the engine,
+- loading samples,
+- evaluating live code,
+- evaluating JavaScript blocks,
+- creating learners,
+- creating analysers,
+- testing grammar changes.
 
+Run:
+
+```sh
+npm run dev
+```
+
+Then open the local development page served by the dev task.
+
+A published example is also available here:
+
+[https://frantic0.github.io/sema-engine/](https://frantic0.github.io/sema-engine/)
 
 ## Documentation
 
-The *sema-engine* has small API surface that you can find more about on this project's [wiki](https://github.com/frantic0/sema-engine/wiki).
+More documentation is available in the project wiki:
 
+[https://github.com/frantic0/sema-engine/wiki](https://github.com/frantic0/sema-engine/wiki)
 
+For a complete application built around this engine, see:
+
+[https://github.com/mimic-sussex/sema](https://github.com/mimic-sussex/sema)
 
 ## Contributing
 
-Pull requests are welcome! Fork the the project and submit PRs to the *develop* branch. Please observe the [Contributing](https://github.com/frantic0/sema-engine/blob/main/CONTRIBUTING.md) guidelines for other ways to contribute (issues, documentation, styles, etc).
+Pull requests are welcome.
 
-## Related Publications
+Please:
 
-Bernardo, F., Kiefer, C., Magnusson, T. (2020). A Signal Engine for a Live Code Language Ecosystem. Journal of Audio Engineering Society, Vol. 68, No. 1, October, DOI: [https://doi.org/10.17743/jaes.2020.0016](https://doi.org/10.17743/jaes.2020.0016)
+1. Fork the repository.
+2. Create a branch from `develop`.
+3. Make your changes.
+4. Run tests and build locally.
+5. Submit a pull request.
+
+See [CONTRIBUTING.md](https://github.com/frantic0/sema-engine/blob/main/CONTRIBUTING.md) for more details.
+
+## Related publications
+
+Bernardo, F., Kiefer, C., Magnusson, T. (2020).  
+**A Signal Engine for a Live Coding Language Ecosystem.**  
+*Journal of the Audio Engineering Society*, Vol. 68, No. 10.  
+DOI: [https://doi.org/10.17743/jaes.2020.0016](https://doi.org/10.17743/jaes.2020.0016)
 
 ## Funding
 
-This project has received funding from two UKRI/AHRC research grants [MIMIC: Musically Intelligent Machines Interacting Creatively (Ref: AH/R002657/1)](https://gtr.ukri.org/projects?ref=AH%2FR002657%2F1) and [Innovating Sema (Ref: AH/V005154/1)](https://gtr.ukri.org/projects?ref=AH/V005154/1).
+This project has received funding from two UKRI/AHRC research grants:
+
+- [MIMIC: Musically Intelligent Machines Interacting Creatively, Ref: AH/R002657/1](https://gtr.ukri.org/projects?ref=AH%2FR002657%2F1)
+- [Innovating Sema, Ref: AH/V005154/1](https://gtr.ukri.org/projects?ref=AH/V005154%2F1)
+
+## License
+
+MIT. See [LICENSE](https://github.com/frantic0/sema-engine/blob/main/LICENSE).
